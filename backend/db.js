@@ -1,15 +1,11 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
+const { createClient } = require("@supabase/supabase-js");
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
-    console.log("✅ Connected to MongoDB Atlas");
-  } catch (err) {
-    console.error("❌ DB connection failed:", err.message);
-    process.exit(1);
-  }
-};
+console.log("Connected to Supabase");
 
-module.exports = connectDB;
+module.exports = supabase;
