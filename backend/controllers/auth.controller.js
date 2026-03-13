@@ -1,88 +1,65 @@
+// auth.controller.js
 const supabase = require("../db");
 
 exports.registerUser = async (req, res) => {
-  console.log(' CONTROLLER REACHED! BODY:', req.body);
-  
   try {
-    const { email, password, username = 'default_user', role } = req.body;
-    
-    if (!email || !password) {
-      console.log(' Missing email/password');
-      return res.status(400).json({ error: 'Email and password required' });
+    const { email, password, username, role = "client" } = req.body;
+
+    if (!email || !password || !username) {
+      return res.status(400).json({ error: "Email, password and username are required" });
     }
-    
-    console.log(' CALLING auth.signUp...');
+
+    if (!["client", "vendeur", "admin"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role" });
+    }
+
+    // 1. Sign up — trigger auto-creates utilisateur + client rows
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: { nom_utilisateur: username } // trigger reads this
+      }
     });
 
-    console.log('auth.signUp RESULT:');
-    console.log('- Has data:', !!data);
-    console.log('- User exists:', !!(data?.user));
-    console.log('- Error message:', authError?.message || 'None');
-    console.log('- Error status:', authError?.statusCode || 'None');
-
-    if (authError) {
-      console.log('AUTH ERROR DETAILS:', authError.message);
-      return res.status(400).json({ error: authError.message });
-    }
+    if (authError) return res.status(400).json({ error: authError.message });
 
     const user = data.user;
-    if (!user) {
-      console.log(' NO USER AFTER SIGNUP');
-      return res.status(400).json({ error: "User object is null" });
-    }
+    if (!user) return res.status(400).json({ error: "Signup failed, no user returned" });
 
-    console.log(' USER CREATED:', user.id);
-
-    console.log(' Inserting utilisateur...');
-    const { error: utilisateurError } = await supabase
-      .from("utilisateur")
-      .insert([{ id: user.id, nom_utilisateur: username, role }]);
-
-    if (utilisateurError) {
-      console.log(' UTILISATEUR INSERT ERROR:', utilisateurError.message);
-      return res.status(400).json({ error: utilisateurError.message });
-    }
-
-    if (role === "client") {
-      console.log('Inserting client...');
-      const { error: clientError } = await supabase
-        .from("client")
-        .insert([{ id: user.id, statut: "actif" }]);
-      if (clientError) {
-        console.log(' CLIENT INSERT ERROR:', clientError.message);
-        return res.status(400).json({ error: clientError.message });
-      }
-      console.log('Client inserted');
-    }
-
+    // 2. If vendeur, upgrade via the DB function (inserts vendeur row + sets role)
     if (role === "vendeur") {
-      console.log(' Inserting vendeur...');
-      const { error: vendeurError } = await supabase
-        .from("vendeur")
-        .insert([{ id: user.id }]);
-      if (vendeurError) {
-        console.log(' VENDEUR INSERT ERROR:', vendeurError.message);
-        return res.status(400).json({ error: vendeurError.message });
-      }
-      console.log('Vendeur inserted');
+      const { error: upgradeError } = await supabase.rpc("upgrade_to_vendeur", {
+        user_id: user.id
+      });
+      if (upgradeError) return res.status(400).json({ error: upgradeError.message });
     }
 
-    console.log(' REGISTRATION COMPLETE!');
-    res.status(201).json({ 
-      message: "User registered successfully", 
+    // 3. If admin, insert admin row + update role
+    if (role === "admin") {
+      const { error: adminError } = await supabase
+        .from("admin")
+        .insert([{ id: user.id }]);
+      if (adminError) return res.status(400).json({ error: adminError.message });
+
+      await supabase
+        .from("utilisateur")
+        .update({ role: "admin" })
+        .eq("id", user.id);
+    }
+
+    res.status(201).json({
+      message: "User registered successfully",
       userId: user.id,
-      email: user.email
+      email: user.email,
+      role
     });
-    
+
   } catch (err) {
-    console.log(' FULL CATCH ERROR:', err.message);
-    console.log(' ERROR STACK:', err.stack);
     res.status(500).json({ error: err.message });
   }
 };
+
 exports.signInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -91,28 +68,29 @@ exports.signInUser = async (req, res) => {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    console.log(" Attempting sign in:", email);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    if (error) return res.status(400).json({ error: error.message });
 
-    if (error) {
-      console.log(" Sign in error:", error.message);
-      return res.status(400).json({ error: error.message });
-    }
+    // Fetch role from utilisateur so frontend knows what to render
+    const { data: profile, error: profileError } = await supabase
+      .from("utilisateur")
+      .select("role, nom_utilisateur")
+      .eq("id", data.user.id)
+      .single();
 
-    console.log(" Sign in successful:", data.user.id);
+    if (profileError) return res.status(400).json({ error: profileError.message });
 
     res.status(200).json({
-      message: "User signed in successfully",
+      message: "Signed in successfully",
       userId: data.user.id,
       email: data.user.email,
-      session: data.session, 
+      role: profile.role,
+      nomUtilisateur: profile.nom_utilisateur,
+      session: data.session
     });
+
   } catch (err) {
-    console.error(" Sign in catch error:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
