@@ -4,6 +4,8 @@ const cors = require('cors');
 const authRoutes = require("./routes/auth.routes");
 const clientRoutes = require('./routes/client.routes');
 const utilisateurRoutes = require('./routes/utilisateur.routes');
+const magasinRoutes = require("./routes/magasin.routes");
+
 
 const app = express();
 const PORT = 5000;
@@ -37,6 +39,9 @@ app.use("/api/utilisateurs", (req, res, next) => {
   console.log(' UTILISATEUR ROUTES HIT:', req.method, req.path);
   next();
 }, utilisateurRoutes);
+
+
+app.use("/api/magasin", magasinRoutes);
 
 app.use((req, res) => {
   console.log(' 404 NOT FOUND:', req.method, req.originalUrl);

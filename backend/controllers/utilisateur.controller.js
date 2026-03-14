@@ -1,7 +1,5 @@
-// utilisateur.controller.js
 const supabase = require("../db");
 
-// createUtilisateur removed — trigger handles it on signup
 
 exports.getAllUtilisateurs = async (req, res) => {
   try {

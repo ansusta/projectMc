@@ -1,12 +1,8 @@
-// client.controller.js
-const supabase = require("../db");
 
-// No longer needed for registration (trigger handles it)
-// Keep only for admin use cases e.g. suspending/banning a client
+const supabase = require("../db");
 
 exports.getAllClients = async (req, res) => {
   try {
-    // Join with utilisateur to get full profile
     const { data, error } = await supabase
       .from("client")
       .select(`

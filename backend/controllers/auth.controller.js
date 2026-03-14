@@ -1,4 +1,4 @@
-// auth.controller.js
+
 const supabase = require("../db");
 
 exports.registerUser = async (req, res) => {
@@ -13,12 +13,12 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid role" });
     }
 
-    // 1. Sign up — trigger auto-creates utilisateur + client rows
+   
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { nom_utilisateur: username } // trigger reads this
+        data: { nom_utilisateur: username } 
       }
     });
 
@@ -27,7 +27,7 @@ exports.registerUser = async (req, res) => {
     const user = data.user;
     if (!user) return res.status(400).json({ error: "Signup failed, no user returned" });
 
-    // 2. If vendeur, upgrade via the DB function (inserts vendeur row + sets role)
+
     if (role === "vendeur") {
       const { error: upgradeError } = await supabase.rpc("upgrade_to_vendeur", {
         user_id: user.id
@@ -35,7 +35,6 @@ exports.registerUser = async (req, res) => {
       if (upgradeError) return res.status(400).json({ error: upgradeError.message });
     }
 
-    // 3. If admin, insert admin row + update role
     if (role === "admin") {
       const { error: adminError } = await supabase
         .from("admin")
@@ -72,7 +71,6 @@ exports.signInUser = async (req, res) => {
 
     if (error) return res.status(400).json({ error: error.message });
 
-    // Fetch role from utilisateur so frontend knows what to render
     const { data: profile, error: profileError } = await supabase
       .from("utilisateur")
       .select("role, nom_utilisateur")
