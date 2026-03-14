@@ -78,20 +78,32 @@ exports.getMagasinByVendeur = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 exports.getAllMagasins = async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data: magasins, error } = await supabase
       .from("magasin")
-      .select(`
-        *,
-        vendeur:id_vendeur (
-          utilisateur ( nom_utilisateur, email )
-        )
-      `);
+      .select("*");
 
     if (error) return res.status(400).json({ error: error.message });
-    res.json(data);
+
+    const enriched = await Promise.all(
+      magasins.map(async (magasin) => {
+        const { data: utilisateur } = await supabase
+          .from("utilisateur")
+          .select("nom_utilisateur, email, photo_url")
+          .eq("id", magasin.id_vendeur)
+          .single();
+
+        return {
+          ...magasin,
+          vendeur_nom:   utilisateur?.nom_utilisateur ?? null,
+          vendeur_email: utilisateur?.email ?? null,
+          vendeur_photo: utilisateur?.photo_url ?? null,
+        };
+      })
+    );
+
+    res.json(enriched);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

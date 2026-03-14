@@ -1,6 +1,5 @@
 const supabase = require("../db");
 
-
 exports.getAllUtilisateurs = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -12,12 +11,27 @@ exports.getAllUtilisateurs = async (req, res) => {
         role,
         date_creation,
         client ( statut ),
-        vendeur ( id ),
         admin ( id )
       `);
 
     if (error) return res.status(400).json({ error: error.message });
-    res.json(data);
+
+    
+    const enriched = await Promise.all(
+      data.map(async (user) => {
+        if (user.role === "vendeur") {
+          const { data: vendeurData } = await supabase
+            .from("vendeur")
+            .select("id")
+            .eq("id", user.id)
+            .single();
+          return { ...user, vendeur: vendeurData };
+        }
+        return { ...user, vendeur: null };
+      })
+    );
+
+    res.json(enriched);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,37 +50,24 @@ exports.getUtilisateurById = async (req, res) => {
         role,
         date_creation,
         client ( statut ),
-        vendeur ( id ),
         admin ( id )
       `)
       .eq("id", id)
       .single();
 
     if (error) return res.status(400).json({ error: error.message });
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
 
-exports.updateRole = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { role } = req.body;
-
-    if (!["client", "vendeur", "admin"].includes(role)) {
-      return res.status(400).json({ error: "Invalid role" });
+    let vendeur = null;
+    if (data.role === "vendeur") {
+      const { data: vendeurData } = await supabase
+        .from("vendeur")
+        .select("id")
+        .eq("id", id)
+        .single();
+      vendeur = vendeurData;
     }
 
-    const { data, error } = await supabase
-      .from("utilisateur")
-      .update({ role })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) return res.status(400).json({ error: error.message });
-    res.json({ message: "Role updated", data });
+    res.json({ ...data, vendeur });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
