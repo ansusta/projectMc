@@ -5,7 +5,8 @@ const authRoutes = require("./routes/auth.routes");
 const clientRoutes = require('./routes/client.routes');
 const utilisateurRoutes = require('./routes/utilisateur.routes');
 const magasinRoutes = require("./routes/magasin.routes");
-const produitRoutes =require("./routes/produit.routes")
+const produitRoutes =require("./routes/produit.routes");
+const panierRoutes =require("./routes/panier.routes");
 
 
 const app = express();
@@ -44,7 +45,7 @@ app.use("/api/utilisateurs", (req, res, next) => {
 
 app.use("/api/magasin", magasinRoutes);
 app.use("/api/produit",produitRoutes);
-
+app.use("/api/panier",panierRoutes);
 app.use((req, res) => {
   console.log(' 404 NOT FOUND:', req.method, req.originalUrl);
   res.status(404).json({ error: 'Route not found', url: req.originalUrl });
