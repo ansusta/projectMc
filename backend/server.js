@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth.routes");
 const clientRoutes = require('./routes/client.routes');
 const utilisateurRoutes = require('./routes/utilisateur.routes');
 const magasinRoutes = require("./routes/magasin.routes");
+const produitRoutes =require("./routes/produit.routes")
 
 
 const app = express();
@@ -42,6 +43,7 @@ app.use("/api/utilisateurs", (req, res, next) => {
 
 
 app.use("/api/magasin", magasinRoutes);
+app.use("/api/produit",produitRoutes);
 
 app.use((req, res) => {
   console.log(' 404 NOT FOUND:', req.method, req.originalUrl);
