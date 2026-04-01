@@ -7,7 +7,12 @@ const utilisateurRoutes = require('./routes/utilisateur.routes');
 const magasinRoutes = require("./routes/magasin.routes");
 const produitRoutes =require("./routes/produit.routes");
 const panierRoutes =require("./routes/panier.routes");
-
+const commandeRoutes = require("./routes/commande.routes");
+const favorisRoutes = require("./routes/favoris.routes");
+const avisRoutes = require("./routes/avis.routes");
+const notificationRoutes = require("./routes/notification.route");
+const signalementRoutes = require("./routes/signalement.routes");
+const adresseRoutes = require("./routes/adresse.routes");
 
 const app = express();
 const PORT = 5000;
@@ -46,6 +51,12 @@ app.use("/api/utilisateurs", (req, res, next) => {
 app.use("/api/magasin", magasinRoutes);
 app.use("/api/produit",produitRoutes);
 app.use("/api/panier",panierRoutes);
+app.use("/api/commande",commandeRoutes);
+app.use("/api/favoris", favorisRoutes);
+app.use("/api/avis", avisRoutes);
+app.use("/api/notification", notificationRoutes);
+app.use("/api/signalement", signalementRoutes);
+app.use("/api/adresse", adresseRoutes);
 app.use((req, res) => {
   console.log(' 404 NOT FOUND:', req.method, req.originalUrl);
   res.status(404).json({ error: 'Route not found', url: req.originalUrl });
