@@ -31,50 +31,50 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   return (
     <div
       onClick={handleClick}
-      className="group bg-card/40 backdrop-blur-md rounded-xl border border-white/5 overflow-hidden hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] hover:border-primary/30 transition-all duration-300 cursor-pointer relative"
+      className="group bg-white dark:bg-card rounded-xl border border-border shadow-soft hover:shadow-md hover:-translate-y-1 hover:border-primary/30 transition-all duration-300 cursor-pointer relative overflow-hidden"
     >
-      <div className="relative aspect-square overflow-hidden bg-black/20">
+      <div className="relative aspect-square overflow-hidden bg-muted">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         {product.originalPrice && (
-          <Badge variant="destructive" className="absolute top-3 left-3 shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+          <Badge variant="destructive" className="absolute top-3 left-3 shadow-sm">
             -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
           </Badge>
         )}
         <button
           onClick={handleToggleFavorite}
-          className="absolute top-3 right-3 w-9 h-9 bg-black/40 backdrop-blur-md border border-white/10 rounded-full flex items-center justify-center shadow-lg hover:bg-black/60 hover:border-white/20 transition-all"
+          className="absolute top-3 right-3 w-9 h-9 bg-background/80 backdrop-blur-md border border-border rounded-full flex items-center justify-center shadow-sm hover:bg-background hover:scale-110 transition-all"
         >
-          <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-red-500 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'text-gray-400 hover:text-white'}`} />
+          <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-destructive text-destructive' : 'text-muted-foreground hover:text-foreground'}`} />
         </button>
         {product.stock < 10 && (
-          <Badge variant="neon" className="absolute bottom-3 left-3 border-orange-500/50 text-orange-400 bg-orange-500/10 shadow-[0_0_10px_rgba(249,115,22,0.3)]">
+          <Badge variant="neon" className="absolute bottom-3 left-3 border-orange-500/50 text-orange-600 dark:text-orange-400 bg-orange-500/10">
             Seulement {product.stock} restants
           </Badge>
         )}
       </div>
 
-      <div className="p-5 space-y-4">
+      <div className="p-5 space-y-4 text-left">
         <div>
-          <p className="text-xs text-primary/70 font-medium mb-1 tracking-wider uppercase">{product.category}</p>
-          <h3 className="font-semibold text-foreground line-clamp-2 mb-1 group-hover:text-primary transition-colors">{product.name}</h3>
-          <p className="text-sm text-muted-foreground">{product.vendor}</p>
+          <p className="text-[10px] text-primary/80 font-bold mb-1 tracking-widest uppercase">{product.category}</p>
+          <h3 className="font-bold text-text-primary line-clamp-2 mb-1 group-hover:text-primary transition-colors leading-tight">{product.name}</h3>
+          <p className="text-sm text-text-secondary">{product.vendor}</p>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-black/20 w-fit px-2 py-1 rounded-md border border-white/5">
-          <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" />
+        <div className="flex items-center gap-1.5 bg-muted w-fit px-2 py-1 rounded-md border border-border">
+          <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
           <span className="text-sm font-medium text-foreground">{product.rating}</span>
           <span className="text-xs text-muted-foreground">({product.reviews})</span>
         </div>
 
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold tracking-tight text-foreground">€{product.price}</span>
+            <span className="text-xl font-bold tracking-tight text-text-primary">€{product.price}</span>
             {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through decoration-muted-foreground/50">€{product.originalPrice}</span>
+              <span className="text-sm text-text-secondary line-through decoration-text-secondary/50">€{product.originalPrice}</span>
             )}
           </div>
         </div>

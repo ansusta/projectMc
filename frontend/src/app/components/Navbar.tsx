@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router';
 import { Badge } from './ui/badge';
 import { useState } from 'react';
+import { ThemeToggle } from './ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -100,6 +101,8 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
               )}
             </Button>
 
+            <ThemeToggle />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="hover:bg-white/10">
@@ -149,7 +152,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
                       </DropdownMenuItem>
                     </>
                   )}
-                  <DropdownMenuItem onClick={() => navigate('/customer/profile')}>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
                     Profil
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
