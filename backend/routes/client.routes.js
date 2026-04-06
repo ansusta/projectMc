@@ -14,6 +14,9 @@ router.get("/", clientController.getAllClients);
 router.get("/:id", clientController.getClientById);
 router.patch("/:id/statut", clientController.updateClientStatut);
 
+router.get("/profile", verifyToken, clientController.getProfile);
+router.put("/profile", verifyToken, clientController.updateProfile);
+router.put("/password", verifyToken, clientController.changePassword);
 
 
 
