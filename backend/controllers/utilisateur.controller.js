@@ -16,7 +16,7 @@ exports.getAllUtilisateurs = async (req, res) => {
 
     if (error) return res.status(400).json({ error: error.message });
 
-    
+
     const enriched = await Promise.all(
       data.map(async (user) => {
         if (user.role === "vendeur") {
@@ -68,6 +68,25 @@ exports.getUtilisateurById = async (req, res) => {
     }
 
     res.json({ ...data, vendeur });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.updateUtilisateur = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nom_utilisateur, email } = req.body;
+
+    const { data, error } = await supabase
+      .from("utilisateur")
+      .update({ nom_utilisateur, email })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

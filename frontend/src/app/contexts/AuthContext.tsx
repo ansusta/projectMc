@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authService } from '../../services/auth.service';
 
 export type UserRole = 'visitor' | 'customer' | 'vendor' | 'admin';
 
@@ -12,55 +13,93 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string, role?: UserRole) => Promise<void>;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role?: UserRole) => Promise<void>;
   logout: () => void;
   updateRole: (role: UserRole) => void;
+  updateUser: (data: Partial<User>) => void;
 }
 
+const roleMap: Record<string, UserRole> = {
+  client: 'customer',
+  vendeur: 'vendor',
+  admin: 'admin',
+};
+
+const TOKEN_KEY = 'auth_token';
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = async (email: string, password: string, role: UserRole = 'customer') => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    setUser({
-      id: '1',
-      name: email.split('@')[0],
-      email,
-      role,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`
-    });
+  // Restore user from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('auth_user');
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        localStorage.removeItem('auth_user');
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    const data = await authService.login(email, password);
+
+    // Persist token for API calls
+    localStorage.setItem(TOKEN_KEY, data.session.access_token);
+
+    const mappedRole: UserRole = roleMap[data.role] || 'customer';
+    const loggedUser: User = {
+      id: data.userId,
+      name: data.nomUtilisateur || email.split('@')[0],
+      email: data.email,
+      role: mappedRole,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
+    };
+
+    setUser(loggedUser);
+    localStorage.setItem('auth_user', JSON.stringify(loggedUser));
   };
 
   const register = async (name: string, email: string, password: string, role: UserRole = 'customer') => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    setUser({
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      email,
-      role,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`
-    });
+    // Map frontend role to backend role
+    const backendRole = role === 'vendor' ? 'vendeur' : role === 'admin' ? 'admin' : 'client';
+    await authService.register(name, email, password, backendRole);
+
+    // Auto-login after registration
+    await login(email, password);
   };
 
   const logout = () => {
+    authService.logout().catch(() => { });
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('auth_user');
     setUser(null);
   };
 
   const updateRole = (role: UserRole) => {
     if (user) {
-      setUser({ ...user, role });
+      const updated = { ...user, role };
+      setUser(updated);
+      localStorage.setItem('auth_user', JSON.stringify(updated));
+    }
+  };
+
+  const updateUser = (data: Partial<User>) => {
+    if (user) {
+      const updated = { ...user, ...data };
+      setUser(updated);
+      localStorage.setItem('auth_user', JSON.stringify(updated));
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateRole }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateRole, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

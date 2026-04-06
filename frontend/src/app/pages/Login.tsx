@@ -19,20 +19,18 @@ export function Login() {
     setIsLoading(true);
 
     try {
-      // Demo: Determine role based on email
-      let role: 'customer' | 'vendor' | 'admin' = 'customer';
-      if (email.includes('vendor')) role = 'vendor';
-      if (email.includes('admin')) role = 'admin';
-
-      await login(email, password, role);
+      // Role is determined by the backend API response
+      await login(email, password);
       toast.success('Connexion réussie !');
 
-      // Redirect based on role
-      if (role === 'admin') navigate('/admin/dashboard');
-      else if (role === 'vendor') navigate('/vendor/dashboard');
+      // Redirect based on role returned from API (stored in AuthContext)
+      const stored = localStorage.getItem('auth_user');
+      const authUser = stored ? JSON.parse(stored) : null;
+      if (authUser?.role === 'admin') navigate('/admin/dashboard');
+      else if (authUser?.role === 'vendor') navigate('/vendor/dashboard');
       else navigate('/customer/dashboard');
-    } catch (error) {
-      toast.error('Erreur lors de la connexion');
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de la connexion');
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +51,7 @@ export function Login() {
             </div>
             <span className="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">NEXUS</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Interface de Connexion</h1>
+          <h1 className="text-3xl font-extrabold text-foreground mb-2 tracking-tight">Interface de Connexion</h1>
           <p className="text-muted-foreground font-medium">Accédez à la matrice technologique</p>
         </div>
 
@@ -111,7 +109,7 @@ export function Login() {
                 <div className="w-full border-t border-white/10"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase tracking-[0.2em] font-black">
-                <span className="px-4 bg-[#0a0311] text-muted-foreground">Ou canal tiers</span>
+                <span className="px-4 bg-background text-muted-foreground">Ou canal tiers</span>
               </div>
             </div>
 
@@ -145,14 +143,7 @@ export function Login() {
           </button>
         </p>
 
-        <div className="mt-10 p-6 bg-white/5 rounded-2xl border border-white/5 shadow-inner">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-4">Canaux de Test :</p>
-          <ul className="text-xs text-muted-foreground space-y-2 font-mono">
-            <li className="flex justify-between"><span>Client:</span> <code className="text-foreground">client@demo.com</code></li>
-            <li className="flex justify-between"><span>Vendeur:</span> <code className="text-foreground">vendor@demo.com</code></li>
-            <li className="flex justify-between"><span>Admin:</span> <code className="text-foreground">admin@demo.com</code></li>
-          </ul>
-        </div>
+
       </div>
     </div>
   );

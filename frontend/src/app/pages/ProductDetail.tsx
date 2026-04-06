@@ -74,8 +74,8 @@ export function ProductDetail() {
                   <Star
                     key={star}
                     className={`w-5 h-5 ${star <= product.rating
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300'
                       }`}
                   />
                 ))}
@@ -167,36 +167,6 @@ export function ProductDetail() {
               </Button>
             </div>
 
-            {/* Features */}
-            <div className="bg-card/20 backdrop-blur-xl rounded-3xl p-8 space-y-6 border border-white/5 shadow-inner">
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
-                  <Truck className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground">Logistique Interstellaire</p>
-                  <p className="text-sm text-muted-foreground">Livraison accélérée en 24h-48h</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
-                  <Shield className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground">Garantie Cyber-Shield</p>
-                  <p className="text-sm text-muted-foreground">Protection totale pendant 2 cycles (ans)</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
-                  <Package className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground">Extraction de Lot Gratuite</p>
-                  <p className="text-sm text-muted-foreground">Retours simplifiés sous 30 jours</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
