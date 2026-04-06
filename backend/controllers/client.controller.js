@@ -1,6 +1,45 @@
 
 const supabase = require("../db");
+const cloudinary = require("../config/cloudinary");
 
+exports.uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // Upload buffer to Cloudinary via upload_stream
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "profile_pictures",
+          public_id: `user_${req.user.id}`, // one file per user, auto-overwrites
+          overwrite: true,
+          transformation: [{ width: 300, height: 300, crop: "fill", gravity: "face" }],
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    // Save the returned URL to the utilisateur table
+    const { data, error } = await supabase
+      .from("utilisateur")
+      .update({ photo_url: uploadResult.secure_url })
+      .eq("id", req.user.id)
+      .select("photo_url")
+      .single();
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(200).json({ message: "Profile picture updated", photo_url: data.photo_url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllClients = async (req, res) => {
   try {
     const { data, error } = await supabase
