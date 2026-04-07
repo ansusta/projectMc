@@ -51,8 +51,17 @@ export function Catalog() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
+<<<<<<< HEAD
             <h1 className="text-4xl font-extrabold tracking-tight mb-2">Catalogue produits</h1>
             <p className="text-muted-foreground">{sortedProducts.length} unités disponibles</p>
+=======
+            <div className="flex items-center gap-2 text-primary mb-2">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+              <span className="text-sm font-mono tracking-widest uppercase">Base de données Nexus</span>
+            </div>
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2">Catalogue produits</h1>
+            <p className="text-muted-foreground">{sortedProducts.length} unités identifiées dans le secteur</p>
+>>>>>>> 2525ffad75494f105b14c54f7ffe8cc1ee8c7de4
           </div>
           <div className="flex items-center gap-4">
             <Button

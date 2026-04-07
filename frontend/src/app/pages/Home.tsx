@@ -135,6 +135,8 @@ export function Home() {
             <div className="text-center mb-16">
               <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">Catégories</h2>
               <p className="text-lg text-gray-400">Explorez nos différentes catégories</p>
+              <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">Dimensions technologiques</h2>
+              <p className="text-lg text-gray-400">Naviguez à travers nos écosystèmes d'innovation</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories.slice(0, 6).map((category, index) => {
@@ -178,6 +180,8 @@ export function Home() {
           <div>
             <h2 className="text-4xl font-extrabold text-text-primary mb-3 tracking-tight">Recommandé pour vous</h2>
             <p className="text-lg text-text-secondary">Sélection spéciale pour votre profil</p>
+            <h2 className="text-4xl font-extrabold text-text-primary mb-3 tracking-tight">Recommandations IA</h2>
+            <p className="text-lg text-text-secondary">Sélection calculée pour des performances optimales</p>
           </div>
           <Button variant="outline" onClick={() => navigate('/catalog')} className="hidden sm:flex border-border hover:border-primary/50 text-foreground hover:bg-primary/5">
             Explorer le terminal

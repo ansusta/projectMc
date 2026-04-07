@@ -58,7 +58,11 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
                 <div className="absolute inset-0 bg-primary opacity-50 blur-md rounded-full group-hover:opacity-100 transition-opacity"></div>
                 <Package className="w-8 h-8 text-white relative z-10" />
               </div>
+<<<<<<< HEAD
               <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">NEXUS</span>
+=======
+              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">NEXUS</span>
+>>>>>>> 2525ffad75494f105b14c54f7ffe8cc1ee8c7de4
             </button>
           </div>
 
