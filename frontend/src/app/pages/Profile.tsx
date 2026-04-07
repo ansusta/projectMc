@@ -1,0 +1,215 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { userService } from '../../services/user.service';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { User, Mail, Shield, LogOut, Loader2, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+export function Profile() {
+    const { user, logout, updateUser } = useAuth();
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+    });
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name,
+                email: user.email,
+            });
+        }
+    }, [user]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user) return;
+
+        setIsUpdating(true);
+        try {
+            await userService.updateProfile(user.id, {
+                nom_utilisateur: formData.name,
+                email: formData.email,
+            });
+
+            // Update local storage and context
+            updateUser({
+                name: formData.name,
+                email: formData.email,
+            });
+
+            toast.success('Profil mis à jour avec succès !');
+        } catch (error: any) {
+            toast.error('Erreur lors de la mise à jour: ' + error.message);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    if (!user) return null;
+
+    return (
+        <div className="min-h-screen bg-background text-foreground transition-colors duration-300 pb-20">
+            {/* Profile Hero Header */}
+            <div className="relative h-48 md:h-64 bg-gradient-to-r from-primary/20 via-primary/5 to-background border-b border-white/5 overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.15),transparent_50%)]"></div>
+                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 md:left-24 md:translate-x-0">
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-background rounded-full p-1.5 shadow-2xl border border-white/10">
+                        <div className="w-full h-full bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                            <img
+                                src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`}
+                                alt={user.name}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 md:mt-10">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    {/* Sidebar / Info */}
+                    <div className="w-full lg:w-1/3">
+                        <Card className="border-border/50 bg-card/40 backdrop-blur-xl shadow-xl sticky top-24">
+                            <CardHeader className="text-center pt-8 md:pt-12">
+                                <CardTitle className="text-3xl font-extrabold tracking-tight">{user.name}</CardTitle>
+                                <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mt-2 mx-auto">
+                                    {user.role}
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-6 py-6">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 text-sm font-medium text-text-primary">
+                                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                            <Shield className="w-4 h-4" />
+                                        </div>
+                                        <span>Statut du compte : Vérifié</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-sm font-medium text-text-primary">
+                                        <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
+                                            <CheckCircle2 className="w-4 h-4" />
+                                        </div>
+                                        <span>Membre depuis : Décembre 2024</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-sm font-medium text-text-primary">
+                                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                            <Mail className="w-4 h-4" />
+                                        </div>
+                                        <span className="truncate">{user.email}</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="pt-6 border-t border-white/5">
+                                <Button
+                                    variant="outline"
+                                    className="w-full border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
+                                    onClick={logout}
+                                >
+                                    <LogOut className="mr-2 w-4 h-4" />
+                                    Se déconnecter
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    </div>
+
+                    {/* Main Content / Form */}
+                    <div className="flex-1 space-y-8">
+                        <Card className="border-border/50 bg-background/50 backdrop-blur-sm shadow-lg overflow-hidden relative">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary/50 to-transparent"></div>
+                            <CardHeader className="pb-8">
+                                <CardTitle className="text-2xl font-bold">Éditer le profil</CardTitle>
+                                <CardDescription className="text-text-secondary">
+                                    Gérez vos informations de compte et vos préférences de contact.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2.5">
+                                            <Label htmlFor="name" className="text-sm font-semibold ml-1">Nom Complet</Label>
+                                            <div className="relative group">
+                                                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                                <Input
+                                                    id="name"
+                                                    value={formData.name}
+                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                    className="pl-11 h-12 bg-muted/30 border-border/50 focus-visible:bg-background focus-visible:ring-primary/40 rounded-xl transition-all"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2.5">
+                                            <Label htmlFor="email" className="text-sm font-semibold ml-1">Adresse Email</Label>
+                                            <div className="relative group">
+                                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                                <Input
+                                                    id="email"
+                                                    type="email"
+                                                    value={formData.email}
+                                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                    className="pl-11 h-12 bg-muted/30 border-border/50 focus-visible:bg-background focus-visible:ring-primary/40 rounded-xl transition-all"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-6 border-t border-white/5">
+                                        <Button type="submit" className="h-12 px-12 text-base font-bold shadow-glow hover:shadow-glow-lg transition-all rounded-xl" disabled={isUpdating}>
+                                            {isUpdating ? (
+                                                <>
+                                                    <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                                                    Mise à jour en cours...
+                                                </>
+                                            ) : (
+                                                'Enregistrer les modifications'
+                                            )}
+                                        </Button>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
+
+                        {/* Account Settings / Privacy Section */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="border-border/50 hover:border-primary/30 transition-colors shadow-md group">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-2 group-hover:bg-primary group-hover:text-white transition-all">
+                                        <Shield className="w-6 h-6" />
+                                    </div>
+                                    <CardTitle className="text-lg">Sécurité</CardTitle>
+                                    <CardDescription>Double authentification et mot de passe.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Button variant="ghost" className="p-0 h-auto font-semibold text-primary hover:bg-transparent">
+                                        Gérer la sécurité →
+                                    </Button>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="border-border/50 hover:border-primary/30 transition-colors shadow-md group">
+                                <CardHeader>
+                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-2 group-hover:bg-primary group-hover:text-white transition-all">
+                                        <Mail className="w-6 h-6" />
+                                    </div>
+                                    <CardTitle className="text-lg">Notifications</CardTitle>
+                                    <CardDescription>Alertes email et marketing.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Button variant="ghost" className="p-0 h-auto font-semibold text-primary hover:bg-transparent">
+                                        Configurer les alertes →
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
