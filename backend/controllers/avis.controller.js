@@ -85,3 +85,51 @@ exports.submitAvis = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getAvis = async (req, res) => {
+  try {
+    const { id_produit, page = 1, limit = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+ 
+    let query = supabase
+      .from("avis")
+      .select(`
+        id,
+        note,
+        contenu,
+        date,
+        client!avis_id_client_fkey (
+          utilisateur!client_id_fkey ( 
+            nom_utilisateur, 
+            email 
+          )
+        ),
+        produit:id_produit ( id, nom_produit )
+      `, { count: "exact" })
+      .order("date", { ascending: false })
+      .range(offset, offset + parseInt(limit) - 1);
+ 
+    if (id_produit) query = query.eq("id_produit", id_produit);
+ 
+    const { data, error, count } = await query;
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ avis: data, total: count, page: parseInt(page), limit: parseInt(limit) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+ 
+exports.deleteAvis = async (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    const { error } = await supabase.from("avis").delete().eq("id", id);
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ message: "Avis supprimé avec succès" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+ 

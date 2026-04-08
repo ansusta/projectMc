@@ -307,3 +307,48 @@ exports.getRestockAlerts = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.getAllPredictions = async (req, res) => {
+  try {
+    // Get today's cached predictions across all shops
+    const today = new Date().toISOString().split("T")[0];
+ 
+    const { data: revenue, error: revError } = await supabase
+      .from("prediction_revenu")
+      .select(`
+        id_magasin,
+        date_cible,
+        revenu_predit,
+        genere_le,
+        magasin:id_magasin ( nom_magasin )
+      `)
+      .gte("genere_le", `${today}T00:00:00Z`)
+      .order("date_cible", { ascending: true });
+ 
+    if (revError) return res.status(400).json({ error: revError.message });
+ 
+    const { data: restock, error: restockError } = await supabase
+      .from("prediction_restock")
+      .select(`
+        id_magasin,
+        nom_produit,
+        unite_7j,
+        seuil_normal,
+        alerte_restock,
+        jours_stock_restant,
+        genere_le,
+        magasin:id_magasin ( nom_magasin )
+      `)
+      .gte("genere_le", `${today}T00:00:00Z`)
+      .order("alerte_restock", { ascending: false });
+ 
+    if (restockError) return res.status(400).json({ error: restockError.message });
+ 
+    res.status(200).json({
+      predictions_revenu:  revenue,
+      predictions_restock: restock,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+ 

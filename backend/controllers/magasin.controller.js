@@ -136,3 +136,21 @@ exports.updateMagasinStatut = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.suspendMagasin = async (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    const { data, error } = await supabase
+      .from("magasin")
+      .update({ statut: "suspendu" })
+      .eq("id", id)
+      .select()
+      .single();
+ 
+    if (error || !data) return res.status(404).json({ error: "Magasin not found" });
+ 
+    res.status(200).json({ message: "Magasin suspendu avec succès", magasin: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

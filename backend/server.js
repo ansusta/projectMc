@@ -14,6 +14,8 @@ const notificationRoutes = require("./routes/notification.route");
 const signalementRoutes = require("./routes/signalement.routes");
 const adresseRoutes = require("./routes/adresse.routes");
 const predictionRoutes = require("./routes/prediction.routes");
+const adminRoutes        = require("./routes/admin.routes");
+const catalogRoutes = require("./routes/catalog.routes");
 const app = express();
 const PORT = 5000;
 
@@ -58,6 +60,8 @@ app.use("/api/notification", notificationRoutes);
 app.use("/api/signalement", signalementRoutes);
 app.use("/api/adresse", adresseRoutes);
 app.use("/api/prediction", predictionRoutes);
+app.use("/api/admin",         adminRoutes);
+app.use("/api/catalog", catalogRoutes);
 app.use((req, res) => {
   console.log(' 404 NOT FOUND:', req.method, req.originalUrl);
   res.status(404).json({ error: 'Route not found', url: req.originalUrl });

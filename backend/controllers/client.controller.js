@@ -1,7 +1,11 @@
 
 const supabase = require("../db");
 const cloudinary = require("../config/cloudinary");
-
+const { createClient } = require("@supabase/supabase-js");
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY 
+);
 exports.uploadProfilePicture = async (req, res) => {
   try {
     if (!req.file) {
@@ -206,6 +210,21 @@ exports.updateProfile = async (req, res) => {
     if (error) return res.status(400).json({ error: error.message });
 
     res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+ 
+exports.deleteClient = async (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    // Delete from auth.users will cascade — but only Supabase admin key can do this
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ message: "Client supprimé avec succès" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

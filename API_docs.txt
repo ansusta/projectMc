@@ -294,9 +294,130 @@ url :
 http://localhost:5000/api/prediction/revenue/id magasin
 auth bearer : vendeurs token
 
+42 get admin stats
+methode : Get
+url : http://localhost:5000/api/admin/stats
+headers: auth bearer (admin's token)
+
+43 get admin predictions
+methode : get
+url : http://localhost:5000/api/admin/predictions
+headers: auth bearer (admin's token)
+
+44 delete client
+methode : delete
+url : http://localhost:5000/api/admin/clients/id client
+auth bearer admins token
+
+44 delete produits
+methode : delete
+url : http://localhost:5000/api/admin/produits/7f28f5f5-3035-4072-985a-7357315b1171http://localhost:5000/api/admin/produits/id produit
+auth bearer admins token
+
+45 get all avis
+methode : get
+url : http://localhost:5000/api/admin/avis
+auth bearer admins token
+
+46 delete avis
+methode :delete
+url : http://localhost:5000/api/admin/avis/id avis
+auth bearer admins token
 
 
+47 get all commandes 
+methode : get
+url : http://localhost:5000/api/admin/commandes
+auth bearer admins token
 
+48 admin annuler commande
+methode : put
+url : http://localhost:5000/api/admin/commandes/id commande/annuler
+auth bearer admins token
 
+49 admin get revenue of vendeur
+methode : get
+url : http://localhost:5000/api/admin/vendeurs/id vendeur/revenue
+auth bearer admins token
 
+50 payer vendeur
+methode : post
+url : http://localhost:5000/api/admin/vendeurs/371e7047-5b18-4039-9360-3d49c6efce5a/payer
+exemple body
+{
+  
+  "montant":"200",
+  "methode": "carte visa",
+  "note":""
+}
 
+51 admin gets all past payments to vendeur
+methode : get
+url : http://localhost:5000/api/admin/vendeurs/id vendeur/paiements
+auth bearer admins token
+
+52 admin get signalement
+methode : get
+url : http://localhost:5000/api/admin/signalements
+auth bearer admins token
+
+53 admin delete signalement (he solves it first)
+methode : delete
+url : http://localhost:5000/api/admin/signalements/0bf946e7-38db-4a92-9dd6-32a5b07c5cd9
+auth bearer admins token
+
+54 admin create category 
+methode :post
+url : http://localhost:5000/api/catalog/categories
+auth bearer admins tokens
+exemple body
+{
+  
+  "nom":"laptops"
+}
+
+55 admin ajouter type 
+methode :post
+url : http://localhost:5000/api/catalog/types
+auth bearer admins tokens
+exemple body {
+  
+  "nom":"lenovo",
+  "nom_categorie": "laptops"
+}
+
+56 admin mettre a jour category
+methode :post
+url : http://localhost:5000/api/catalog/categories/id categorie
+auth bearer admins tokens
+exemple body
+{
+  "nom":"laptop"
+}
+57 get all categories
+get
+http://localhost:5000/api/catalog/categories
+auth bearer admins tokens
+
+58 get all types
+get
+http://localhost:5000/api/catalog/types
+auth bearer admins tokens
+
+59 mettre a jour type
+post
+http://localhost:5000/api/catalog/types/id type
+auth bearer admins tokens
+exemple body
+{
+  "nom":"laptop"
+}
+60 supprimer type
+delete
+http://localhost:5000/api/catalog/types/id type
+auth bearer admins tokens
+
+61 supprimer categorie
+delete
+http://localhost:5000/api/catalog/categories/id categorie
+auth bearer admins tokens

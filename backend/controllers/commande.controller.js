@@ -255,3 +255,74 @@ exports.getCommandesEnCours = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getCommandes = async (req, res) => {
+  try {
+    const { statut, page = 1, limit = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+ 
+    let query = supabase
+      .from("commande")
+      .select(`
+        id,
+        statut_commande,
+        montant_total,
+        date_commande,
+        client!commande_id_client_fkey (
+          utilisateur!client_id_fkey ( nom_utilisateur, email )
+        ),
+        adresse:id_adrs ( ville, pays ),
+        ligne_commande (
+          qte,
+          prix_at_time,
+          produit:id_produit ( nom_produit )
+        ),
+        livraison ( statut_livraison, numero_suivi ),
+        paiement ( methode_paiement, statut_paiement )
+      `, { count: "exact" })
+      .order("date_commande", { ascending: false })
+      .range(offset, offset + parseInt(limit) - 1);
+ 
+    if (statut) query = query.eq("statut_commande", statut);
+ 
+    const { data, error, count } = await query;
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ commandes: data, total: count, page: parseInt(page), limit: parseInt(limit) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+ 
+exports.annulerCommande = async (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    const { data: commande, error: fetchError } = await supabase
+      .from("commande")
+      .select("id, statut_commande")
+      .eq("id", id)
+      .single();
+ 
+    if (fetchError || !commande) return res.status(404).json({ error: "Commande not found" });
+ 
+    if (commande.statut_commande === "annulee") {
+      return res.status(400).json({ error: "Commande already cancelled" });
+    }
+    if (commande.statut_commande === "completer") {
+      return res.status(400).json({ error: "Cannot cancel a completed order" });
+    }
+ 
+    const { error } = await supabase
+      .from("commande")
+      .update({ statut_commande: "annulee" })
+      .eq("id", id);
+ 
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ message: "Commande annulée avec succès" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+ 

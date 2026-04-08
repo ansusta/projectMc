@@ -55,3 +55,42 @@ exports.signalerProduit = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.getSignalements = async (req, res) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+ 
+    const { data, error, count } = await supabase
+      .from("signalement")
+      .select(`
+        id,
+        motif,
+        date,
+        client!signalement_id_client_fkey (
+          utilisateur!client_id_fkey ( nom_utilisateur, email )
+        ),
+        produit:id_produit ( id, nom_produit )
+      `, { count: "exact" })
+      .order("date", { ascending: false })
+      .range(offset, offset + parseInt(limit) - 1);
+ 
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ signalements: data, total: count, page: parseInt(page), limit: parseInt(limit) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+ 
+exports.deleteSignalement = async (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    const { error } = await supabase.from("signalement").delete().eq("id", id);
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ message: "Signalement supprimé avec succès" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

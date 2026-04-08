@@ -101,3 +101,21 @@ exports.getProduitById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.deleteProduit = async (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    // Remove from cart and favorites first to avoid FK violations
+    await supabase.from("item").delete().eq("id_produit", id);
+    await supabase.from("favoriser").delete().eq("id_produit", id);
+    await supabase.from("avis").delete().eq("id_produit", id);
+    await supabase.from("signalement").delete().eq("id_produit", id);
+ 
+    const { error } = await supabase.from("produit").delete().eq("id", id);
+    if (error) return res.status(400).json({ error: error.message });
+ 
+    res.status(200).json({ message: "Produit supprimé avec succès" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
