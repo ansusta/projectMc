@@ -1,0 +1,24 @@
+import { api } from './api';
+
+export interface AdminStats {
+  totalUsers: number;
+  totalVendors: number;
+  totalProducts: number;
+  totalOrders: number;
+  revenue: number;
+}
+
+export const adminService = {
+  // Get platform-wide stats
+  getStats: () => api.get<AdminStats>('/admin/stats'),
+
+  // User management
+  getAllUsers: () => api.get<{ users: any[] }>('/admin/users'),
+  updateUserRole: (userId: string, role: string) => 
+    api.patch<{ message: string }>(`/admin/users/${userId}/role`, { role }),
+
+  // Store management (Validation)
+  getPendingStores: () => api.get<{ stores: any[] }>('/admin/stores/pending'),
+  validateStore: (storeId: string, status: 'actif' | 'suspendu') => 
+    api.patch<{ message: string }>(`/admin/stores/${storeId}/validate`, { status }),
+};

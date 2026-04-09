@@ -21,16 +21,18 @@ export function Login() {
     try {
       // Role is determined by the backend API response
       await login(email, password);
-      toast.success('Connexion réussie !');
+      toast.success('Connexion réussie ! Séquence d\'accès validée.');
 
-      // Redirect based on role returned from API (stored in AuthContext)
+      // Check current user state from AuthContext (which was updated by login)
+      // Redirect based on role returned from API
       const stored = localStorage.getItem('auth_user');
       const authUser = stored ? JSON.parse(stored) : null;
+      
       if (authUser?.role === 'admin') navigate('/admin/dashboard');
       else if (authUser?.role === 'vendor') navigate('/vendor/dashboard');
       else navigate('/customer/dashboard');
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de la connexion');
+      toast.error(error.message || 'Erreur lors de la connexion. Vérifiez vos identifiants.');
     } finally {
       setIsLoading(false);
     }

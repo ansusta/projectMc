@@ -3,20 +3,16 @@
  * Automatically injects the Supabase JWT token from localStorage.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Use relative URL to leverage Vite Proxy during development and bypass CORS
+const BASE_URL = '/api';
 
 function getToken(): string | null {
     try {
-        // Supabase stores the session in localStorage under a specific key
-        const key = Object.keys(localStorage).find((k) => k.includes('auth-token') || k.includes('supabase'));
-        if (key) {
-            const raw = localStorage.getItem(key);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                return parsed?.access_token || parsed?.session?.access_token || null;
-            }
-        }
-        // Fallback: custom storage
+        // Uniformise sur la clé 'auth-token' (format standard)
+        const token = localStorage.getItem('auth-token');
+        if (token) return token;
+
+        // Fallback progressif si l'ancienne clé existe encore
         return localStorage.getItem('auth_token');
     } catch {
         return null;
@@ -29,18 +25,31 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         'Content-Type': 'application/json',
         ...(options.headers as Record<string, string>),
     };
-    if (token) {
+    const isPublicRoute = path === '/auth/login' || path === '/auth/register';
+    if (token && !isPublicRoute) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+    const fullUrl = `${BASE_URL}${path}`;
+    const reqMethod = options.method || 'GET';
+    console.log(`🌐 [API] Request: ${reqMethod} ${fullUrl}`);
+    
+    try {
+        const res = await fetch(fullUrl, { ...options, headers });
+        console.log(`✅ [API] Response Received: ${res.status}`);
 
-    if (!res.ok) {
-        const errorBody = await res.json().catch(() => ({ error: res.statusText }));
-        throw new Error(errorBody.error || `HTTP error ${res.status}`);
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            const message = errorData.error || errorData.message || res.statusText || `Request failed: ${res.status}`;
+            throw new Error(message);
+        }
+
+        const data = await res.json();
+        return data as T;
+    } catch (err: any) {
+        console.error(`❌ [API] Error:`, err.message);
+        throw err;
     }
-
-    return res.json() as T;
 }
 
 export const api = {

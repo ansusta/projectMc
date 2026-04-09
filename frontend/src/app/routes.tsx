@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router';
+import React from 'react';
+import { createBrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Catalog } from './pages/Catalog';
@@ -9,17 +9,29 @@ import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
 import { CustomerDashboard } from './pages/CustomerDashboard';
 import { VendorDashboard } from './pages/VendorDashboard';
+import { VendorStore } from './pages/VendorStore';
+import { VendorProducts } from './pages/VendorProducts';
+import { VendorOrders } from './pages/VendorOrders';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { AdminUsers } from './pages/AdminUsers';
+import { AdminStores } from './pages/AdminStores';
 import { Cart } from './pages/Cart';
+import { NotFound } from './pages/NotFound';
+import { CustomerOrders } from './pages/CustomerOrders';
+import { CustomerFavorites } from './pages/CustomerFavorites';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { FAQ } from './pages/FAQ';
+import { Contact } from './pages/Contact';
+import { Terms } from './pages/Terms';
+import { Privacy } from './pages/Privacy';
+import { Legal } from './pages/Legal';
+import { AddressManager } from './pages/AddressManager';
+import { ProfileSettings } from './pages/ProfileSettings';
+import { OrderDetails } from './pages/OrderDetails';
 
-function Root({ children }: { children: ReactNode }) {
-  return <Layout>{children}</Layout>;
-}
-
-function AuthRoot({ children }: { children: ReactNode }) {
-  return <Layout hideFooter>{children}</Layout>;
-}
+const Root = ({ children }: { children: React.ReactNode }) => (
+  <Layout>{children}</Layout>
+);
 
 export const router = createBrowserRouter([
   {
@@ -36,57 +48,100 @@ export const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <AuthRoot><Login /></AuthRoot>,
+    element: <Root><Login /></Root>,
   },
   {
     path: '/register',
-    element: <AuthRoot><Register /></AuthRoot>,
+    element: <Root><Register /></Root>,
   },
+  {
+    path: '/faq',
+    element: <Root><FAQ /></Root>,
+  },
+  {
+    path: '/contact',
+    element: <Root><Contact /></Root>,
+  },
+  {
+    path: '/terms',
+    element: <Root><Terms /></Root>,
+  },
+  {
+    path: '/privacy',
+    element: <Root><Privacy /></Root>,
+  },
+  {
+    path: '/legal',
+    element: <Root><Legal /></Root>,
+  },
+  {
+    path: '/cart',
+    element: <Root><Cart /></Root>,
+  },
+  
+  // Protected Routes - Client
   {
     path: '/profile',
     element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><Profile /></ProtectedRoute></Root>,
   },
-  // -- Customer routes (protected) --
   {
-    path: '/customer/dashboard',
+    path: '/settings',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><ProfileSettings /></ProtectedRoute></Root>,
+  },
+  {
+    path: '/dashboard',
     element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerDashboard /></ProtectedRoute></Root>,
   },
   {
-    path: '/customer/cart',
-    element: <Root><ProtectedRoute allowedRoles={['customer']}><Cart /></ProtectedRoute></Root>,
+    path: '/orders',
+    element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerOrders /></ProtectedRoute></Root>,
   },
   {
-    path: '/customer/orders',
-    element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerDashboard /></ProtectedRoute></Root>,
+    path: '/orders/:id',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><OrderDetails /></ProtectedRoute></Root>,
   },
   {
-    path: '/customer/favorites',
-    element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerDashboard /></ProtectedRoute></Root>,
+    path: '/favorites',
+    element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerFavorites /></ProtectedRoute></Root>,
   },
   {
-    path: '/customer/profile',
-    element: <Navigate to="/profile" replace />,
+    path: '/addresses',
+    element: <Root><ProtectedRoute allowedRoles={['customer']}><AddressManager /></ProtectedRoute></Root>,
   },
-  // -- Vendor routes (protected) --
+
+  // Protected Routes - Vendor
   {
     path: '/vendor/dashboard',
     element: <Root><ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute></Root>,
   },
   {
+    path: '/vendor/store',
+    element: <Root><ProtectedRoute allowedRoles={['vendor']}><VendorStore /></ProtectedRoute></Root>,
+  },
+  {
     path: '/vendor/products',
-    element: <Root><ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute></Root>,
+    element: <Root><ProtectedRoute allowedRoles={['vendor']}><VendorProducts /></ProtectedRoute></Root>,
   },
   {
     path: '/vendor/orders',
-    element: <Root><ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute></Root>,
+    element: <Root><ProtectedRoute allowedRoles={['vendor']}><VendorOrders /></ProtectedRoute></Root>,
   },
-  // -- Admin routes (protected) --
+
+  // Protected Routes - Admin
   {
     path: '/admin/dashboard',
     element: <Root><ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute></Root>,
   },
   {
+    path: '/admin/users',
+    element: <Root><ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute></Root>,
+  },
+  {
+    path: '/admin/stores',
+    element: <Root><ProtectedRoute allowedRoles={['admin']}><AdminStores /></ProtectedRoute></Root>,
+  },
+  {
     path: '*',
-    element: <Navigate to="/" replace />,
+    element: <NotFound />,
   },
 ]);

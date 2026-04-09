@@ -27,7 +27,7 @@ const roleMap: Record<string, UserRole> = {
   admin: 'admin',
 };
 
-const TOKEN_KEY = 'auth_token';
+const TOKEN_KEY = 'auth-token';
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const mappedRole: UserRole = roleMap[data.role] || 'customer';
     const loggedUser: User = {
       id: data.userId,
-      name: data.nomUtilisateur || email.split('@')[0],
+      name: data.nomUtilisateur || data.email?.split('@')[0] || 'Utilisateur',
       email: data.email,
       role: mappedRole,
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
@@ -69,10 +69,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (name: string, email: string, password: string, role: UserRole = 'customer') => {
     // Map frontend role to backend role
     const backendRole = role === 'vendor' ? 'vendeur' : role === 'admin' ? 'admin' : 'client';
+    
+    // 1. Inscription
     await authService.register(name, email, password, backendRole);
 
-    // Auto-login after registration
-    await login(email, password);
+    // 2. Tentative d'auto-connexion
+    try {
+      await login(email, password);
+    } catch (loginError) {
+      console.warn("Auto-login failed after registration:", loginError);
+      // On ne jette pas l'erreur d'inscription si seule la connexion échoue (ex: confirmation email requise)
+      throw new Error("Inscription réussie ! Veuillez vous connecter manuellement (vérifiez vos emails si nécessaire).");
+    }
   };
 
   const logout = () => {

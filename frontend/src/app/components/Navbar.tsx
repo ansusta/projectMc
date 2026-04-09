@@ -144,16 +144,29 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
                   )}
                   {user.role === 'vendor' && (
                     <>
+                      <DropdownMenuItem onClick={() => navigate('/vendor/store')}>
+                        Configuration Magasin
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/vendor/products')}>
-                        Mes produits
+                        Catalogue Produits
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/vendor/orders')}>
-                        Commandes reçues
+                        Commandes Reçues
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {user.role === 'admin' && (
+                    <>
+                      <DropdownMenuItem onClick={() => navigate('/admin/users')}>
+                        Gestion Utilisateurs
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/admin/stores')}>
+                        Validation Magasins
                       </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuItem onClick={() => navigate('/profile')}>
-                    Profil
+                    Profil Personnel
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">

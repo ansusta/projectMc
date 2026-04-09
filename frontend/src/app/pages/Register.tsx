@@ -23,12 +23,18 @@ export function Register() {
 
     try {
       await register(name, email, password, role);
-      toast.success('Compte créé avec succès !');
+      toast.success('Compte créé avec succès ! Protocoles synchronisés.');
 
+      // Navigation is now handled based on the actual logged in state
       if (role === 'vendor') navigate('/vendor/dashboard');
       else navigate('/customer/dashboard');
-    } catch (error) {
-      toast.error('Erreur lors de la création du compte');
+    } catch (error: any) {
+      if (error.message.includes("Veuillez vous connecter manuellement")) {
+        toast.info(error.message);
+        navigate('/login');
+      } else {
+        toast.error(error.message || 'Erreur lors de la création du compte');
+      }
     } finally {
       setIsLoading(false);
     }

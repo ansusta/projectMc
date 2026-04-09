@@ -13,11 +13,18 @@ export const commandeService = {
     passer: (id_adrs: string, methode_paiement: MethodePaiement) =>
         api.post<CommandeResponse>('/commande', { id_adrs, methode_paiement }),
 
-    getById: (id: string) => api.get<{ commande: unknown }>(`/commande/${id}`),
+    getById: (id: string) => api.get<{ commande: any }>(`/commande/${id}`),
 
-    getEnCours: () => api.get<{ commandes_en_cours: unknown[] }>('/commande/en-cours'),
+    getEnCours: () => api.get<{ commandes_en_cours: any[] }>('/commande/en-cours'),
 
-    getHistorique: () => api.get<{ historique: unknown[] }>('/commande/historique'),
+    getHistorique: () => api.get<{ historique: any[] }>('/commande/historique'),
 
     annuler: (id: string) => api.patch<{ message: string }>(`/commande/${id}/annuler`, {}),
+
+    // Vendor specific calls
+    getByVendeur: (vendeurId: string) => 
+        api.get<{ commandes: any[] }>(`/commande/vendeur/${vendeurId}`),
+
+    updateStatut: (id: string, statut: string) =>
+        api.patch<{ message: string }>(`/commande/${id}/statut`, { statut }),
 };

@@ -39,8 +39,11 @@ export function Cart() {
   const total = subtotal + shipping + tax;
 
   const handleCheckout = () => {
-    toast.success('Redirection vers le paiement...');
-    // Navigate to checkout
+    if (cartItems.length === 0) {
+      toast.error('Votre panier est vide');
+      return;
+    }
+    navigate('/checkout/address');
   };
 
   return (

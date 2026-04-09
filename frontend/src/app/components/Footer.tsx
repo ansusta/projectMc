@@ -1,4 +1,5 @@
 import { Package, Mail, Phone, MapPin } from 'lucide-react';
+import { Link } from 'react-router';
 
 export function Footer() {
   return (
@@ -22,20 +23,20 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">LIENS RAPIDES</h3>
             <ul className="space-y-2 text-sm text-text-secondary">
-              <li><a href="/catalog" className="hover:text-primary transition-colors hover:pl-1">Catalogue</a></li>
-              <li><a href="/about" className="hover:text-primary transition-colors hover:pl-1">La Matrice</a></li>
-              <li><a href="/vendors" className="hover:text-primary transition-colors hover:pl-1">Réseau Vendeurs</a></li>
-              <li><a href="/help" className="hover:text-primary transition-colors hover:pl-1">Support Cybo</a></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors hover:pl-1">Catalogue</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors hover:pl-1">FAQ / Support</Link></li>
+              <li><Link to="/vendors" className="hover:text-primary transition-colors hover:pl-1">Réseau Vendeurs</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors hover:pl-1">Nous Contacter</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">SECTEURS</h3>
             <ul className="space-y-2 text-sm text-text-secondary">
-              <li><a href="/catalog?category=pc" className="hover:text-primary transition-colors hover:pl-1">Stations Orbit</a></li>
-              <li><a href="/catalog?category=components" className="hover:text-primary transition-colors hover:pl-1">Hardware</a></li>
-              <li><a href="/catalog?category=gaming" className="hover:text-primary transition-colors hover:pl-1">Simulateurs</a></li>
-              <li><a href="/catalog?category=audio" className="hover:text-primary transition-colors hover:pl-1">Acoustique</a></li>
+              <li><Link to="/catalog?category=pc" className="hover:text-primary transition-colors hover:pl-1">Stations Orbit</Link></li>
+              <li><Link to="/catalog?category=components" className="hover:text-primary transition-colors hover:pl-1">Hardware</Link></li>
+              <li><Link to="/catalog?category=gaming" className="hover:text-primary transition-colors hover:pl-1">Simulateurs</Link></li>
+              <li><Link to="/catalog?category=audio" className="hover:text-primary transition-colors hover:pl-1">Acoustique</Link></li>
             </ul>
           </div>
 
@@ -64,8 +65,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border text-center text-sm text-text-secondary flex justify-between items-center">
+        <div className="mt-8 pt-8 border-t border-border text-center text-sm text-text-secondary flex flex-col md:flex-row justify-between items-center gap-4">
           <p>&copy; 2026 NEXUS. Protocoles sécurisés.</p>
+          <div className="flex gap-6">
+            <Link to="/terms" className="hover:text-primary">Conditions</Link>
+            <Link to="/privacy" className="hover:text-primary">Confidentialité</Link>
+            <Link to="/legal" className="hover:text-primary">Mentions</Link>
+          </div>
           <div className="flex gap-4">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse mt-1.5 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
             <span>Systèmes opérationnels</span>
