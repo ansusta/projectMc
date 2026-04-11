@@ -119,3 +119,70 @@ exports.deleteProduit = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+//////////********************************* */
+exports.createProduit = async (req, res) => {
+  try {
+    // 1. Extract the product details from the request
+    const { nom_produit, description, prix, qte_dispo, type_id, magasin_id } = req.body;
+    
+    // 2. Handle Cloudinary Image Upload
+    // If your route uses a multer middleware for Cloudinary, the URL will be in req.file.path
+    let image_url = req.body.image_url || null; 
+    if (req.file && req.file.path) {
+        image_url = req.file.path;
+    }
+
+    // 3. Basic Validation
+    if (!nom_produit || !prix || !qte_dispo || !magasin_id || !type_id) {
+      return res.status(400).json({ error: "Missing required fields (nom_produit, prix, qte_dispo, magasin_id, type_id)" });
+    }
+
+    // 4. Save to Supabase
+    const { data, error } = await supabase
+      .from("produit")
+      .insert([
+        {
+          nom_produit,
+          description,
+          prix: parseFloat(prix),
+          qte_dispo: parseInt(qte_dispo),
+          image_url: image_url,
+          type_id,
+          magasin_id
+        }
+      ])
+      .select(); // .select() ensures Supabase returns the newly created item
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(201).json({ message: "Produit ajouté avec succès", produit: data[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateProduit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Handle optional image update via Cloudinary
+    if (req.file && req.file.path) {
+        updates.image_url = req.file.path;
+    }
+
+    const { data, error } = await supabase
+      .from("produit")
+      .update(updates)
+      .eq("id", id)
+      .select();
+
+    if (error) return res.status(400).json({ error: error.message });
+    if (!data || data.length === 0) return res.status(404).json({ error: "Produit introuvable" });
+
+    res.status(200).json({ message: "Produit mis à jour avec succès", produit: data[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
