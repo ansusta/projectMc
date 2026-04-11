@@ -41,6 +41,15 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
             const message = errorData.error || errorData.message || res.statusText || `Request failed: ${res.status}`;
+            
+            if (res.status === 401) {
+                console.warn('🔐 [API] Unauthorized access detected. Clearing session.');
+                localStorage.removeItem('auth-token');
+                localStorage.removeItem('auth_token'); // Clear legacy key too
+                localStorage.removeItem('auth_user');
+                // Optional: window.location.href = '/login'; 
+            }
+
             throw new Error(message);
         }
 
