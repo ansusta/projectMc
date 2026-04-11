@@ -48,30 +48,26 @@ export function Catalog() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-12 gap-4">
           <div>
-            <div className="flex items-center gap-2 text-primary mb-2">
+            <div className="flex items-center gap-2 text-primary mb-1 sm:mb-2">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-              <span className="text-sm font-mono tracking-widest uppercase">Base de données Nexus</span>
+              <span className="text-xs sm:text-sm font-mono tracking-widest uppercase">Base de données Nexus</span>
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2">Catalogue produits</h1>
-            <p className="text-muted-foreground">{sortedProducts.length} unités identifiées dans le secteur</p>
+            <h1 className="text-xl sm:text-4xl font-extrabold tracking-tight mb-1">Catalogue produits</h1>
+            <p className="text-sm text-muted-foreground">{sortedProducts.length} unités identifiées dans le secteur</p>
           </div>
-          <div className="flex items-center gap-4">
-            <Button
-              variant="glass"
-              onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden h-11"
-            >
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="glass" onClick={() => setShowFilters(!showFilters)} className="lg:hidden h-10 sm:h-11 text-sm">
               <Filter className="w-4 h-4 mr-2" />
-              Filtres
+              Filtres {selectedCategories.length > 0 && `(${selectedCategories.length})`}
             </Button>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-56 h-11 bg-card/40 border-white/10 backdrop-blur-md rounded-xl focus:ring-primary/50 text-foreground">
+              <SelectTrigger className="w-40 sm:w-56 h-10 sm:h-11 bg-card/40 border-border backdrop-blur-md rounded-xl focus:ring-primary/50 text-foreground text-sm">
                 <SelectValue placeholder="Trier par" />
               </SelectTrigger>
-              <SelectContent className="bg-background/90 backdrop-blur-xl border-white/10 text-foreground text-sm">
+              <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground text-sm">
                 <SelectItem value="popular">Popularité</SelectItem>
                 <SelectItem value="price-asc">Prix croissant</SelectItem>
                 <SelectItem value="price-desc">Prix décroissant</SelectItem>
@@ -81,10 +77,10 @@ export function Catalog() {
           </div>
         </div>
 
-        <div className="flex gap-8">
-          {/* Modern Sidebar Filters */}
-          <aside className={`lg:block ${showFilters ? 'block' : 'hidden'} lg:w-72 shrink-0`}>
-            <div className="bg-card/30 backdrop-blur-xl rounded-3xl border border-white/5 p-8 sticky top-28 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <div className="flex gap-4 sm:gap-8">
+          {/* Sidebar Filters */}
+          <aside className={`${showFilters ? 'block' : 'hidden'} lg:block w-full sm:w-72 shrink-0`}>
+            <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border p-5 sm:p-8 lg:sticky top-28 shadow-soft">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-bold tracking-tight">Filtres</h2>
                 <button
@@ -156,9 +152,9 @@ export function Catalog() {
           </aside>
 
           {/* Products Grid */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {sortedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6 sm:gap-8">
                 {sortedProducts.map((product) => (
                   <ProductCard
                     key={product.id}

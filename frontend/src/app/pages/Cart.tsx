@@ -48,8 +48,8 @@ export function Cart() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-8">Panier d'achat</h1>
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
+        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-5 sm:mb-8">Panier d'achat</h1>
 
         {cartItems.length === 0 ? (
           <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-16 text-center shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
@@ -67,20 +67,16 @@ export function Cart() {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => (
-                <div key={item.product.id} className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-6 transition-all hover:border-primary/30 group">
-                  <div className="flex gap-6">
-                    <div className="relative overflow-hidden rounded-2xl w-32 h-32 shrink-0">
-                      <img
-                        src={item.product.image}
-                        alt={item.product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
+                <div key={item.product.id} className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-4 sm:p-6 transition-all hover:border-primary/30 group">
+                  <div className="flex gap-4 sm:gap-6">
+                    <div className="relative overflow-hidden rounded-xl w-20 h-20 sm:w-32 sm:h-32 shrink-0">
+                      <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{item.product.name}</h3>
-                          <p className="text-sm text-muted-foreground font-mono">CODE: {item.product.vendor}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1 sm:mb-2 gap-2">
+                        <div className="min-w-0">
+                          <h3 className="text-base sm:text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors truncate">{item.product.name}</h3>
+                          <p className="text-xs text-muted-foreground font-mono">CODE: {item.product.vendor}</p>
                         </div>
                         <button
                           onClick={() => removeItem(item.product.id)}
@@ -90,8 +86,8 @@ export function Cart() {
                         </button>
                       </div>
 
-                      <div className="flex items-end justify-between mt-4">
-                        <div className="flex items-center gap-4 bg-white/5 p-1 rounded-xl border border-white/10">
+                      <div className="flex items-end justify-between mt-3 sm:mt-4 flex-wrap gap-3">
+                        <div className="flex items-center gap-2 sm:gap-4 bg-muted/30 p-1 rounded-xl border border-border">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -113,7 +109,7 @@ export function Cart() {
                           </Button>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xl font-black text-foreground tabular-nums">
+                          <p className="text-lg sm:text-2xl font-black text-foreground tabular-nums">
                             €{(item.product.price * item.quantity).toFixed(2)}
                           </p>
                           <p className="text-xs text-muted-foreground font-mono">UNIT: €{item.product.price}</p>
@@ -127,8 +123,8 @@ export function Cart() {
 
             {/* Order Summary */}
             <div>
-              <div className="bg-card/30 backdrop-blur-xl border border-white/5 rounded-3xl p-8 sticky top-28 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-                <h2 className="text-2xl font-bold text-foreground mb-8 tracking-tight">Récapitulatif</h2>
+              <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-5 sm:p-8 lg:sticky top-28 shadow-soft">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-5 sm:mb-8 tracking-tight">Récapitulatif</h2>
 
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-muted-foreground font-medium">

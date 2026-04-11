@@ -26,7 +26,7 @@ export function CustomerOrders() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Header */}
         <div className="mb-10">
           <Button 
@@ -44,8 +44,8 @@ export function CustomerOrders() {
                 <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
                 <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Journal des Flux</span>
               </div>
-              <h1 className="text-4xl font-black tracking-tight">Historique des Commandes</h1>
-              <p className="text-muted-foreground mt-2">Gérez et suivez vos transferts d'unités Nexus</p>
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight">Historique des Commandes</h1>
+              <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">Gérez et suivez vos transferts d'unités Nexus</p>
             </div>
 
             <div className="flex items-center gap-3">

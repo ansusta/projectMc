@@ -45,21 +45,21 @@ export const AdminStores = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background font-mono">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-8 bg-background font-mono">
+      <div className="max-w-6xl mx-auto space-y-5 sm:space-y-8">
         
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
           <div>
-            <h1 className="text-3xl text-foreground tracking-[0.3em] flex items-center gap-4 italic font-bold">
-              <span className="w-2 h-10 bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]"></span>
+            <h1 className="text-xl sm:text-3xl text-foreground tracking-[0.2em] sm:tracking-[0.3em] flex items-center gap-3 sm:gap-4 italic font-bold">
+              <span className="w-1.5 sm:w-2 h-8 sm:h-10 bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"></span>
               MODÉRATION DES MAGASINS
             </h1>
-            <p className="mt-1 text-cyan-600/50 text-[10px] uppercase tracking-tighter">
+            <p className="mt-1 text-primary/40 text-[10px] uppercase tracking-tighter">
               Validation des protocoles commerciaux et vérification de conformité marchande
             </p>
           </div>
-          <div className="text-right">
-             <span className="text-cyan-600 text-xs tracking-widest">{stores.length} UNITÉS EN ATTENTE</span>
+          <div className="text-left sm:text-right">
+             <span className="text-primary/60 text-xs tracking-widest">{stores.length} UNITÉS EN ATTENTE</span>
           </div>
         </div>
 
@@ -72,18 +72,18 @@ export const AdminStores = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-card/20 border border-cyan-500/20 p-6 rounded-2xl relative overflow-hidden group backdrop-blur-md shadow-soft"
-              >
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <Store size={80} className="text-cyan-500" />
-                </div>
+                className="bg-card/40 border border-primary/20 p-4 sm:p-6 rounded-2xl relative overflow-hidden group backdrop-blur-md shadow-soft hover:border-primary/40 transition-all"
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <Store size={80} className="text-primary" />
+              </div>
 
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="w-16 h-16 bg-background border border-cyan-500/30 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-background border border-border rounded-full flex items-center justify-center overflow-hidden shadow-sm">
                     {store.photo_url ? (
                         <img src={store.photo_url} alt="Store logo" className="w-full h-full object-cover" />
                     ) : (
-                        <Store size={24} className="text-cyan-600/50" />
+                        <Store size={24} className="text-primary/40" />
                     )}
                   </div>
                   <div>

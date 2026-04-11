@@ -70,11 +70,11 @@ export function Profile() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 md:mt-10">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-16 sm:mt-20 md:mt-10">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar / Info */}
                     <div className="w-full lg:w-1/3">
-                        <Card className="border-border/50 bg-card/40 backdrop-blur-xl shadow-xl sticky top-24">
+                        <Card className="border-border/50 bg-card/40 backdrop-blur-xl shadow-xl lg:sticky top-24">
                             <CardHeader className="text-center pt-8 md:pt-12">
                                 <CardTitle className="text-3xl font-extrabold tracking-tight">{user.name}</CardTitle>
                                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mt-2 mx-auto">
@@ -128,7 +128,7 @@ export function Profile() {
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                         <div className="space-y-2.5">
                                             <Label htmlFor="name" className="text-sm font-semibold ml-1">Nom Complet</Label>
                                             <div className="relative group">

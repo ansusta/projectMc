@@ -36,9 +36,9 @@ export function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Product Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 mb-10 sm:mb-16">
           {/* Images */}
           <div>
             <div className="aspect-square rounded-3xl overflow-hidden bg-card/20 border border-white/5 mb-6 group">
@@ -59,9 +59,9 @@ export function ProductDetail() {
 
           {/* Info */}
           <div>
-            <div className="mb-6">
-              <Badge variant="neon" className="mb-4">{product.category}</Badge>
-              <h1 className="text-4xl font-extrabold text-foreground mb-3 tracking-tight">{product.name}</h1>
+            <div className="mb-4 sm:mb-6">
+              <Badge variant="neon" className="mb-3 sm:mb-4">{product.category}</Badge>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground mb-2 sm:mb-3 tracking-tight">{product.name}</h1>
               <p className="text-muted-foreground flex items-center gap-2">
                 <span className="text-sm uppercase tracking-widest font-mono">Fournisseur:</span>
                 <span className="text-primary font-bold">{product.vendor}</span>
@@ -84,9 +84,9 @@ export function ProductDetail() {
               <span className="text-sm text-gray-500">({product.reviews} avis)</span>
             </div>
 
-            <div className="mb-8 p-6 bg-card/20 backdrop-blur-md rounded-2xl border border-white/5 shadow-inner">
-              <div className="flex items-baseline gap-4 mb-3">
-                <span className="text-5xl font-black text-foreground tabular-nums">€{product.price}</span>
+            <div className="mb-5 sm:mb-8 p-4 sm:p-6 bg-card/40 backdrop-blur-md rounded-2xl border border-border shadow-inner">
+              <div className="flex items-baseline gap-3 sm:gap-4 mb-3 flex-wrap">
+                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">€{product.price}</span>
                 {product.originalPrice && (
                   <span className="text-2xl text-muted-foreground line-through tabular-nums">€{product.originalPrice}</span>
                 )}
@@ -147,23 +147,13 @@ export function ProductDetail() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4 mb-10">
-              <Button
-                variant="glow"
-                onClick={handleAddToCart}
-                disabled={product.stock === 0}
-                className="flex-1 h-14 text-lg font-bold"
-              >
-                <ShoppingCart className="w-5 h-5 mr-3" />
+            <div className="flex gap-3 sm:gap-4 mb-8 sm:mb-10">
+              <Button variant="glow" onClick={handleAddToCart} disabled={product.stock === 0} className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold">
+                <ShoppingCart className="w-5 h-5 mr-2 sm:mr-3" />
                 Initialiser l'achat
               </Button>
-              <Button
-                variant="glass"
-                size="icon"
-                onClick={() => setIsFavorite(!isFavorite)}
-                className="h-14 w-14"
-              >
-                <Heart className={`w-6 h-6 transition-all ${isFavorite ? 'fill-primary text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'text-foreground'}`} />
+              <Button variant="glass" size="icon" onClick={() => setIsFavorite(!isFavorite)} className="h-12 sm:h-14 w-12 sm:w-14">
+                <Heart className={`w-5 h-5 sm:w-6 sm:h-6 transition-all ${isFavorite ? 'fill-primary text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'text-foreground'}`} />
               </Button>
             </div>
 
@@ -172,9 +162,9 @@ export function ProductDetail() {
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <div className="mt-20">
-            <h2 className="text-3xl font-extrabold text-foreground mb-8 tracking-tight">Modules Similaires</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-10 sm:mt-20">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-foreground mb-5 sm:mb-8 tracking-tight">Modules Similaires</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {relatedProducts.map((p) => (
                 <ProductCard key={p.id} product={p} onAddToCart={() => toast.success('Produit ajouté !')} />
               ))}

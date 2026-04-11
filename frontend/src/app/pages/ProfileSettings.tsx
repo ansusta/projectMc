@@ -53,16 +53,16 @@ export function ProfileSettings() {
           Dashboard
         </Button>
 
-        <div className="mb-12">
-          <div className="flex items-center gap-3 text-secondary mb-3">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex items-center gap-3 text-secondary mb-2 sm:mb-3">
             <div className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(34,211,238,1)]"></div>
-            <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Configuration Système</span>
+            <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Configuration Système</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight">Paramètres du Profil</h1>
-          <p className="text-muted-foreground mt-2">Gérez vos identifiants et vos protocoles de communication.</p>
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight">Paramètres du Profil</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm">Gérez vos identifiants et vos protocoles de communication.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12">
           {/* Main Form */}
           <div className="md:col-span-2 space-y-8">
             <motion.div 

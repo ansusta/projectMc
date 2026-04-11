@@ -61,14 +61,14 @@ export const VendorProducts = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-7xl mx-auto space-y-5 sm:space-y-8">
         
         {/* Header & Search */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
-              <span className="w-1.5 h-10 bg-primary"></span>
+            <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
+              <span className="w-1.5 h-8 sm:h-10 bg-primary"></span>
               CATALOGUE PROFILÉ
             </h1>
             <p className="mt-1 text-primary/50 font-mono text-xs uppercase tracking-tighter">
@@ -76,29 +76,29 @@ export const VendorProducts = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="relative group">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="relative group flex-1 sm:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <input 
                 type="text"
-                placeholder="RECHERCHER DANS L'INVENTAIRE..."
+                placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-card/40 border border-border rounded-xl pl-10 pr-4 py-2 text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 min-w-[300px] transition-all"
+                className="bg-card/40 border border-border rounded-xl pl-10 pr-4 py-2 text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:min-w-[220px] transition-all"
               />
             </div>
             <button 
               onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}
-              className="bg-primary/10 border border-primary/50 p-2 text-primary hover:bg-primary/20 transition-all rounded-xl flex items-center gap-2 px-4 shadow-soft"
+              className="bg-primary/10 border border-primary/50 p-2 text-primary hover:bg-primary/20 transition-all rounded-xl flex items-center gap-1.5 px-3 shadow-soft whitespace-nowrap"
             >
-              <Plus size={18} />
-              <span className="font-mono text-xs font-bold uppercase tracking-wider">Nouveau Produit</span>
+              <Plus size={16} />
+              <span className="font-mono text-xs font-bold uppercase tracking-wider hidden sm:inline">Nouveau</span>
             </button>
           </div>
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
           <AnimatePresence>
             {filteredProducts.map((product, index) => (
               <motion.div

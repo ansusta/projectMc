@@ -17,26 +17,22 @@ export function CustomerFavorites() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Header */}
-        <div className="mb-12">
-          <Button 
-            variant="ghost" 
-            className="mb-6 -ml-4 hover:bg-muted opacity-70"
-            onClick={() => navigate('/customer/dashboard')}
-          >
+        <div className="mb-8 sm:mb-12">
+          <Button variant="ghost" className="mb-4 sm:mb-6 -ml-3 hover:bg-muted opacity-70" onClick={() => navigate('/customer/dashboard')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour au Dashboard
           </Button>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <div className="flex items-center gap-3 text-primary mb-3">
+              <div className="flex items-center gap-3 text-primary mb-2">
                 <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
-                <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Unités Mémorisées</span>
+                <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Unités Mémorisées</span>
               </div>
-              <h1 className="text-4xl font-black tracking-tight">Modules Favoris</h1>
-              <p className="text-muted-foreground mt-2">Votre sélection personnalisée de technologies Nexus</p>
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight">Modules Favoris</h1>
+              <p className="text-muted-foreground mt-1 sm:mt-2 text-sm">Votre sélection personnalisée de technologies Nexus</p>
             </div>
 
             {favoriteProducts.length > 0 && (

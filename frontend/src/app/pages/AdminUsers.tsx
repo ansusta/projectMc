@@ -47,11 +47,11 @@ export const AdminUsers = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background font-mono">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-8 bg-background font-mono">
+      <div className="max-w-7xl mx-auto space-y-5 sm:space-y-8">
         
         <div>
-          <h1 className="text-3xl text-foreground tracking-[0.3em] flex items-center gap-4 italic font-bold">
+          <h1 className="text-xl sm:text-3xl text-foreground tracking-[0.3em] flex items-center gap-4 italic font-bold">
             <span className="w-2 h-10 bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"></span>
             CONTRÔLE DES ACCÈS
           </h1>
@@ -61,8 +61,8 @@ export const AdminUsers = () => {
         </div>
 
         {/* Users List */}
-        <div className="bg-card/20 border border-primary/20 rounded-2xl overflow-hidden backdrop-blur-md shadow-soft">
-          <table className="w-full text-left border-collapse">
+        <div className="bg-card/20 border border-primary/20 rounded-2xl overflow-x-auto backdrop-blur-md shadow-soft">
+          <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr className="border-b border-primary/30 bg-primary/10">
                 <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Identité</th>

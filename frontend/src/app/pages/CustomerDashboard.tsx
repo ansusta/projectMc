@@ -31,14 +31,14 @@ export function CustomerDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12">
-          <div className="flex items-center gap-3 text-primary mb-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex items-center gap-3 text-primary mb-2 sm:mb-3">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
-            <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Système Operational</span>
+            <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Système Operational</span>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-foreground">Interface Client</h1>
-          <p className="text-muted-foreground text-lg italic">Bienvenue dans votre centre de contrôle Nexus</p>
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 text-foreground">Interface Client</h1>
+          <p className="text-muted-foreground text-sm sm:text-lg italic">Bienvenue dans votre centre de contrôle Nexus</p>
         </div>
 
         {/* Stats */}
@@ -73,49 +73,50 @@ export function CustomerDashboard() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Recent Orders */}
           <div className="lg:col-span-2">
             <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border overflow-hidden shadow-soft">
-              <div className="p-8 border-b border-border bg-muted/30">
-                <div className="flex items-center justify-between">
+              <div className="p-4 sm:p-8 border-b border-border bg-muted/30">
+                <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Signal des Commandes</h2>
+                    <h2 className="text-lg sm:text-2xl font-bold tracking-tight">Signal des Commandes</h2>
                     <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">Derniers transferts de données</p>
                   </div>
-                  <Button variant="ghost" className="hover:bg-white/10" onClick={() => navigate('/customer/orders')}>
-                    Accéder à la base
+                  <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/customer/orders')}>
+                    Tout voir
                   </Button>
                 </div>
               </div>
               <div className="divide-y divide-border">
                 {recentOrders.map((order) => (
-                  <div key={order.id} className="p-8 hover:bg-muted/30 transition-all group">
-                    <div className="flex items-start justify-between mb-6">
+                  <div key={order.id} className="p-4 sm:p-6 hover:bg-muted/30 transition-all group">
+                    <div className="flex items-start justify-between mb-3 sm:mb-4">
                       <div>
-                        <p className="font-bold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">{order.id}</p>
-                        <p className="text-sm font-mono text-muted-foreground">{new Date(order.date).toLocaleDateString('fr-FR')}</p>
+                        <p className="font-bold text-base sm:text-lg text-foreground mb-0.5 group-hover:text-primary transition-colors">{order.id}</p>
+                        <p className="text-xs font-mono text-muted-foreground">{new Date(order.date).toLocaleDateString('fr-FR')}</p>
                       </div>
-                      <Badge className={`${statusColors[order.status]} border font-bold uppercase tracking-widest text-[10px] px-3 py-1 rounded-full`}>
+                      <Badge className={`${statusColors[order.status]} border font-bold uppercase tracking-widest text-[10px] px-2 py-0.5 rounded-full`}>
                         {statusLabels[order.status]}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 mb-6">
-                      {order.items.map((item, idx) => (
-                        <div key={idx} className="relative group/item overflow-hidden rounded-xl border border-border w-20 h-20 shadow-sm">
-                          <img
-                            src={item.image}
-                            alt={item.productName}
-                            className="w-full h-full object-cover transition-transform group-hover/item:scale-125 duration-500"
-                          />
+                    <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4 flex-wrap">
+                      {order.items.slice(0, 3).map((item, idx) => (
+                        <div key={idx} className="relative overflow-hidden rounded-lg border border-border w-14 h-14 sm:w-20 sm:h-20 shadow-sm">
+                          <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
                         </div>
                       ))}
+                      {order.items.length > 3 && (
+                        <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-lg border border-border bg-muted/50 flex items-center justify-center text-xs text-muted-foreground font-mono">
+                          +{order.items.length - 3}
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest">
-                        Index: {order.items.length} UNITE{order.items.length > 1 ? 'S' : ''}
+                        {order.items.length} article{order.items.length > 1 ? 's' : ''}
                       </p>
-                      <p className="text-2xl font-black text-foreground tabular-nums">€{order.total}</p>
+                      <p className="text-xl sm:text-2xl font-black text-foreground tabular-nums">€{order.total}</p>
                     </div>
                   </div>
                 ))}
@@ -124,44 +125,32 @@ export function CustomerDashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="space-y-8">
-            <div className="bg-card/40 backdrop-blur-2xl rounded-2xl border border-border p-8 shadow-soft">
-              <h2 className="text-xl font-bold mb-6 tracking-tight">Protocoles Rapides</h2>
-              <div className="space-y-4">
-                <Button
-                  onClick={() => navigate('/catalog')}
-                  variant="glow"
-                  className="w-full h-12 justify-start pl-6"
-                >
-                  <ShoppingBag className="w-5 h-5 mr-3" />
+          <div className="space-y-4 sm:space-y-8">
+            <div className="bg-card/40 backdrop-blur-2xl rounded-2xl border border-border p-5 sm:p-8 shadow-soft">
+              <h2 className="text-base sm:text-xl font-bold mb-4 sm:mb-6 tracking-tight">Protocoles Rapides</h2>
+              <div className="grid grid-cols-1 gap-3">
+                <Button onClick={() => navigate('/catalog')} variant="glow" className="w-full h-11 justify-start pl-5">
+                  <ShoppingBag className="w-4 h-4 mr-3" />
                   Initialiser Catalogue
                 </Button>
-                <Button
-                  onClick={() => navigate('/customer/orders')}
-                  variant="glass"
-                  className="w-full h-12 justify-start pl-6"
-                >
-                  <Package className="w-5 h-5 mr-3" />
+                <Button onClick={() => navigate('/customer/orders')} variant="glass" className="w-full h-11 justify-start pl-5">
+                  <Package className="w-4 h-4 mr-3" />
                   Base Commandes
                 </Button>
-                <Button
-                  onClick={() => navigate('/customer/favorites')}
-                  variant="glass"
-                  className="w-full h-12 justify-start pl-6"
-                >
-                  <Heart className="w-5 h-5 mr-3" />
+                <Button onClick={() => navigate('/customer/favorites')} variant="glass" className="w-full h-11 justify-start pl-5">
+                  <Heart className="w-4 h-4 mr-3" />
                   Modules Favoris
                 </Button>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-primary to-primary/60 rounded-2xl p-8 relative overflow-hidden group shadow-md">
+            <div className="bg-gradient-to-br from-primary to-primary/60 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-md">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-3xl rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700"></div>
-              <h3 className="text-2xl font-black mb-3">OFFRE NEXUS</h3>
-              <p className="text-white/80 text-sm mb-6 leading-relaxed">
-                Optimisez votre prochain transfert (-15%) avec la clé de cryptage: <span className="font-mono bg-white/20 px-2 py-0.5 rounded ml-1 font-bold">WELCOME15</span>
+              <h3 className="text-xl sm:text-2xl font-black mb-2 sm:mb-3">OFFRE NEXUS</h3>
+              <p className="text-white/80 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
+                Optimisez votre prochain transfert (-15%) avec la clé: <span className="font-mono bg-white/20 px-2 py-0.5 rounded ml-1 font-bold">WELCOME15</span>
               </p>
-              <Button className="w-full bg-white text-primary border-none hover:bg-white/90 font-bold h-12 rounded-xl">
+              <Button className="w-full bg-white text-primary border-none hover:bg-white/90 font-bold h-11 rounded-xl text-sm">
                 Injecter Code
               </Button>
             </div>
@@ -169,23 +158,17 @@ export function CustomerDashboard() {
         </div>
 
         {/* Recommended Products */}
-        <div className="mt-20">
-          <div className="flex items-center justify-between mb-10">
+        <div className="mt-10 sm:mt-20">
+          <div className="flex items-center justify-between mb-6 sm:mb-10">
             <div>
-              <h2 className="text-3xl font-black tracking-tight">Analyse Prédictive</h2>
-              <p className="text-sm text-muted-foreground uppercase tracking-[0.2em] font-mono mt-1">Modules suggérés par l'IA</p>
+              <h2 className="text-xl sm:text-3xl font-black tracking-tight">Analyse Prédictive</h2>
+              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-mono mt-1">Modules suggérés par l'IA</p>
             </div>
-            <Button variant="ghost" className="hover:bg-white/10" onClick={() => navigate('/catalog')}>
-              Tout voir
-            </Button>
+            <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/catalog')}>Tout voir</Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {recommendedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={() => toast.success('Produit ajouté au panier !')}
-              />
+              <ProductCard key={product.id} product={product} onAddToCart={() => toast.success('Produit ajouté au panier !')} />
             ))}
           </div>
         </div>

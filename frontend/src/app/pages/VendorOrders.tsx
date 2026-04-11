@@ -56,12 +56,12 @@ export const VendorOrders = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-6xl mx-auto space-y-5 sm:space-y-8">
         
         <div>
-          <h1 className="text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
-            <span className="w-1.5 h-10 bg-primary"></span>
+          <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-2 sm:gap-3 italic">
+            <span className="w-1.5 h-8 sm:h-10 bg-primary"></span>
             COMMANDES ENTRANTES
           </h1>
           <p className="mt-1 text-primary/50 font-mono text-xs uppercase tracking-tighter">
@@ -79,10 +79,10 @@ export const VendorOrders = () => {
               transition={{ delay: index * 0.05 }}
               className="bg-gray-900/30 border border-cyan-900/20 hover:border-cyan-500/30 transition-all rounded-sm overflow-hidden"
             >
-              <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-sm">
-                    <ShoppingBag size={20} />
+              <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-sm">
+                    <ShoppingBag size={18} />
                   </div>
                   <div>
                     <h3 className="text-foreground font-mono font-bold tracking-widest text-sm mb-1 uppercase">COMMANDE #{order.id.substring(0, 8)}</h3>

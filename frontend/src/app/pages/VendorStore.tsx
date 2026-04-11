@@ -73,19 +73,20 @@ export const VendorStore = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-12 px-3 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-4xl mx-auto space-y-5 sm:space-y-8">
         {/* Header Section */}
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-card/40 p-8 shadow-soft">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card/40 p-5 sm:p-8 shadow-soft">
           <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Store size={120} className="text-cyan-500" />
+            <Store size={80} className="text-primary sm:hidden" />
+            <Store size={120} className="text-primary hidden sm:block" />
           </div>
           <div className="relative z-10">
-            <h1 className="text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
-              <span className="w-2 h-8 bg-primary"></span>
+            <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
+              <span className="w-2 h-6 sm:h-8 bg-primary"></span>
               CONFIGURATION MAGASIN
             </h1>
-            <p className="mt-2 text-primary/60 font-mono text-sm tracking-tight uppercase">
+            <p className="mt-2 text-primary/60 font-mono text-xs tracking-tight uppercase">
               Gestion des paramètres de l'interface de vente - ID: {store?.id.substring(0, 8)}
             </p>
           </div>
