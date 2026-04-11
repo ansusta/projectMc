@@ -4,7 +4,7 @@ import { mockOrders, mockProducts } from '../lib/mock-data';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { ProductCard } from '../components/ProductCard';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const statusColors = {

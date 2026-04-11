@@ -2,7 +2,7 @@ import { ArrowRight, Monitor, Cpu, Mouse, Gamepad2, HardDrive, Headphones, Truck
 import { Button } from '../components/ui/button';
 import { ProductCard } from '../components/ProductCard';
 import { mockProducts, categories } from '../lib/mock-data';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { SplineScene } from '../components/ui/splite';
 import { Spotlight } from '../components/ui/spotlight';

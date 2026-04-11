@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Truck, Zap, Calendar, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';

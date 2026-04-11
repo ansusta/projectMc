@@ -47,28 +47,28 @@ export const AdminUsers = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-black font-mono">
+    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background font-mono">
       <div className="max-w-6xl mx-auto space-y-8">
         
         <div>
-          <h1 className="text-3xl text-white tracking-[0.3em] flex items-center gap-4 italic font-bold">
-            <span className="w-2 h-10 bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]"></span>
+          <h1 className="text-3xl text-foreground tracking-[0.3em] flex items-center gap-4 italic font-bold">
+            <span className="w-2 h-10 bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"></span>
             CONTRÔLE DES ACCÈS
           </h1>
-          <p className="mt-1 text-red-500/50 text-[10px] uppercase tracking-tighter">
+          <p className="mt-1 text-primary/50 text-[10px] uppercase tracking-tighter">
             Gestion globale des identités et des niveaux de privilèges utilisateurs
           </p>
         </div>
 
         {/* Users List */}
-        <div className="bg-gray-900/20 border border-red-900/20 rounded-sm overflow-hidden backdrop-blur-md">
+        <div className="bg-card/20 border border-primary/20 rounded-2xl overflow-hidden backdrop-blur-md shadow-soft">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-red-900/30 bg-red-900/10">
-                <th className="p-4 text-red-500 text-[10px] uppercase tracking-widest">Identité</th>
-                <th className="p-4 text-red-500 text-[10px] uppercase tracking-widest">Contact</th>
-                <th className="p-4 text-red-500 text-[10px] uppercase tracking-widest">Rôle Actuel</th>
-                <th className="p-4 text-red-500 text-[10px] uppercase tracking-widest text-right">Actions</th>
+              <tr className="border-b border-primary/30 bg-primary/10">
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Identité</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Contact</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Rôle Actuel</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -78,28 +78,28 @@ export const AdminUsers = () => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="border-b border-red-900/10 hover:bg-red-900/5 transition-colors group"
+                  className="border-b border-primary/10 hover:bg-primary/5 transition-colors group"
                 >
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-sm bg-red-900/20 border border-red-900/30 flex items-center justify-center text-red-400">
+                      <div className="w-8 h-8 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
                         <Users size={14} />
                       </div>
-                      <span className="text-white text-sm tracking-widest">{user.nom_utilisateur || 'ANONYME'}</span>
+                      <span className="text-foreground text-sm tracking-widest">{user.nom_utilisateur || 'ANONYME'}</span>
                     </div>
                   </td>
-                  <td className="p-4 text-red-500/50 text-xs">
+                  <td className="p-4 text-primary/50 text-xs">
                     <div className="flex items-center gap-2 italic">
                       <Mail size={12} className="opacity-30" />
                       {user.email}
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className={`text-[10px] px-2 py-1 rounded-sm border ${
-                      user.role === 'admin' ? 'bg-red-600/20 border-red-500 text-red-400' :
+                    <span className={`text-[10px] px-2 py-1 rounded-full border ${
+                      user.role === 'admin' ? 'bg-primary/20 border-primary/50 text-primary' :
                       user.role === 'vendeur' ? 'bg-blue-600/20 border-blue-500 text-blue-400' :
-                      'bg-gray-800 border-gray-600 text-gray-400'
-                    } uppercase tracking-widest font-bold`}>
+                      'bg-muted border-border text-foreground/50'
+                    } uppercase tracking-widest font-bold shadow-sm`}>
                       {user.role}
                     </span>
                   </td>
@@ -107,7 +107,7 @@ export const AdminUsers = () => {
                     <button 
                       onClick={() => handleRoleUpdate(user.id, user.role)}
                       disabled={user.role === 'admin'}
-                      className="text-[10px] text-red-500 disabled:opacity-20 hover:text-red-400 transition-colors uppercase gap-2 flex items-center justify-end w-full tracking-tighter"
+                      className="text-[10px] text-primary disabled:opacity-20 hover:text-primary/80 transition-colors uppercase gap-2 flex items-center justify-end w-full tracking-tighter outline-none focus:ring-1 focus:ring-primary/30 rounded-md p-1"
                     >
                       <Shield size={12} /> Modifier Privilèges
                     </button>
@@ -118,7 +118,7 @@ export const AdminUsers = () => {
           </table>
 
           {users.length === 0 && (
-            <div className="p-20 text-center opacity-30 italic text-sm text-red-500 uppercase tracking-[0.5em]">
+            <div className="p-20 text-center opacity-30 italic text-sm text-primary uppercase tracking-[0.5em] font-mono">
               Séquence réseau vide - Aucun utilisateur détecté
             </div>
           )}

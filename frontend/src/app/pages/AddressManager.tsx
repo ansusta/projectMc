@@ -4,7 +4,7 @@ import { Button } from '../components/ui/button';
 import { adresseService, Adresse } from '../../services/adresse.service';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export function AddressManager() {
   const navigate = useNavigate();

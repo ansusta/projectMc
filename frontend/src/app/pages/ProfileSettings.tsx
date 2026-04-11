@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { User, Mail, Shield, ArrowLeft, Loader2, Key } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export function ProfileSettings() {
   const { user, refreshUser } = useAuth();

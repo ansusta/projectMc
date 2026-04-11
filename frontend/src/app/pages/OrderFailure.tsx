@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { XCircle, ShieldAlert, RefreshCcw, Home, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 
 export function OrderFailure() {

@@ -3,7 +3,7 @@ import { Minus, Plus, Trash2, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { mockProducts } from '../lib/mock-data';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface CartItem {

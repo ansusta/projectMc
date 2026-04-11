@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate } from 'react-router-dom';
 import { mockProducts } from '../lib/mock-data';
 import { Star, ShoppingCart, Heart, Flag, Minus, Plus, Package, Shield, Truck } from 'lucide-react';
 import { Button } from '../components/ui/button';

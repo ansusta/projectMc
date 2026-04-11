@@ -1,5 +1,5 @@
 import { Package, Search, ChevronRight, ArrowLeft, Filter } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { mockOrders } from '../lib/mock-data';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';

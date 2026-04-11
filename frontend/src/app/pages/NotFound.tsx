@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Home, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Plus, Trash2, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { adresseService, Adresse } from '../../services/adresse.service';

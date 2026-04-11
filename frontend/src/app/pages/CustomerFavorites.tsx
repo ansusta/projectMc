@@ -1,5 +1,5 @@
 import { Heart, Search, ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { mockProducts } from '../lib/mock-data';
 import { Button } from '../components/ui/button';
 import { ProductCard } from '../components/ProductCard';

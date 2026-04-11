@@ -2,7 +2,7 @@ import { Search, ShoppingCart, User, Menu, Heart, Package, Languages } from 'luc
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Badge } from './ui/badge';
 import { useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';

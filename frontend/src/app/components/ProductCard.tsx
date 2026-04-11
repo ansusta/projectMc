@@ -3,7 +3,7 @@ import { Product } from '../lib/mock-data';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;

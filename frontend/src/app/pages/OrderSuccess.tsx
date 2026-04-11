@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, Package, ArrowRight, Download, Share2 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { useEffect } from 'react';
 import confetti from 'canvas-confetti';
