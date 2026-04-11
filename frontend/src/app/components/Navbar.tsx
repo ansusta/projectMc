@@ -46,7 +46,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
   };
 
   return (
-    <nav className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+    <nav className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border shadow-soft">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
@@ -55,10 +55,10 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
             </button>
             <button onClick={() => navigate('/')} className="flex items-center gap-2 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-primary opacity-50 blur-md rounded-full group-hover:opacity-100 transition-opacity"></div>
-                <Package className="w-8 h-8 text-white relative z-10" />
+                <div className="absolute inset-0 bg-primary opacity-30 blur-md rounded-full group-hover:opacity-50 transition-opacity"></div>
+                <Package className="w-8 h-8 text-primary relative z-10" />
               </div>
-              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">NEXUS</span>
+              <span className="text-xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">NEXUS</span>
             </button>
           </div>
 
@@ -70,7 +70,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
                 placeholder="Rechercher dans la matrice..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/50 focus-visible:bg-white/10 transition-all rounded-xl"
+                className="pl-10 bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/50 focus-visible:bg-secondary transition-all rounded-xl"
               />
             </div>
           </form>
@@ -105,11 +105,11 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-white/10">
+                <Button variant="ghost" size="icon" className="hover:bg-accent ring-offset-background transition-colors">
                   <Languages className="w-5 h-5 text-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background/90 backdrop-blur-xl border-white/10">
+              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border">
                 <DropdownMenuItem className="focus:bg-primary/20 cursor-pointer">Français (FR)</DropdownMenuItem>
                 <DropdownMenuItem className="focus:bg-primary/20 cursor-pointer">English (EN)</DropdownMenuItem>
                 <DropdownMenuItem className="focus:bg-primary/20 cursor-pointer text-right">العربية (AR)</DropdownMenuItem>
@@ -119,8 +119,8 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2 hover:bg-white/10 rounded-full pr-4 pl-1">
-                    <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center border border-primary/30 shadow-[0_0_10px_rgba(139,92,246,0.2)]">
+                <Button variant="ghost" className="gap-2 hover:bg-accent rounded-full pr-4 pl-1 transition-all">
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 group-hover:border-primary/40 transition-colors">
                       <User className="w-4 h-4 text-primary" />
                     </div>
                     <span className="hidden md:inline font-medium text-foreground">{user.name}</span>
@@ -176,7 +176,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-2">
-                <Button variant="ghost" onClick={() => navigate('/login')} className="hover:bg-white/5">
+                <Button variant="ghost" onClick={() => navigate('/login')} className="hover:bg-accent">
                   Connexion
                 </Button>
                 <Button variant="glow" onClick={() => navigate('/register')}>
@@ -198,7 +198,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-50 border-gray-200"
+              className="pl-10 bg-secondary border-border"
             />
           </div>
         </form>
