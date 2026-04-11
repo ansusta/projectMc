@@ -8,11 +8,11 @@ import { User, Mail, Shield, ArrowLeft, Loader2, Key } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export function ProfileSettings() {
-  const { user, refreshUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: user?.nomUtilisateur || '',
+    username: user?.name || '',
     email: user?.email || '',
   });
 
@@ -26,8 +26,14 @@ export function ProfileSettings() {
         nom_utilisateur: formData.username,
         email: formData.email,
       });
+
+      // Update local state and context
+      updateUser({
+        name: formData.username,
+        email: formData.email,
+      });
+
       toast.success('Profil synchronisé avec succès.');
-      await refreshUser();
     } catch (err: any) {
       toast.error(err.message || 'Erreur lors de la synchronisation.');
     } finally {
@@ -40,7 +46,7 @@ export function ProfileSettings() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Button 
           variant="ghost" 
-          className="mb-8 -ml-4 hover:bg-white/5 opacity-70"
+          className="mb-8 -ml-4 hover:bg-muted opacity-70"
           onClick={() => navigate('/customer/dashboard')}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -62,7 +68,7 @@ export function ProfileSettings() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl"
+              className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-8 shadow-soft"
             >
               <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
                 <User className="w-5 h-5 text-primary" />
@@ -77,7 +83,7 @@ export function ProfileSettings() {
                       type="text" 
                       value={formData.username}
                       onChange={(e) => setFormData({...formData, username: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                      className="w-full bg-muted/30 border border-border rounded-xl px-10 py-3 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono text-foreground"
                       required
                     />
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -91,7 +97,7 @@ export function ProfileSettings() {
                       type="email" 
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono"
+                      className="w-full bg-muted/30 border border-border rounded-xl px-10 py-3 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono text-foreground"
                       required
                     />
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -108,7 +114,7 @@ export function ProfileSettings() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8"
+              className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-8 shadow-soft"
             >
               <h2 className="text-xl font-bold mb-8 flex items-center gap-3 text-red-400">
                 <Key className="w-5 h-5" />
@@ -125,15 +131,15 @@ export function ProfileSettings() {
 
           {/* Sidebar Status */}
           <div className="space-y-6">
-            <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 text-center">
+            <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-8 text-center shadow-soft">
               <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6 relative">
                  <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse"></div>
-                 <span className="text-3xl font-black text-primary relative z-10">{user?.nomUtilisateur?.[0].toUpperCase()}</span>
+                 <span className="text-3xl font-black text-primary relative z-10">{user?.name?.[0].toUpperCase()}</span>
               </div>
-              <h3 className="text-xl font-bold mb-1">{user?.nomUtilisateur}</h3>
+              <h3 className="text-xl font-bold mb-1">{user?.name}</h3>
               <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest">{user?.role}</p>
               
-              <div className="mt-8 space-y-4 pt-8 border-t border-white/5">
+              <div className="mt-8 space-y-4 pt-8 border-t border-border">
                 <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
                     <span>Statut Compte</span>
                     <span className="text-green-500 font-bold">Actif</span>

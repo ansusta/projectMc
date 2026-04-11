@@ -15,13 +15,13 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon: Icon, trend, description, className }: StatCardProps) {
   return (
-    <Card className={`p-8 border-white/5 bg-card/10 backdrop-blur-xl group hover:border-primary/30 transition-all duration-500 overflow-hidden relative ${className}`}>
+    <Card className={`p-8 border-border bg-card/40 backdrop-blur-xl group hover:border-primary/30 transition-all duration-500 overflow-hidden relative shadow-soft ${className}`}>
       <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
 
       <div className="flex items-start justify-between relative z-10">
         <div className="flex-1">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-3 opacity-60">{title}</p>
-          <p className="text-4xl font-black text-white mb-4 tabular-nums selection:bg-primary/30">{value}</p>
+          <p className="text-4xl font-black text-foreground mb-4 tabular-nums selection:bg-primary/30">{value}</p>
 
           <div className="flex flex-col gap-2">
             {trend && (
@@ -41,7 +41,7 @@ export function StatCard({ title, value, icon: Icon, trend, description, classNa
           </div>
         </div>
 
-        <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 group-hover:border-primary/50 group-hover:bg-primary/10 transition-all transform group-hover:rotate-12 duration-500 shadow-inner">
+        <div className="w-14 h-14 bg-muted/20 rounded-2xl flex items-center justify-center border border-border group-hover:border-primary/50 group-hover:bg-primary/10 transition-all transform group-hover:rotate-12 duration-500 shadow-sm">
           <Icon className="w-7 h-7 text-primary group-hover:text-white transition-colors" />
         </div>
       </div>

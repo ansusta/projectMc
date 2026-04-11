@@ -35,8 +35,8 @@ export function VendorDashboard() {
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
               <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Secteur Marchand Alpha</span>
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2">Centre de Distribution</h1>
-            <p className="text-muted-foreground text-lg">Gérez vos modules et optimisez votre flux de données</p>
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-foreground">Centre de Distribution</h1>
+            <p className="text-muted-foreground text-lg italic">Gerez vos modules et optimisez votre flux de données</p>
           </div>
           <Button variant="glow" className="h-14 px-8 text-lg font-bold">
             <Plus className="w-5 h-5 mr-3" />
@@ -51,47 +51,47 @@ export function VendorDashboard() {
             value={`€${revenue.toLocaleString()}`}
             icon={DollarSign}
             trend={{ value: 12.5, isPositive: true }}
-            className="bg-card/20 backdrop-blur-xl border-white/5"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
             title="Inventaire Nexus"
             value={activeProducts}
             icon={Package}
             trend={{ value: 8, isPositive: true }}
-            className="bg-card/20 backdrop-blur-xl border-white/5"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
             title="Signaux de Vente"
             value={pendingOrders}
             icon={ShoppingCart}
             description="Transferts requis"
-            className="bg-card/20 backdrop-blur-xl border-white/5"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
             title="Courbe d'Expansion"
             value="+23.5%"
             icon={TrendingUp}
             trend={{ value: 4.2, isPositive: true }}
-            className="bg-card/20 backdrop-blur-xl border-white/5"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
           {/* Sales Chart */}
-          <div className="bg-card/20 backdrop-blur-xl rounded-3xl border border-white/5 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border p-8 shadow-soft">
             <h2 className="text-2xl font-bold tracking-tight mb-8">Fluctuations des Ventes</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={salesData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                <XAxis dataKey="month" stroke="#ffffff50" axisLine={false} tickLine={false} />
-                <YAxis stroke="#ffffff50" axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                <XAxis dataKey="month" stroke="#888888" axisLine={false} tickLine={false} fontSize={12} />
+                <YAxis stroke="#888888" axisLine={false} tickLine={false} fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1a0b2e',
-                    border: '1px solid #ffffff10',
+                    backgroundColor: 'var(--card)',
+                    border: '1px solid var(--border)',
                     borderRadius: '16px',
                     backdropFilter: 'blur(20px)',
-                    color: 'white'
+                    color: 'var(--foreground)'
                   }}
                   itemStyle={{ color: '#8b5cf6' }}
                 />
@@ -108,20 +108,20 @@ export function VendorDashboard() {
           </div>
 
           {/* Top Products Chart */}
-          <div className="bg-card/20 backdrop-blur-xl rounded-3xl border border-white/5 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border p-8 shadow-soft">
             <h2 className="text-2xl font-bold tracking-tight mb-8">Efficacité des Modules</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topProductsData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                <XAxis dataKey="name" stroke="#ffffff50" axisLine={false} tickLine={false} />
-                <YAxis stroke="#ffffff50" axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                <XAxis dataKey="name" stroke="#888888" axisLine={false} tickLine={false} fontSize={12} />
+                <YAxis stroke="#888888" axisLine={false} tickLine={false} fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1a0b2e',
-                    border: '1px solid #ffffff10',
+                    backgroundColor: 'var(--card)',
+                    border: '1px solid var(--border)',
                     borderRadius: '16px',
                     backdropFilter: 'blur(20px)',
-                    color: 'white'
+                    color: 'var(--foreground)'
                   }}
                 />
                 <Bar dataKey="sales" fill="#8b5cf6" radius={[12, 12, 0, 0]} />
@@ -131,8 +131,8 @@ export function VendorDashboard() {
         </div>
 
         {/* Recent Orders */}
-        <div className="bg-card/20 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-          <div className="p-8 border-b border-white/5 bg-white/5">
+        <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border overflow-hidden shadow-soft">
+          <div className="p-8 border-b border-border bg-muted/30">
             <h2 className="text-2xl font-bold tracking-tight">Signal des Transactions</h2>
             <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">Base de données synchronisée</p>
           </div>
@@ -148,9 +148,9 @@ export function VendorDashboard() {
                   <th className="px-8 py-4 text-left text-xs font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-border">
                 {mockOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-white/5 transition-colors group">
+                  <tr key={order.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="px-8 py-6 whitespace-nowrap">
                       <div className="font-bold text-foreground group-hover:text-primary transition-colors">{order.id}</div>
                     </td>

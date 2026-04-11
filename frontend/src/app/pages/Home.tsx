@@ -176,8 +176,8 @@ export function Home() {
 
         <div className="flex items-end justify-between mb-12 relative z-10">
           <div>
-            <h2 className="text-4xl font-extrabold text-text-primary mb-3 tracking-tight">Recommandations IA</h2>
-            <p className="text-lg text-text-secondary">Sélection calculée pour des performances optimales</p>
+            <h2 className="text-4xl font-extrabold text-foreground mb-3 tracking-tight">recommandations pour vous</h2>
+            <p className="text-lg text-muted-foreground">recommandations pour vous</p>
           </div>
           <Button variant="outline" onClick={() => navigate('/catalog')} className="hidden sm:flex border-border hover:border-primary/50 text-foreground hover:bg-primary/5">
             Explorer le terminal

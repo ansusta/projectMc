@@ -31,7 +31,7 @@ export function CustomerOrders() {
         <div className="mb-10">
           <Button 
             variant="ghost" 
-            className="mb-6 -ml-4 hover:bg-white/5 opacity-70"
+            className="mb-6 -ml-4 hover:bg-muted opacity-70"
             onClick={() => navigate('/customer/dashboard')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -54,7 +54,7 @@ export function CustomerOrders() {
                 <input 
                   type="text" 
                   placeholder="Rechercher une commande..."
-                  className="bg-card/20 border border-white/5 rounded-xl pl-10 pr-4 py-2 w-full md:w-64 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono text-sm"
+                  className="bg-card/40 border border-border rounded-xl pl-10 pr-4 py-2 w-full md:w-64 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono text-sm"
                 />
               </div>
               <Button variant="glass" size="icon">
@@ -73,12 +73,12 @@ export function CustomerOrders() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="bg-card/10 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all group"
+                className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl overflow-hidden hover:border-primary/20 transition-all group shadow-soft"
               >
                 <div className="p-6 md:p-8">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                      <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center border border-border">
                         <Package className="w-6 h-6 text-primary" />
                       </div>
                       <div>
@@ -91,9 +91,9 @@ export function CustomerOrders() {
                       <Badge className={`${statusColors[order.status]} border font-mono uppercase tracking-widest text-[10px] px-4 py-1.5 rounded-full`}>
                         {statusLabels[order.status]}
                       </Badge>
-                      <div className="text-right">
+                      <div className="text-right border-l border-border/50 pl-4">
                         <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest mb-1">Montant Total</p>
-                        <p className="text-2xl font-black tabular-nums">€{order.total.toLocaleString()}</p>
+                        <p className="text-2xl font-black tabular-nums text-foreground">€{order.total.toLocaleString()}</p>
                       </div>
                     </div>
                   </div>
@@ -101,19 +101,19 @@ export function CustomerOrders() {
                   {/* Items list */}
                   <div className="flex flex-wrap gap-4 mb-8">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-4 bg-white/5 rounded-2xl p-3 border border-white/5 hover:border-white/10 transition-colors cursor-pointer group/item">
-                        <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                      <div key={idx} className="flex items-center gap-4 bg-muted/30 rounded-xl p-3 border border-border hover:border-primary/20 transition-colors cursor-pointer group/item">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-border/50 shrink-0">
                           <img src={item.image} alt={item.productName} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500" />
                         </div>
                         <div className="hidden sm:block">
-                          <p className="font-bold text-sm leading-tight text-foreground/90">{item.productName}</p>
+                          <p className="font-bold text-sm leading-tight text-foreground">{item.productName}</p>
                           <p className="text-xs text-muted-foreground mt-1">Qté: {item.quantity} • €{item.price}</p>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                  <div className="flex items-center justify-between pt-6 border-t border-border">
                     <p className="text-xs font-mono text-muted-foreground uppercase tracking-[0.2em]">
                       Destination: {order.customer} // Localisation Certifiée
                     </p>
@@ -126,7 +126,7 @@ export function CustomerOrders() {
               </motion.div>
             ))
           ) : (
-            <div className="text-center py-20 bg-card/10 rounded-3xl border border-dashed border-white/10">
+            <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border shadow-inner">
               <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-20" />
               <p className="text-xl font-bold text-muted-foreground">Aucune commande détectée dans ce secteur</p>
               <Button variant="glow" size="lg" className="mt-6" onClick={() => navigate('/catalog')}>

@@ -22,7 +22,7 @@ export function CustomerFavorites() {
         <div className="mb-12">
           <Button 
             variant="ghost" 
-            className="mb-6 -ml-4 hover:bg-white/5 opacity-70"
+            className="mb-6 -ml-4 hover:bg-muted opacity-70"
             onClick={() => navigate('/customer/dashboard')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -55,13 +55,13 @@ export function CustomerFavorites() {
         </div>
 
         {/* Search & Stats Bar */}
-        <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 mb-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-soft">
           <div className="flex items-center gap-6">
             <div className="text-center md:text-left">
               <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-1">Capacité</p>
               <p className="text-xl font-bold">{favoriteProducts.length} / 50</p>
             </div>
-            <div className="w-px h-10 bg-white/5 hidden md:block"></div>
+            <div className="w-px h-10 bg-border hidden md:block"></div>
             <div className="text-center md:text-left">
               <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-1">Dernière MaJ</p>
               <p className="text-xl font-bold">Synchronisé</p>
@@ -69,11 +69,11 @@ export function CustomerFavorites() {
           </div>
           
           <div className="relative group/search w-full md:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within/search:text-primary transition-colors" />
             <input 
               type="text" 
               placeholder="Filtrer mes favoris..."
-              className="bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono text-sm text-foreground"
+              className="bg-muted/40 border border-border rounded-xl pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-mono text-sm text-foreground"
             />
           </div>
         </div>
@@ -97,8 +97,8 @@ export function CustomerFavorites() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-32 bg-card/10 rounded-3xl border border-dashed border-white/10">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/5 mb-6">
+          <div className="text-center py-32 bg-muted/20 rounded-2xl border border-dashed border-border shadow-inner">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted/50 mb-6 border border-border">
               <Heart className="w-10 h-10 text-muted-foreground opacity-20" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">Mémoire vide</h2>

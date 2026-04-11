@@ -81,7 +81,7 @@ export function AddressManager() {
         <div className="mb-12">
           <Button 
             variant="ghost" 
-            className="mb-6 -ml-4 hover:bg-white/5 opacity-70"
+            className="mb-6 -ml-4 hover:bg-muted opacity-70"
             onClick={() => navigate('/customer/dashboard')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -116,11 +116,11 @@ export function AddressManager() {
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="h-32 bg-white/5 rounded-3xl animate-pulse border border-white/5"></div>
+                  <div key={i} className="h-32 bg-muted/30 rounded-2xl animate-pulse border border-border"></div>
                 ))}
               </div>
             ) : adresses.length === 0 ? (
-              <div className="text-center py-20 bg-card/10 rounded-3xl border border-dashed border-white/10">
+              <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border shadow-inner">
                 <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-20" />
                 <p className="text-xl font-bold text-muted-foreground">Aucun secteur enregistré</p>
                 <Button variant="glass" className="mt-6" onClick={() => setShowAddForm(true)}>
@@ -137,11 +137,11 @@ export function AddressManager() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-6 group hover:border-primary/30 transition-all shadow-xl"
+                      className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 group hover:border-primary/30 transition-all shadow-soft"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex gap-5">
-                          <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary/10 group-hover:border-primary/20 transition-colors">
+                          <div className="w-14 h-14 rounded-xl bg-muted/50 flex items-center justify-center border border-border group-hover:bg-primary/10 group-hover:border-primary/20 transition-colors">
                             <Home className="w-6 h-6 text-primary" />
                           </div>
                           <div>
@@ -149,7 +149,7 @@ export function AddressManager() {
                             <p className="text-muted-foreground font-mono text-sm uppercase tracking-wider">{addr.code_postal} {addr.ville}</p>
                             <p className="text-sm text-muted-foreground/60 mt-1">{addr.pays}</p>
                             {addr.complement_adresse && (
-                              <p className="text-xs italic text-primary/70 mt-3 px-3 py-1 bg-primary/5 rounded-lg border border-primary/10 inline-block">
+                              <p className="text-xs italic text-primary mt-3 px-3 py-1 bg-primary/10 rounded-lg border border-primary/20 inline-block">
                                 {addr.complement_adresse}
                               </p>
                             )}
@@ -179,7 +179,7 @@ export function AddressManager() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-card/30 backdrop-blur-2xl border border-primary/20 rounded-3xl p-8 sticky top-12 shadow-[0_0_50px_rgba(139,92,246,0.1)]"
+                    className="bg-card/50 backdrop-blur-2xl border border-primary/20 rounded-2xl p-8 sticky top-12 shadow-glow"
                 >
                     <h2 className="text-2xl font-bold mb-8">Nouveau Secteur</h2>
                     <form onSubmit={handleAddAddress} className="space-y-4">
@@ -270,7 +270,7 @@ export function AddressManager() {
                     </form>
                 </motion.div>
               ) : (
-                <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 sticky top-12">
+                <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-8 sticky top-12 shadow-soft">
                    <h2 className="text-xl font-bold mb-6">Informations</h2>
                    <div className="space-y-6">
                       <div className="flex items-start gap-4">

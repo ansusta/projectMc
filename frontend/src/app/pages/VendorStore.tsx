@@ -59,13 +59,13 @@ export const VendorStore = () => {
 
   if (!store && !loading) {
     return (
-      <div className="p-8 text-center bg-gray-900 min-h-screen pt-24 text-white">
-        <AlertCircle className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
+      <div className="p-8 text-center bg-card/20 rounded-2xl border border-border min-h-screen pt-24 text-foreground">
+        <AlertCircle className="w-16 h-16 text-primary mx-auto mb-4" />
         <h2 className="text-2xl font-mono mb-2 tracking-widest">MAGASIN NON TROUVÉ</h2>
-        <p className="text-gray-400 font-mono mb-8 opacity-70 italic small uppercase">
+        <p className="text-muted-foreground font-mono mb-8 opacity-70 italic small uppercase">
             Aucun module de vente n'est associé à cette signature id numérique
         </p>
-        <button className="px-6 py-2 bg-cyan-600/20 border border-cyan-500/50 text-cyan-400 rounded-sm hover:bg-cyan-600/30 transition-all font-mono">
+        <button className="px-6 py-2 bg-primary/20 border border-primary/50 text-primary rounded-sm hover:bg-primary/30 transition-all font-mono">
             INITIALISER LE MODULE MAGASIN
         </button>
       </div>
@@ -73,19 +73,19 @@ export const VendorStore = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-black">
+    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header Section */}
-        <div className="relative overflow-hidden rounded-sm border border-cyan-900/30 bg-gray-900/40 p-8">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card/40 p-8 shadow-soft">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Store size={120} className="text-cyan-500" />
           </div>
           <div className="relative z-10">
-            <h1 className="text-3xl font-mono text-white tracking-widest flex items-center gap-3">
-              <span className="w-2 h-8 bg-cyan-500"></span>
+            <h1 className="text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
+              <span className="w-2 h-8 bg-primary"></span>
               CONFIGURATION MAGASIN
             </h1>
-            <p className="mt-2 text-cyan-500/60 font-mono text-sm tracking-tight uppercase">
+            <p className="mt-2 text-primary/60 font-mono text-sm tracking-tight uppercase">
               Gestion des paramètres de l'interface de vente - ID: {store?.id.substring(0, 8)}
             </p>
           </div>
@@ -101,28 +101,28 @@ export const VendorStore = () => {
               animate={{ opacity: 1, y: 0 }}
               className="md:col-span-2 space-y-6"
             >
-              <div className="bg-gray-900/40 border border-cyan-900/20 p-6 rounded-sm backdrop-blur-sm">
-                <h3 className="text-white font-mono mb-6 flex items-center gap-2 text-sm tracking-wider opacity-80 uppercase">
-                  <Layout size={16} className="text-cyan-500" /> Informations Générales
+              <div className="bg-card/40 border border-border p-6 rounded-2xl backdrop-blur-md shadow-soft">
+                <h3 className="text-foreground font-mono mb-6 flex items-center gap-2 text-sm tracking-wider opacity-80 uppercase">
+                  <Layout size={16} className="text-primary" /> Informations Générales
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-mono text-cyan-500/70 uppercase mb-1">Nom du magasin</label>
+                    <label className="block text-xs font-mono text-muted-foreground uppercase mb-1">Nom du magasin</label>
                     <input 
                       type="text"
                       value={store?.nom_magasin || ''}
                       onChange={(e) => setStore(s => s ? {...s, nom_magasin: e.target.value} : null)}
-                      className="w-full bg-black/50 border border-cyan-900/30 rounded-sm px-4 py-2 text-white font-mono focus:outline-none focus:border-cyan-500/50 transition-colors"
+                      className="w-full bg-input border border-border rounded-xl px-4 py-2 text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono text-cyan-500/70 uppercase mb-1">Description / Bio</label>
+                    <label className="block text-xs font-mono text-muted-foreground uppercase mb-1">Description / Bio</label>
                     <textarea 
                       rows={4}
                       value={store?.description || ''}
                       onChange={(e) => setStore(s => s ? {...s, description: e.target.value} : null)}
-                      className="w-full bg-black/50 border border-cyan-900/30 rounded-sm px-4 py-2 text-white font-mono focus:outline-none focus:border-cyan-500/50 transition-colors resize-none"
+                      className="w-full bg-input border border-border rounded-xl px-4 py-2 text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
                     />
                   </div>
                 </div>
@@ -136,31 +136,31 @@ export const VendorStore = () => {
               transition={{ delay: 0.1 }}
               className="space-y-6"
             >
-              <div className="bg-gray-900/40 border border-cyan-900/20 p-6 rounded-sm backdrop-blur-sm">
-                <h3 className="text-white font-mono mb-6 flex items-center gap-2 text-sm tracking-wider opacity-80 uppercase">
-                  <ImageIcon size={16} className="text-cyan-500" /> Identité Visuelle
+              <div className="bg-card/40 border border-border p-6 rounded-2xl backdrop-blur-md shadow-soft">
+                <h3 className="text-foreground font-mono mb-6 flex items-center gap-2 text-sm tracking-wider opacity-80 uppercase">
+                  <ImageIcon size={16} className="text-primary" /> Identité Visuelle
                 </h3>
                 
                 <div className="space-y-6">
                   <div className="text-center">
-                    <div className="w-24 h-24 mx-auto bg-black border border-cyan-900/30 rounded-full mb-3 flex items-center justify-center overflow-hidden">
+                    <div className="w-24 h-24 mx-auto bg-muted rounded-full mb-3 flex items-center justify-center overflow-hidden border border-border shadow-inner">
                       {store?.photo_url ? (
                         <img src={store.photo_url} alt="Logo" className="w-full h-full object-cover" />
                       ) : (
-                        <Store size={32} className="text-cyan-900" />
+                        <Store size={32} className="text-muted-foreground/30" />
                       )}
                     </div>
-                    <button type="button" className="text-[10px] font-mono text-cyan-500 hover:text-cyan-400 uppercase tracking-tighter">
+                    <button type="button" className="text-[10px] font-mono text-primary hover:text-primary transition-colors uppercase tracking-tighter">
                       Modifier le logo
                     </button>
                   </div>
 
-                  <div className="p-3 border border-dashed border-cyan-900/30 rounded-sm bg-black/40">
-                    <label className="block text-[10px] font-mono text-cyan-500/40 uppercase mb-2">Bannière Storefront</label>
-                    <div className="h-20 bg-gray-800/50 rounded-sm flex items-center justify-center">
-                      <ImageIcon size={20} className="text-cyan-900" />
+                  <div className="p-3 border border-dashed border-border rounded-xl bg-muted/40">
+                    <label className="block text-[10px] font-mono text-muted-foreground/60 uppercase mb-2">Bannière Storefront</label>
+                    <div className="h-20 bg-muted rounded-xl flex items-center justify-center border border-border/50">
+                      <ImageIcon size={20} className="text-muted-foreground/30" />
                     </div>
-                    <button type="button" className="w-full mt-2 text-[10px] font-mono text-cyan-500 hover:text-cyan-400 uppercase tracking-tighter">
+                    <button type="button" className="w-full mt-2 text-[10px] font-mono text-primary hover:text-primary transition-colors uppercase tracking-tighter">
                       Importer une bannière
                     </button>
                   </div>
@@ -170,13 +170,13 @@ export const VendorStore = () => {
           </div>
 
           {/* Action Footer */}
-          <div className="flex justify-end pt-4 border-t border-cyan-900/20">
+          <div className="flex justify-end pt-4 border-t border-border">
             <button
               disabled={saving}
-              className="flex items-center gap-2 px-8 py-3 bg-cyan-600/10 border border-cyan-500/50 text-cyan-400 rounded-sm hover:bg-cyan-600/20 transition-all font-mono uppercase tracking-widest text-sm disabled:opacity-50"
+              className="flex items-center gap-2 px-8 py-3 bg-primary/10 border border-primary/50 text-primary rounded-xl hover:bg-primary/20 transition-all font-mono uppercase tracking-widest text-sm disabled:opacity-50 shadow-soft"
             >
               {saving ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-cyan-500"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-primary"></div>
               ) : (
                 <Save size={18} />
               )}

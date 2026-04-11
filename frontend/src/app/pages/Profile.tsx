@@ -55,10 +55,10 @@ export function Profile() {
     return (
         <div className="min-h-screen bg-background text-foreground transition-colors duration-300 pb-20">
             {/* Profile Hero Header */}
-            <div className="relative h-48 md:h-64 bg-gradient-to-r from-primary/20 via-primary/5 to-background border-b border-white/5 overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.15),transparent_50%)]"></div>
+            <div className="relative h-48 md:h-64 bg-gradient-to-r from-primary/20 via-primary/5 to-background border-b border-border overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary),0.1),transparent_50%)]"></div>
                 <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 md:left-24 md:translate-x-0">
-                    <div className="w-32 h-32 md:w-40 md:h-40 bg-background rounded-full p-1.5 shadow-2xl border border-white/10">
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-background rounded-full p-1.5 shadow-2xl border border-border">
                         <div className="w-full h-full bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
                             <img
                                 src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`}
@@ -83,19 +83,19 @@ export function Profile() {
                             </CardHeader>
                             <CardContent className="space-y-6 py-6">
                                 <div className="space-y-3">
-                                    <div className="flex items-center gap-3 text-sm font-medium text-text-primary">
+                                    <div className="flex items-center gap-3 text-sm font-medium text-foreground">
                                         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                                             <Shield className="w-4 h-4" />
                                         </div>
                                         <span>Statut du compte : Vérifié</span>
                                     </div>
-                                    <div className="flex items-center gap-3 text-sm font-medium text-text-primary">
+                                    <div className="flex items-center gap-3 text-sm font-medium text-foreground">
                                         <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
                                             <CheckCircle2 className="w-4 h-4" />
                                         </div>
                                         <span>Membre depuis : Décembre 2024</span>
                                     </div>
-                                    <div className="flex items-center gap-3 text-sm font-medium text-text-primary">
+                                    <div className="flex items-center gap-3 text-sm font-medium text-foreground">
                                         <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
                                             <Mail className="w-4 h-4" />
                                         </div>
@@ -103,7 +103,7 @@ export function Profile() {
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter className="pt-6 border-t border-white/5">
+                            <CardFooter className="pt-6 border-t border-border">
                                 <Button
                                     variant="outline"
                                     className="w-full border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
@@ -122,7 +122,7 @@ export function Profile() {
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary/50 to-transparent"></div>
                             <CardHeader className="pb-8">
                                 <CardTitle className="text-2xl font-bold">Éditer le profil</CardTitle>
-                                <CardDescription className="text-text-secondary">
+                                <CardDescription className="text-muted-foreground">
                                     Gérez vos informations de compte et vos préférences de contact.
                                 </CardDescription>
                             </CardHeader>
@@ -159,7 +159,7 @@ export function Profile() {
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 border-t border-white/5">
+                                    <div className="pt-6 border-t border-border">
                                         <Button type="submit" className="h-12 px-12 text-base font-bold shadow-glow hover:shadow-glow-lg transition-all rounded-xl" disabled={isUpdating}>
                                             {isUpdating ? (
                                                 <>

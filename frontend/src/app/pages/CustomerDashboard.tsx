@@ -37,8 +37,8 @@ export function CustomerDashboard() {
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
             <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Système Operational</span>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">Interface Client</h1>
-          <p className="text-muted-foreground text-lg">Bienvenue dans votre centre de contrôle Nexus</p>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-foreground">Interface Client</h1>
+          <p className="text-muted-foreground text-lg italic">Bienvenue dans votre centre de contrôle Nexus</p>
         </div>
 
         {/* Stats */}
@@ -48,36 +48,36 @@ export function CustomerDashboard() {
             value={mockOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length}
             icon={Package}
             trend={{ value: 12, isPositive: true }}
-            className="bg-card/20 backdrop-blur-xl border-white/5 shadow-none"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
             title="Flux de Crédits"
             value={`€${totalSpent.toLocaleString()}`}
             icon={ShoppingBag}
             trend={{ value: 8, isPositive: true }}
-            className="bg-card/20 backdrop-blur-xl border-white/5 shadow-none"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
             title="Modules Favoris"
             value="23"
             icon={Heart}
             description="Unités mémorisées"
-            className="bg-card/20 backdrop-blur-xl border-white/5 shadow-none"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
             title="Index Fidélité"
             value="1,245"
             icon={TrendingUp}
             trend={{ value: 15, isPositive: true }}
-            className="bg-card/20 backdrop-blur-xl border-white/5 shadow-none"
+            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Recent Orders */}
           <div className="lg:col-span-2">
-            <div className="bg-card/20 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-              <div className="p-8 border-b border-white/5 bg-white/5">
+            <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border overflow-hidden shadow-soft">
+              <div className="p-8 border-b border-border bg-muted/30">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold tracking-tight">Signal des Commandes</h2>
@@ -88,9 +88,9 @@ export function CustomerDashboard() {
                   </Button>
                 </div>
               </div>
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-border">
                 {recentOrders.map((order) => (
-                  <div key={order.id} className="p-8 hover:bg-white/5 transition-all group">
+                  <div key={order.id} className="p-8 hover:bg-muted/30 transition-all group">
                     <div className="flex items-start justify-between mb-6">
                       <div>
                         <p className="font-bold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">{order.id}</p>
@@ -102,7 +102,7 @@ export function CustomerDashboard() {
                     </div>
                     <div className="flex items-center gap-4 mb-6">
                       {order.items.map((item, idx) => (
-                        <div key={idx} className="relative group/item overflow-hidden rounded-xl border border-white/5 w-20 h-20">
+                        <div key={idx} className="relative group/item overflow-hidden rounded-xl border border-border w-20 h-20 shadow-sm">
                           <img
                             src={item.image}
                             alt={item.productName}
@@ -125,7 +125,7 @@ export function CustomerDashboard() {
 
           {/* Quick Actions */}
           <div className="space-y-8">
-            <div className="bg-card/30 backdrop-blur-2xl rounded-3xl border border-white/10 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            <div className="bg-card/40 backdrop-blur-2xl rounded-2xl border border-border p-8 shadow-soft">
               <h2 className="text-xl font-bold mb-6 tracking-tight">Protocoles Rapides</h2>
               <div className="space-y-4">
                 <Button
@@ -155,7 +155,7 @@ export function CustomerDashboard() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-primary to-primary-foreground/20 rounded-3xl p-8 relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-primary to-primary/60 rounded-2xl p-8 relative overflow-hidden group shadow-md">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-3xl rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700"></div>
               <h3 className="text-2xl font-black mb-3">OFFRE NEXUS</h3>
               <p className="text-white/80 text-sm mb-6 leading-relaxed">

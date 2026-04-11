@@ -56,15 +56,15 @@ export const VendorOrders = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-black">
+    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-6xl mx-auto space-y-8">
         
         <div>
-          <h1 className="text-3xl font-mono text-white tracking-widest flex items-center gap-3 italic">
-            <span className="w-1.5 h-10 bg-cyan-500"></span>
+          <h1 className="text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
+            <span className="w-1.5 h-10 bg-primary"></span>
             COMMANDES ENTRANTES
           </h1>
-          <p className="mt-1 text-cyan-500/50 font-mono text-xs uppercase tracking-tighter">
+          <p className="mt-1 text-primary/50 font-mono text-xs uppercase tracking-tighter">
             Traitement des flux logistiques et validation des transactions
           </p>
         </div>
@@ -81,14 +81,14 @@ export const VendorOrders = () => {
             >
               <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-sm bg-cyan-600/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-sm">
                     <ShoppingBag size={20} />
                   </div>
                   <div>
-                    <h3 className="text-white font-mono font-bold tracking-widest text-sm mb-1 uppercase">COMMANDE #{order.id.substring(0, 8)}</h3>
-                    <div className="flex items-center gap-4 text-[10px] font-mono text-cyan-500/40 uppercase">
+                    <h3 className="text-foreground font-mono font-bold tracking-widest text-sm mb-1 uppercase">COMMANDE #{order.id.substring(0, 8)}</h3>
+                    <div className="flex items-center gap-4 text-[10px] font-mono text-primary/40 uppercase">
                       <span>{new Date(order.date_commande).toLocaleDateString()}</span>
-                      <span className="w-1 h-1 bg-cyan-900 rounded-full"></span>
+                      <span className="w-1 h-1 bg-primary/20 rounded-full"></span>
                       <span>{order.items?.length || 0} ARTICLES</span>
                     </div>
                   </div>
@@ -99,28 +99,28 @@ export const VendorOrders = () => {
                     {order.statut}
                   </div>
                   
-                  <div className="text-right px-4">
-                    <p className="text-[10px] font-mono text-cyan-500/40 uppercase mb-1">Montant Total</p>
-                    <p className="text-xl font-mono text-white tracking-widest">{order.montant_total} <small className="text-xs">XDN</small></p>
+                  <div className="text-right px-4 border-l border-border/50">
+                    <p className="text-[10px] font-mono text-muted-foreground uppercase mb-1">Montant Total</p>
+                    <p className="text-xl font-mono text-foreground tracking-widest">{order.montant_total} <small className="text-xs">XDN</small></p>
                   </div>
 
                   <div className="flex items-center gap-2 ml-4">
                     <button 
                       onClick={() => updateStatus(order.id, 'En préparation')}
-                      className="p-2 bg-gray-900 border border-cyan-900/30 text-cyan-500 hover:border-cyan-500 transition-colors rounded-sm"
+                      className="p-2 bg-muted/30 border border-border text-primary hover:border-primary transition-colors rounded-lg shadow-sm"
                       title="Préparer"
                     >
                       <Clock size={16} />
                     </button>
                     <button 
                       onClick={() => updateStatus(order.id, 'Expédié')}
-                      className="p-2 bg-gray-900 border border-cyan-900/30 text-green-500 hover:border-green-500 transition-colors rounded-sm"
+                      className="p-2 bg-muted/30 border border-border text-green-500 hover:border-green-500 transition-colors rounded-lg shadow-sm"
                       title="Expédier"
                     >
                       <Truck size={16} />
                     </button>
                     <button 
-                      className="p-2 bg-gray-900 border border-cyan-900/30 text-white hover:border-cyan-500 transition-colors rounded-sm"
+                      className="p-2 bg-muted/30 border border-border text-foreground hover:border-primary transition-colors rounded-lg shadow-sm"
                       title="Détails"
                     >
                       <Eye size={16} />
@@ -132,10 +132,10 @@ export const VendorOrders = () => {
           ))}
 
           {orders.length === 0 && (
-            <div className="text-center py-24 bg-gray-900/20 border border-dashed border-cyan-900/30 rounded-sm">
-              <Clock size={48} className="mx-auto text-cyan-900 mb-4 animate-pulse" />
-              <h3 className="text-cyan-500 font-mono text-sm tracking-widest uppercase italic">Aucune commande en attente de traitement</h3>
-              <p className="text-cyan-500/30 font-mono text-[10px] mt-2 uppercase">Vigilance réseau active - En attente de signaux marchands</p>
+            <div className="text-center py-24 bg-muted/20 border border-dashed border-border rounded-2xl">
+              <Clock size={48} className="mx-auto text-muted-foreground/30 mb-4 animate-pulse" />
+              <h3 className="text-muted-foreground font-mono text-sm tracking-widest uppercase italic">Aucune commande en attente de traitement</h3>
+              <p className="text-muted-foreground/30 font-mono text-[10px] mt-2 uppercase">Vigilance réseau active - En attente de signaux marchands</p>
             </div>
           )}
         </div>
