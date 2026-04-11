@@ -75,7 +75,7 @@ export const router = createBrowserRouter([
     element: <Root><Legal /></Root>,
   },
   {
-    path: '/cart',
+    path: '/customer/cart',
     element: <Root><Cart /></Root>,
   },
   
@@ -89,23 +89,23 @@ export const router = createBrowserRouter([
     element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><ProfileSettings /></ProtectedRoute></Root>,
   },
   {
-    path: '/dashboard',
+    path: '/customer/dashboard',
     element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerDashboard /></ProtectedRoute></Root>,
   },
   {
-    path: '/orders',
+    path: '/customer/orders',
     element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerOrders /></ProtectedRoute></Root>,
   },
   {
-    path: '/orders/:id',
+    path: '/customer/orders/:id',
     element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><OrderDetails /></ProtectedRoute></Root>,
   },
   {
-    path: '/favorites',
+    path: '/customer/favorites',
     element: <Root><ProtectedRoute allowedRoles={['customer']}><CustomerFavorites /></ProtectedRoute></Root>,
   },
   {
-    path: '/addresses',
+    path: '/customer/addresses',
     element: <Root><ProtectedRoute allowedRoles={['customer']}><AddressManager /></ProtectedRoute></Root>,
   },
 

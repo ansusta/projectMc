@@ -34,16 +34,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restore user from localStorage on mount
+  // Skip auto-restoration as requested to ensure a fresh start
   useEffect(() => {
-    const stored = localStorage.getItem('auth_user');
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {
-        localStorage.removeItem('auth_user');
-      }
-    }
     setIsLoading(false);
   }, []);
 
