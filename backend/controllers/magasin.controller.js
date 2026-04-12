@@ -154,3 +154,18 @@ exports.suspendMagasin = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getPendingStores = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("magasin")
+      .select("*")
+      .eq("statut", "nonValide");
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(200).json({ stores: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

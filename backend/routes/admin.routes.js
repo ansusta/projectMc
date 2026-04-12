@@ -21,6 +21,14 @@ router.get("/stats", statsCtrl.getStats);
 // ── Predictions ───────────────────────────────────────────────
 router.get("/predictions", predictionsCtrl.getAllPredictions);
 
+// ── Users Management ─────────────────────────────────────────
+router.get("/users",          clientsCtrl.getAllClients);
+router.patch("/users/:id/role", clientsCtrl.updateClientStatut); 
+
+// ── Stores Management ─────────────────────────────────────────
+router.get("/stores/pending",   magasinsCtrl.getPendingStores);
+router.patch("/stores/:id/validate", magasinsCtrl.updateMagasinStatut);
+
 // ── Clients ───────────────────────────────────────────────────
 //router.get("/clients",                  clientsCtrl.getClients);
 //router.get("/clients/:id",              clientsCtrl.getClientById);

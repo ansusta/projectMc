@@ -95,8 +95,8 @@ exports.signInUser = async (req, res) => {
 
 exports.signOutUser = async (req, res) => {
   try {
-    // Sign out the user using their token (set in supabase client per request)
-    const { error } = await supabase.auth.admin.signOut(req.token);
+    // Standard sign out for the current user session
+    const { error } = await supabase.auth.signOut();
  
     if (error) return res.status(400).json({ error: error.message });
  

@@ -19,15 +19,15 @@ const catalogRoutes = require("./routes/catalog.routes");
 const app = express();
 const PORT = 5000;
 
+app.use(cors());
+app.use(express.json());
+
 app.use((req, res, next) => {
   console.log(` ${req.method} ${req.originalUrl}`);
   console.log(` Body:`, req.body ? JSON.stringify(req.body, null, 2) : 'EMPTY');
   console.log('---');
   next();
 });
-
-app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
   console.log(' ROOT ROUTE HIT');
@@ -50,16 +50,33 @@ app.use("/api/utilisateurs", (req, res, next) => {
 }, utilisateurRoutes);
 
 
-app.use("/api/magasin", magasinRoutes);
-app.use("/api/produit",produitRoutes);
-app.use("/api/panier",panierRoutes);
-app.use("/api/commande",commandeRoutes);
+app.use("/api/magasins", magasinRoutes);
+app.use("/api/magasin",  magasinRoutes);
+
+app.use("/api/produits", produitRoutes);
+app.use("/api/produit",  produitRoutes);
+
+app.use("/api/paniers",  panierRoutes);
+app.use("/api/panier",   panierRoutes);
+
+app.use("/api/commandes", commandeRoutes);
+app.use("/api/commande",  commandeRoutes);
+
 app.use("/api/favoris", favorisRoutes);
 app.use("/api/avis", avisRoutes);
-app.use("/api/notification", notificationRoutes);
-app.use("/api/signalement", signalementRoutes);
-app.use("/api/adresse", adresseRoutes);
-app.use("/api/prediction", predictionRoutes);
+
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/notification",  notificationRoutes);
+
+app.use("/api/signalements", signalementRoutes);
+app.use("/api/signalement",  signalementRoutes);
+
+app.use("/api/adresses", adresseRoutes);
+app.use("/api/adresse",  adresseRoutes);
+
+app.use("/api/predictions", predictionRoutes);
+app.use("/api/prediction",  predictionRoutes);
+
 app.use("/api/admin",         adminRoutes);
 app.use("/api/catalog", catalogRoutes);
 app.use((req, res) => {
