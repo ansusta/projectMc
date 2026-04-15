@@ -127,7 +127,6 @@ exports.createProduit = async (req, res) => {
     const { nom_produit, description, prix, qte_dispo, type_id, magasin_id } = req.body;
     
     // 2. Handle Cloudinary Image Upload
-    // If your route uses a multer middleware for Cloudinary, the URL will be in req.file.path
     let image_url = req.body.image_url || null; 
     if (req.file && req.file.path) {
         image_url = req.file.path;
@@ -152,7 +151,7 @@ exports.createProduit = async (req, res) => {
           magasin_id
         }
       ])
-      .select(); // .select() ensures Supabase returns the newly created item
+      .select(); 
 
     if (error) return res.status(400).json({ error: error.message });
 
