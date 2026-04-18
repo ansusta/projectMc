@@ -25,14 +25,14 @@ export function CheckoutShipping() {
       id: 'express',
       name: t('checkout.warpTransfer'),
       desc: t('checkout.warpTransferDesc'),
-      price: 9.99,
+      price: 1500,
       icon: Truck,
     },
     {
       id: 'nexus_prime',
       name: t('checkout.nexusPrimeInstant'),
       desc: t('checkout.nexusPrimeInstantDesc'),
-      price: 24.99,
+      price: 3500,
       icon: Zap,
     },
   ];
@@ -102,7 +102,7 @@ export function CheckoutShipping() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-black">{method.price === 0 ? t('cart.free') : method.price.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
+                      <p className="text-xl font-black">{method.price === 0 ? t('cart.free') : method.price.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</p>
                       {selectedMethod === method.id && <Check className="text-primary w-6 h-6 ml-auto mt-2" />}
                     </div>
                   </div>
@@ -120,7 +120,7 @@ export function CheckoutShipping() {
                 <div className="h-px bg-white/5"></div>
                 <div className="flex justify-between font-mono text-xs uppercase tracking-widest text-primary">
                   <span>{t('checkout.logisticFees')}</span>
-                  <span>{(selectedMethod === 'standard' ? 0 : shippingMethods.find(m => m.id === selectedMethod)?.price || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
+                  <span>{(selectedMethod === 'standard' ? 0 : shippingMethods.find(m => m.id === selectedMethod)?.price || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</span>
                 </div>
               </div>
               <Button 

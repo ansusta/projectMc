@@ -164,6 +164,35 @@ exports.getCommandeById = async (req, res) => {
   }
 };
 
+const restoreStock = async (commandeId) => {
+  try {
+    const { data: lignes, error: fetchError } = await supabase
+      .from("ligne_commande")
+      .select("id_produit, qte")
+      .eq("id_commande", commandeId);
+
+    if (fetchError || !lignes) return;
+
+    for (const ligne of lignes) {
+      // Get current stock
+      const { data: p, error: pErr } = await supabase
+        .from("produit")
+        .select("qte_dispo")
+        .eq("id", ligne.id_produit)
+        .single();
+      
+      if (!pErr && p) {
+        await supabase
+          .from("produit")
+          .update({ qte_dispo: p.qte_dispo + ligne.qte })
+          .eq("id", ligne.id_produit);
+      }
+    }
+  } catch (err) {
+    console.error("Stock restoration failed:", err);
+  }
+};
+
 exports.annulerCommande = async (req, res) => {
   try {
     const { id } = req.params;
@@ -177,7 +206,7 @@ exports.annulerCommande = async (req, res) => {
 
     if (fetchError || !commande) return res.status(404).json({ error: "Commande not found" });
 
-    if (commande.statut_commande !== "en_cours") {
+    if (commande.statut_commande !== "en_cours" && commande.statut_commande !== "acceptee") {
       return res.status(400).json({
         error: `Cannot cancel a commande with status "${commande.statut_commande}"`
       });
@@ -189,6 +218,9 @@ exports.annulerCommande = async (req, res) => {
       .eq("id", id);
 
     if (error) return res.status(400).json({ error: error.message });
+
+    // Restore Stock
+    await restoreStock(id);
 
     res.status(200).json({ message: "Commande annulée avec succès" });
   } catch (err) {
@@ -307,8 +339,10 @@ exports.getCommandesByVendeur = async (req, res) => {
       .single();
 
     if (magError || !magasin) {
+      console.log(`[getCommandesByVendeur] Vendor ${vendeurId} has no store associated.`);
       return res.status(200).json({ commandes: [] });
     }
+    console.log(`[getCommandesByVendeur] Vendor ${vendeurId} owns store ${magasin.id}`);
 
     // 2. Find products belonging to this store
     const { data: produits, error: prodError } = await supabase
@@ -317,6 +351,7 @@ exports.getCommandesByVendeur = async (req, res) => {
       .eq("id_magasin", magasin.id);
 
     if (prodError || !produits || produits.length === 0) {
+      console.log(`[getCommandesByVendeur] Store ${magasin.id} has no products.`);
       return res.status(200).json({ commandes: [] });
     }
 
@@ -333,6 +368,7 @@ exports.getCommandesByVendeur = async (req, res) => {
     }
 
     const commandeIds = [...new Set(lignes.map(l => l.id_commande))];
+    console.log(`[getCommandesByVendeur] Vendor ${vendeurId} has ${commandeIds.length} orders related to their products.`);
 
     // 4. Fetch full order data for those commande IDs
     const { data: commandes, error: cmdError } = await supabase
@@ -343,7 +379,7 @@ exports.getCommandesByVendeur = async (req, res) => {
         montant_total,
         date_commande,
         client:id_client (
-          utilisateur:id (nom_utilisateur, email)
+          utilisateur ( nom_utilisateur, email )
         ),
         adresse:id_adrs (ville, pays),
         ligne_commande (
@@ -358,13 +394,18 @@ exports.getCommandesByVendeur = async (req, res) => {
     if (cmdError) return res.status(400).json({ error: cmdError.message });
 
     // Flatten client info
-    const formatted = (commandes || []).map(c => ({
-      ...c,
-      statut: c.statut_commande,
-      client_nom: c.client?.utilisateur?.nom_utilisateur || "Client",
-      client_email: c.client?.utilisateur?.email || "",
-      items: c.ligne_commande || [],
-    }));
+    const formatted = (commandes || []).map(c => {
+      // Find the user info which might be nested differently depending on Supabase relations
+      const userInfo = c.client?.utilisateur?.[0] || c.client?.utilisateur || {};
+      
+      return {
+        ...c,
+        statut: c.statut_commande,
+        client_nom: userInfo.nom_utilisateur || "Client",
+        client_email: userInfo.email || "",
+        items: c.ligne_commande || [],
+      };
+    });
 
     res.status(200).json({ commandes: formatted });
   } catch (err) {
@@ -385,6 +426,19 @@ exports.updateStatutCommande = async (req, res) => {
       });
     }
 
+    // 1. Get current status to see if we need to restore stock
+    const { data: currentCmd, error: fetchError } = await supabase
+      .from("commande")
+      .select("statut_commande")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !currentCmd) {
+      console.error(`[updateStatutCommande] Fetch error for order ${id}:`, fetchError);
+      return res.status(404).json({ error: "Commande not found" });
+    }
+
+    // 2. Perform the update
     const { data, error } = await supabase
       .from("commande")
       .update({ statut_commande: statut })
@@ -392,11 +446,20 @@ exports.updateStatutCommande = async (req, res) => {
       .select()
       .single();
 
-    if (error) return res.status(400).json({ error: error.message });
-    if (!data) return res.status(404).json({ error: "Commande not found" });
+    if (error) {
+      console.error(`[updateStatutCommande] Update error for order ${id}:`, error);
+      return res.status(400).json({ error: error.message });
+    }
+
+    // 3. If transitioning to 'annulee' from a non-cancelled state, restore stock
+    if (statut === "annulee" && currentCmd.statut_commande !== "annulee") {
+      console.log(`[updateStatutCommande] Status changed to 'annulee' for order ${id}. Triggering stock restoration.`);
+      await restoreStock(id);
+    }
 
     res.status(200).json({ message: "Statut updated", commande: data });
   } catch (err) {
+    console.error(`[updateStatutCommande] System error:`, err);
     res.status(500).json({ error: err.message });
   }
 };

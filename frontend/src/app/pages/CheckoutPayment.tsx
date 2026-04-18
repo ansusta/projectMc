@@ -42,7 +42,7 @@ export function CheckoutPayment() {
 
     setIsProcessing(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       const res = await commandeService.passer(addressId, selectedMethod);
       toast.success(t('checkout.payment.bankAuthSuccess'));
       
@@ -168,16 +168,16 @@ export function CheckoutPayment() {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-muted-foreground text-sm">
                   <span>{t('cart.subtotal')}</span>
-                  <span>{cartTotal.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
+                  <span>{cartTotal.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground text-sm">
                   <span>{t('cart.shipping')}</span>
-                  <span>{shippingPrice.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
+                  <span>{shippingPrice.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</span>
                 </div>
                 <div className="h-px bg-white/5"></div>
                 <div className="flex justify-between text-2xl font-black text-primary">
                   <span>{t('cart.total')}</span>
-                  <span className="tabular-nums">{finalTotal.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
+                  <span className="tabular-nums">{finalTotal.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</span>
                 </div>
               </div>
 

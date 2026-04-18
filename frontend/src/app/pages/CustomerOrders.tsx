@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 const statusColors: Record<string, string> = {
   en_cours: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  acceptee: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
   completer: 'bg-green-500/20 text-green-400 border-green-500/30',
   annulee: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
@@ -198,7 +199,7 @@ export function CustomerOrders() {
                       {t('customerOrders.delivery')}: {order.adresse?.ville || t('customerOrders.unspecified')}, {order.adresse?.pays || ''}
                     </p>
                     <div className="flex items-center gap-3">
-                      {order.statut_commande === 'en_cours' && (
+                      {(order.statut_commande === 'en_cours' || order.statut_commande === 'acceptee') && (
                         <Button
                           variant="ghost"
                           className="text-red-400 hover:bg-red-500/10 hover:text-red-300 text-xs rounded-xl"

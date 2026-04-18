@@ -11,6 +11,7 @@ const magasinsCtrl    = require("../controllers/magasin.controller");
 const paiementCtrl    = require("../controllers/paiement.controller");
 const predictionsCtrl = require("../controllers/prediction.controller");
 const signalementsCtrl = require("../controllers/signalement.controller");
+const utilisateurCtrl  = require("../controllers/utilisateur.controller");
 
 // All admin routes require admin token
 router.use(verifyAdmin);
@@ -22,9 +23,9 @@ router.get("/stats", statsCtrl.getStats);
 router.get("/predictions", predictionsCtrl.getAllPredictions);
 
 // ── Users Management ─────────────────────────────────────────
-router.get("/users",          clientsCtrl.getAllClients);
+router.get("/users",            utilisateurCtrl.getAllUtilisateurs);
 router.patch("/users/:id/role", clientsCtrl.updateUserRole); 
-
+router.delete("/users/:id",     utilisateurCtrl.deleteUtilisateur);
 // ── Stores Management ─────────────────────────────────────────
 router.get("/stores/pending",   magasinsCtrl.getPendingStores);
 router.patch("/stores/:id/validate", magasinsCtrl.updateMagasinStatut);

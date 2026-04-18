@@ -74,6 +74,19 @@ export function CheckoutAddress() {
     }
   };
 
+  const handleDeleteAddress = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!window.confirm(t('common.confirmDelete') || 'Supprimer cette adresse ?')) return;
+    try {
+      await adresseService.deleteAdresse(id);
+      setAdresses(adresses.filter(a => a.id !== id));
+      if (selectedId === id) setSelectedId(null);
+      toast.success(t('checkout.addressDetail.deleteSuccess') || 'Adresse supprimée');
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
   const handleContinue = () => {
     if (!selectedId) {
       toast.error(t('checkout.address.selectError'));
@@ -136,7 +149,15 @@ export function CheckoutAddress() {
                           {addr.complement_adresse && <p className="text-xs text-muted-foreground mt-1 italic opacity-70">{addr.complement_adresse}</p>}
                         </div>
                       </div>
-                      {selectedId === addr.id && <Check className="text-primary w-6 h-6" />}
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={(e) => handleDeleteAddress(e, addr.id)}
+                          className="p-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        {selectedId === addr.id && <Check className="text-primary w-6 h-6" />}
+                      </div>
                     </div>
                   </div>
                 ))}

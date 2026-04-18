@@ -133,7 +133,7 @@ export function ProductDetail() {
 
             <div className="mb-5 sm:mb-8 p-4 sm:p-6 bg-card/40 backdrop-blur-md rounded-2xl border border-border shadow-inner">
               <div className="flex items-baseline gap-3 sm:gap-4 mb-3 flex-wrap">
-                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">{product.prix.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
+                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">{product.prix.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</span>
               </div>
             </div>
 

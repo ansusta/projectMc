@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Shield, Mail, ShieldAlert, CheckCircle } from 'lucide-react';
+import { Users, Shield, Mail, ShieldAlert, CheckCircle, Trash2 } from 'lucide-react';
 import { adminService } from '../../services/admin.service';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +37,19 @@ export const AdminUsers = () => {
       toast.success(t('adminUsers.privilegesUpdated'));
     } catch (error) {
       toast.error(t('adminUsers.updateFailed'));
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    const confirmMsg = `${t('adminUsers.confirmDeleteUser') || 'Êtes-vous sûr de vouloir supprimer définitivement'} ${userName} ?`;
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      await adminService.deleteUser(userId);
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      toast.success(t('adminUsers.deleteSuccess') || 'Utilisateur supprimé avec succès');
+    } catch (error) {
+      toast.error(t('adminUsers.deleteFailed') || 'Erreur lors de la suppression');
     }
   };
 
@@ -106,13 +119,25 @@ export const AdminUsers = () => {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <button 
-                      onClick={() => handleRoleUpdate(user.id, user.role)}
-                      disabled={user.role === 'admin'}
-                      className="text-[10px] text-primary disabled:opacity-20 hover:text-primary/80 transition-colors uppercase gap-2 flex items-center justify-end w-full tracking-tighter outline-none focus:ring-1 focus:ring-primary/30 rounded-md p-1"
-                    >
-                      <Shield size={12} /> {t('adminUsers.modifyPrivileges')}
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => handleRoleUpdate(user.id, user.role)}
+                          disabled={user.role === 'admin'}
+                          className="text-[10px] text-primary disabled:opacity-20 hover:text-primary/80 transition-all uppercase gap-2 flex items-center tracking-tighter outline-none focus:ring-1 focus:ring-primary/30 rounded-md p-1"
+                          title={t('adminUsers.modifyPrivileges')}
+                        >
+                          <Shield size={12} /> {t('adminUsers.modifyPrivileges')}
+                        </button>
+
+                        <button 
+                          onClick={() => handleDeleteUser(user.id, user.nom_utilisateur)}
+                          disabled={user.role === 'admin'}
+                          className="text-red-500 hover:text-red-400 disabled:opacity-20 transition-all p-1.5 hover:bg-red-500/10 rounded-lg"
+                          title={t('common.delete') || 'Supprimer'}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                    </div>
                   </td>
                 </motion.tr>
               ))}

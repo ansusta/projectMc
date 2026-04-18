@@ -46,7 +46,7 @@ export function OrderSuccess() {
             </div>
             <div className="flex justify-between items-center text-sm font-mono uppercase tracking-widest text-muted-foreground">
               <span>{t('checkoutSuccess.amountCredited')}</span>
-              <span className="text-foreground font-bold">{total.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
+              <span className="text-foreground font-bold">{total.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</span>
             </div>
             <div className="h-px bg-white/5"></div>
             <p className="text-[10px] text-muted-foreground leading-relaxed italic opacity-70">

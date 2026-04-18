@@ -14,7 +14,7 @@ interface ProductCardProps {
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // Mapping backend fields to component fields
   const name = (product as any).nom_produit || (product as any).name || t('product.unnamed');
@@ -85,9 +85,13 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
 
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold tracking-tight text-text-primary">€{price}</span>
+            <span className="text-xl font-bold tracking-tight text-text-primary">
+              {price.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}
+            </span>
             {originalPrice && (
-              <span className="text-sm text-text-secondary line-through decoration-text-secondary/50">€{originalPrice}</span>
+              <span className="text-sm text-text-secondary line-through decoration-text-secondary/50">
+                {originalPrice.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}
+              </span>
             )}
           </div>
         </div>

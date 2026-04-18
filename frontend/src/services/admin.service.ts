@@ -20,6 +20,8 @@ export const adminService = {
   getAllUsers: () => api.get<{ users: any[] }>('/admin/users'),
   updateUserRole: (userId: string, role: string) => 
     api.patch<{ message: string }>(`/admin/users/${userId}/role`, { role }),
+  deleteUser: (userId: string) => 
+    api.delete<{ message: string }>(`/admin/users/${userId}`),
 
   // Store management (Validation)
   getPendingStores: () => api.get<{ stores: any[] }>('/admin/stores/pending'),

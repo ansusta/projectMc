@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Eye, Clock, CheckCircle, Truck, XCircle, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Eye, Clock, CheckCircle, Truck, XCircle, ChevronRight, Check, X, Loader2 } from 'lucide-react';
 import { commandeService } from '../../services/commande.service';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
@@ -42,6 +42,7 @@ export const VendorOrders = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'en_cours': return 'text-blue-400 border-blue-500/30 bg-blue-500/10';
+      case 'acceptee': return 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10';
       case 'completer': return 'text-green-400 border-green-500/30 bg-green-500/10';
       case 'annulee': return 'text-red-400 border-red-500/30 bg-red-500/10';
       default: return 'text-gray-400 border-gray-500/30 bg-gray-500/10';
@@ -51,7 +52,7 @@ export const VendorOrders = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-vh-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+        <Loader2 className="animate-spin h-12 w-12 text-primary" />
       </div>
     );
   }
@@ -61,8 +62,8 @@ export const VendorOrders = () => {
       <div className="max-w-6xl mx-auto space-y-5 sm:space-y-8">
         
         <div>
-          <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-2 sm:gap-3 italic">
-            <span className="w-1.5 h-8 sm:h-10 bg-primary"></span>
+          <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-2 sm:gap-3 italic uppercase">
+            <span className="w-1.5 h-8 sm:h-10 bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]"></span>
             {t('vendorDashboard.incomingOrders')}
           </h1>
           <p className="mt-1 text-primary/50 font-mono text-xs uppercase tracking-tighter">
@@ -78,53 +79,53 @@ export const VendorOrders = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-gray-900/30 border border-cyan-900/20 hover:border-cyan-500/30 transition-all rounded-sm overflow-hidden"
+              className="bg-card/40 backdrop-blur-md border border-border hover:border-primary/30 transition-all rounded-2xl overflow-hidden shadow-soft"
             >
               <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-sm">
-                    <ShoppingBag size={18} />
+                {/* Left Section */}
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                    <ShoppingBag size={22} />
                   </div>
-                  <div>
-                    <h3 className="text-foreground font-mono font-bold tracking-widest text-sm mb-1 uppercase">{t('vendorDashboard.orderRef')} #{order.id.substring(0, 8)}</h3>
-                    <div className="flex items-center gap-4 text-[10px] font-mono text-primary/40 uppercase">
-                      <span>{new Date(order.date_commande).toLocaleDateString(i18n.language)}</span>
+                  <div className="space-y-1">
+                    <h3 className="text-foreground font-mono font-bold tracking-widest text-sm uppercase italic">
+                      {t('vendorDashboard.orderRef')} #{order?.id?.substring(0, 8).toUpperCase() || '---'}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-mono text-primary/60 uppercase">
+                      <span>{order?.date_commande ? new Date(order.date_commande).toLocaleDateString(i18n.language) : '---'}</span>
                       <span className="w-1 h-1 bg-primary/20 rounded-full"></span>
-                      <span>{order.ligne_commande?.length || order.items?.length || 0} {t('vendorDashboard.items')}</span>
+                      <span>{ (order?.ligne_commande?.length || 0) + (order?.items?.length || 0) } {t('vendorDashboard.items')}</span>
+                      <span className="w-1 h-1 bg-primary/20 rounded-full"></span>
+                      <span className="text-foreground/40 italic">{order?.client_nom || 'Client'}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
-                   <div className={`px-3 py-1 border rounded-full text-[10px] font-mono uppercase tracking-widest ${getStatusColor(order.statut_commande || order.statut)}`}>
-                    {t(`customerOrders.status.${order.statut_commande || order.statut}`, order.statut_commande || order.statut)}
+                {/* Right Section */}
+                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-6">
+                  {/* Status Badge */}
+                  <div className={`px-4 py-1.5 border rounded-full text-[10px] font-mono uppercase tracking-[0.2em] font-bold shadow-sm ${getStatusColor(order?.statut_commande || order?.statut || 'en_cours')}`}>
+                    {t('common.status.' + (order?.statut_commande || order?.statut || 'en_cours'), { defaultValue: 'En cours' })}
                   </div>
                   
-                  <div className="text-right px-4 border-l border-border/50">
-                    <p className="text-[10px] font-mono text-muted-foreground uppercase mb-1">{t('vendorDashboard.totalAmount')}</p>
-                    <p className="text-xl font-mono text-foreground tracking-widest">{order.montant_total} <small className="text-xs">XDN</small></p>
+                  {/* Price */}
+                  <div className="text-right px-6 border-l border-border/50">
+                    <p className="text-[10px] font-mono text-muted-foreground uppercase mb-1 tracking-widest opacity-60">
+                      {t('vendorDashboard.totalAmount')}
+                    </p>
+                    <p className="text-xl font-mono text-foreground font-black tracking-tighter">
+                      {(Number(order?.montant_total) || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}
+                    </p>
                   </div>
 
-                  <div className="flex items-center gap-2 ml-4">
+                  {/* Details Link */}
+                  <div className="flex items-center gap-3">
                     <button 
-                      onClick={() => updateStatus(order.id, 'en_cours')}
-                      className="p-2 bg-muted/30 border border-border text-primary hover:border-primary transition-colors rounded-lg shadow-sm"
-                      title={t('vendorDashboard.prepare')}
-                    >
-                      <Clock size={16} />
-                    </button>
-                    <button 
-                      onClick={() => updateStatus(order.id, 'completer')}
-                      className="p-2 bg-muted/30 border border-border text-green-500 hover:border-green-500 transition-colors rounded-lg shadow-sm"
-                      title={t('vendorDashboard.ship')}
-                    >
-                      <Truck size={16} />
-                    </button>
-                    <button 
-                      className="p-2 bg-muted/30 border border-border text-foreground hover:border-primary transition-colors rounded-lg shadow-sm"
+                      className="p-2.5 bg-card border border-border text-foreground/40 hover:text-primary hover:border-primary/50 transition-all rounded-xl shadow-sm"
                       title={t('vendorDashboard.analysis')}
+                      onClick={() => toast.info("Détails bientôt disponible")}
                     >
-                      <Eye size={16} />
+                      <Eye size={18} />
                     </button>
                   </div>
                 </div>
@@ -133,10 +134,10 @@ export const VendorOrders = () => {
           ))}
 
           {orders.length === 0 && (
-            <div className="text-center py-24 bg-muted/20 border border-dashed border-border rounded-2xl">
-              <Clock size={48} className="mx-auto text-muted-foreground/30 mb-4 animate-pulse" />
-              <h3 className="text-muted-foreground font-mono text-sm tracking-widest uppercase italic">{t('vendorDashboard.noOrdersAwaiting')}</h3>
-              <p className="text-muted-foreground/30 font-mono text-[10px] mt-2 uppercase">{t('vendorDashboard.networkVigilance')}</p>
+            <div className="text-center py-24 bg-card/10 border border-dashed border-primary/20 rounded-2xl shadow-inner">
+              <Clock size={48} className="mx-auto text-primary/20 mb-4 animate-pulse" />
+              <h3 className="text-primary/40 font-mono text-sm tracking-widest uppercase italic">{t('vendorDashboard.noOrdersAwaiting')}</h3>
+              <p className="text-primary/20 font-mono text-[10px] mt-2 uppercase">{t('vendorDashboard.networkVigilance')}</p>
             </div>
           )}
         </div>

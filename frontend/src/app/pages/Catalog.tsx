@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { ProductCard } from '../components/ProductCard';
-import { categories } from '../lib/mock-data';
 import { Slider } from '../components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '../components/ui/select';
 import { Checkbox } from '../components/ui/checkbox';
@@ -9,31 +8,46 @@ import { Filter, X, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { produitService, Product } from '../../services/produit.service';
+import { catalogService, Category } from '../../services/catalog.service';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '../contexts/CartContext';
 
 export function Catalog() {
   const { addItem } = useCart();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [priceRange, setPriceRange] = useState([0, 500000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('popular');
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
+    fetchInitialData();
+  }, []);
+
+  useEffect(() => {
     fetchProducts();
-  }, [selectedCategories]); // Re-fetch when categories change
+  }, [selectedCategories]);
+
+  const fetchInitialData = async () => {
+    try {
+      const res = await catalogService.getCategories();
+      setCategories(res.categories || []);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      // We pass the first selected category if any (backend supports one category filter)
+      // Backend supports filtering by category name
       const res = await produitService.search({
         categorie: selectedCategories.length > 0 ? selectedCategories[0] : undefined
       });
-      setProducts(res.produits);
+      setProducts(res.produits || []);
     } catch (err) {
       toast.error(t('catalog.loadError'));
     } finally {
@@ -47,27 +61,30 @@ export function Catalog() {
     } catch (err) {}
   };
 
-  const toggleCategory = (categoryId: string) => {
+  const toggleCategory = (categoryName: string) => {
     setSelectedCategories(prev =>
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
+      prev.includes(categoryName)
+        ? prev.filter(name => name !== categoryName)
+        : [categoryName]
     );
   };
 
   const filteredProducts = products.filter(product => {
-    const inPriceRange = product.prix >= priceRange[0] && product.prix <= priceRange[1];
+    const prix = parseFloat(product.prix as any) || 0;
+    const inPriceRange = prix >= priceRange[0] && prix <= priceRange[1];
     return inPriceRange;
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
+    const prixA = parseFloat(a.prix as any) || 0;
+    const prixB = parseFloat(b.prix as any) || 0;
     switch (sortBy) {
       case 'price-asc':
-        return a.prix - b.prix;
+        return prixA - prixB;
       case 'price-desc':
-        return b.prix - a.prix;
+        return prixB - prixA;
       default:
-        return 0; // Backend handles sorting better, but we keep this for local filtering
+        return 0;
     }
   });
 
@@ -111,7 +128,7 @@ export function Catalog() {
                 <button
                   onClick={() => {
                     setSelectedCategories([]);
-                    setPriceRange([0, 3500]);
+                    setPriceRange([0, 500000]);
                   }}
                   className="text-xs font-bold text-primary hover:text-primary/80 transition-colors uppercase tracking-widest"
                 >
@@ -124,15 +141,14 @@ export function Catalog() {
                 <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">{t('catalog.sectors')}</h3>
                 <div className="space-y-4">
                   {categories.map((category) => (
-                    <div key={category.id} className="flex items-center group cursor-pointer" onClick={() => toggleCategory(category.name)}>
+                    <div key={category.id} className="flex items-center group cursor-pointer" onClick={() => toggleCategory(category.nom)}>
                       <Checkbox
                         id={category.id}
-                        checked={selectedCategories.includes(category.name)}
+                        checked={selectedCategories.includes(category.nom)}
                         className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
                       <Label htmlFor={category.id} className="ml-3 text-sm font-medium text-foreground/70 group-hover:text-foreground cursor-pointer transition-colors flex justify-between w-full">
-                        <span>{t(category.key)}</span>
-                        <span className="text-xs text-muted-foreground tabular-nums">{category.count}</span>
+                        <span>{category.nom}</span>
                       </Label>
                     </div>
                   ))}
@@ -141,17 +157,17 @@ export function Catalog() {
 
               {/* Price Range */}
               <div className="mb-10">
-                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">{t('catalog.budget')} (EUR)</h3>
+                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">{t('catalog.budget')} (DZD)</h3>
                 <Slider
                   value={priceRange}
                   onValueChange={setPriceRange}
-                  max={3500}
-                  step={50}
+                  max={500000}
+                  step={1000}
                   className="mb-6"
                 />
                 <div className="flex items-center justify-between text-xs font-mono font-bold text-primary">
-                  <span className="bg-primary/10 px-2 py-1 rounded">{priceRange[0]} €</span>
-                  <span className="bg-primary/10 px-2 py-1 rounded">{priceRange[1]} €</span>
+                  <span>{priceRange[0].toLocaleString(i18n.language)} DA</span>
+                  <span>{priceRange[1].toLocaleString(i18n.language)} DA</span>
                 </div>
               </div>
 
@@ -163,12 +179,6 @@ export function Catalog() {
                     <Checkbox id="in-stock" defaultChecked className="border-white/20 data-[state=checked]:bg-primary" />
                     <Label htmlFor="in-stock" className="ml-3 text-sm font-medium text-foreground/70 group-hover:text-foreground cursor-pointer transition-colors">
                       {t('catalog.inStock')}
-                    </Label>
-                  </div>
-                  <div className="flex items-center group">
-                    <Checkbox id="on-sale" className="border-white/20 data-[state=checked]:bg-primary" />
-                    <Label htmlFor="on-sale" className="ml-3 text-sm font-medium text-foreground/70 group-hover:text-foreground cursor-pointer transition-colors">
-                      {t('catalog.specialOffers')}
                     </Label>
                   </div>
                 </div>
@@ -189,7 +199,7 @@ export function Catalog() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onAddToCart={handleAddToCart}
+                    onAddToCart={() => handleAddToCart(product)}
                   />
                 ))}
               </div>
@@ -204,7 +214,7 @@ export function Catalog() {
                   variant="outline"
                   onClick={() => {
                     setSelectedCategories([]);
-                    setPriceRange([0, 5000]);
+                    setPriceRange([0, 500000]);
                   }}
                   className="border-white/10 hover:bg-white/5 text-foreground"
                 >
