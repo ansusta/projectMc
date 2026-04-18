@@ -6,6 +6,10 @@ export interface AdminStats {
   totalProducts: number;
   totalOrders: number;
   revenue: number;
+  // Detailed breakdown
+  clients?: { total: number; actifs: number; suspendus: number; bannis: number };
+  commandes?: { total: number; en_cours: number; completees: number; annulees: number; revenu_total: number };
+  magasins?: { total: number; actifs: number; en_attente_validation: number };
 }
 
 export const adminService = {

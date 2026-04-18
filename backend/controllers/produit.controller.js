@@ -119,3 +119,103 @@ exports.deleteProduit = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get all products for a specific store
+exports.getByMagasin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("produit")
+      .select(`
+        id,
+        nom_produit,
+        description,
+        prix,
+        qte_dispo,
+        image_url,
+        date_ajout,
+        type (
+          nom,
+          categorie ( nom )
+        ),
+        magasin (
+          nom_magasin
+        )
+      `)
+      .eq("id_magasin", id)
+      .order("date_ajout", { ascending: false });
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(200).json({ produits: data || [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Create a new product
+exports.createProduit = async (req, res) => {
+  try {
+    const { nom_produit, description, prix, qte_dispo, image_url, id_magasin, id_type } = req.body;
+
+    if (!nom_produit || !prix || !id_magasin) {
+      return res.status(400).json({ error: "nom_produit, prix, and id_magasin are required" });
+    }
+
+    const { data, error } = await supabase
+      .from("produit")
+      .insert([{
+        nom_produit,
+        description: description || '',
+        prix: parseFloat(prix),
+        qte_dispo: parseInt(qte_dispo) || 0,
+        image_url: image_url || null,
+        id_magasin,
+        id_type: id_type || null,
+      }])
+      .select()
+      .single();
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(201).json({ message: "Produit créé avec succès", produit: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update a product
+exports.updateProduit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = {};
+
+    const allowed = ['nom_produit', 'description', 'prix', 'qte_dispo', 'image_url', 'id_type'];
+    allowed.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: "No fields to update" });
+    }
+
+    if (updates.prix) updates.prix = parseFloat(updates.prix);
+    if (updates.qte_dispo) updates.qte_dispo = parseInt(updates.qte_dispo);
+
+    const { data, error } = await supabase
+      .from("produit")
+      .update(updates)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(200).json({ message: "Produit mis à jour", produit: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

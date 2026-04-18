@@ -23,7 +23,7 @@ router.get("/predictions", predictionsCtrl.getAllPredictions);
 
 // ── Users Management ─────────────────────────────────────────
 router.get("/users",          clientsCtrl.getAllClients);
-router.patch("/users/:id/role", clientsCtrl.updateClientStatut); 
+router.patch("/users/:id/role", clientsCtrl.updateUserRole); 
 
 // ── Stores Management ─────────────────────────────────────────
 router.get("/stores/pending",   magasinsCtrl.getPendingStores);

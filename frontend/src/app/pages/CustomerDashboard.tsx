@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Heart, Package, TrendingUp, Loader2 } from 'lucide-react';
+import { ShoppingBag, Heart, Package, TrendingUp, Loader2, DollarSign } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -32,11 +32,24 @@ export function CustomerDashboard() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [ordersRes, productsRes] = await Promise.all([
+        const [histRes, enCoursRes, productsRes] = await Promise.all([
           commandeService.getHistorique(),
+          commandeService.getEnCours(),
           produitService.search({ limit: 4 }),
         ]);
-        setOrders(ordersRes.historique || []);
+        // Combine and deduplicate
+        const all = [
+          ...(enCoursRes.commandes_en_cours || []),
+          ...(histRes.historique || []),
+        ];
+        const seen = new Set<string>();
+        const unique = all.filter(o => {
+          if (seen.has(o.id)) return false;
+          seen.add(o.id);
+          return true;
+        });
+        unique.sort((a, b) => new Date(b.date_commande).getTime() - new Date(a.date_commande).getTime());
+        setOrders(unique);
         setProducts(productsRes.produits || []);
       } catch (err) {
         console.error('Dashboard load error:', err);
@@ -47,7 +60,7 @@ export function CustomerDashboard() {
     loadData();
   }, []);
 
-  const totalSpent = orders.reduce((sum, o) => sum + (o.montant_total || 0), 0);
+  const totalSpent = orders.reduce((sum, o) => sum + (parseFloat(o.montant_total) || 0), 0);
   const recentOrders = orders.slice(0, 3);
 
   if (loading) {
@@ -78,10 +91,9 @@ export function CustomerDashboard() {
             <p className="text-3xl font-black mt-1">{orders.length}</p>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
-            <div className="bg-card/30 backdrop-blur-xl border border-white/5 rounded-3xl p-8">
-            <h3 className="text-secondary text-xs font-mono uppercase tracking-[0.3em] font-black">{t('customerDashboard.totalCredits')}</h3>
-            <p className="text-3xl font-black mt-1">{totalSpent.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })}</p>
-          </div>
+            <DollarSign className="w-6 h-6 text-yellow-400 mb-3" />
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">{t('customerDashboard.totalCredits')}</p>
+            <p className="text-3xl font-black mt-1">{totalSpent.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 })}</p>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
             <TrendingUp className="w-6 h-6 text-green-400 mb-3" />
@@ -138,7 +150,7 @@ export function CustomerDashboard() {
                         <p className="text-xs font-mono text-muted-foreground">
                           {order.ligne_commande?.length || 0} {t('customerDashboard.articles')} • {order.adresse?.ville}
                         </p>
-                        <p className="text-xl font-black text-foreground tabular-nums">€{(order.montant_total || 0).toFixed(2)}</p>
+                        <p className="text-xl font-black text-foreground tabular-nums">{(parseFloat(order.montant_total) || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</p>
                       </div>
                     </div>
                   ))}
@@ -203,7 +215,7 @@ export function CustomerDashboard() {
                   </div>
                   <div className="p-4">
                     <p className="font-bold text-sm truncate">{product.nom_produit}</p>
-                    <p className="text-primary font-black text-lg mt-1">{product.prix.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
+                    <p className="text-primary font-black text-lg mt-1">{product.prix.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</p>
                     <Button
                       variant="glow"
                       className="w-full mt-3 h-9 text-xs"

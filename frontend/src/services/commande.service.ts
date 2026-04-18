@@ -19,7 +19,7 @@ export const commandeService = {
 
     getHistorique: () => api.get<{ historique: any[] }>('/commande/historique'),
 
-    annuler: (id: string) => api.patch<{ message: string }>(`/commande/${id}/annuler`, {}),
+    annuler: (id: string) => api.put<{ message: string }>(`/commande/${id}/annuler`, {}),
 
     // Vendor specific calls
     getByVendeur: (vendeurId: string) => 

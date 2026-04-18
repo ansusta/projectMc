@@ -46,21 +46,36 @@ exports.uploadProfilePicture = async (req, res) => {
 };
 exports.getAllClients = async (req, res) => {
   try {
+    // Get all users with their client info for admin dashboard
     const { data, error } = await supabase
-      .from("client")
+      .from("utilisateur")
       .select(`
         id,
-        statut,
-        utilisateur (
-          email,
-          nom_utilisateur,
-          role,
-          date_creation
+        email,
+        nom_utilisateur,
+        role,
+        date_creation,
+        photo_url,
+        client (
+          statut
         )
-      `);
+      `)
+      .order("date_creation", { ascending: false });
 
     if (error) return res.status(400).json({ error: error.message });
-    res.json(data);
+
+    // Flatten the response for frontend consumption
+    const users = (data || []).map(u => ({
+      id: u.id,
+      email: u.email,
+      nom_utilisateur: u.nom_utilisateur,
+      role: u.role,
+      date_creation: u.date_creation,
+      photo_url: u.photo_url,
+      statut: u.client?.[0]?.statut || u.client?.statut || 'actif',
+    }));
+
+    res.json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -84,6 +99,30 @@ exports.updateClientStatut = async (req, res) => {
 
     if (error) return res.status(400).json({ error: error.message });
     res.json({ message: "Client statut updated", data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update user role in utilisateur table (for admin user management)
+exports.updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!["client", "vendeur", "admin"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role value" });
+    }
+
+    const { data, error } = await supabase
+      .from("utilisateur")
+      .update({ role })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ message: "User role updated", data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

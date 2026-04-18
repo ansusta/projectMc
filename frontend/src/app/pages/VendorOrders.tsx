@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export const VendorOrders = () => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
 
@@ -32,7 +32,7 @@ export const VendorOrders = () => {
   const updateStatus = async (orderId: string, newStatus: string) => {
     try {
       await commandeService.updateStatut(orderId, newStatus);
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, statut: newStatus } : o));
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, statut_commande: newStatus, statut: newStatus } : o));
       toast.success(`${t('vendorDashboard.statusUpdated')} : ${newStatus}`);
     } catch (error) {
       toast.error(t('vendorDashboard.statusUpdateError'));
@@ -40,20 +40,10 @@ export const VendorOrders = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'payé': 
-      case 'paid': 
-      case 'payéé':
-      case 'تم الدفع': return 'text-green-400 border-green-500/30 bg-green-500/10';
-      case 'en préparation': 
-      case 'processing':
-      case 'جاري المعالجة': return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
-      case 'expédié': 
-      case 'shipped':
-      case 'تم الشحن': return 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10';
-      case 'annulé':
-      case 'cancelled':
-      case 'ملغاة': return 'text-red-400 border-red-500/30 bg-red-500/10';
+    switch (status) {
+      case 'en_cours': return 'text-blue-400 border-blue-500/30 bg-blue-500/10';
+      case 'completer': return 'text-green-400 border-green-500/30 bg-green-500/10';
+      case 'annulee': return 'text-red-400 border-red-500/30 bg-red-500/10';
       default: return 'text-gray-400 border-gray-500/30 bg-gray-500/10';
     }
   };
@@ -100,14 +90,14 @@ export const VendorOrders = () => {
                     <div className="flex items-center gap-4 text-[10px] font-mono text-primary/40 uppercase">
                       <span>{new Date(order.date_commande).toLocaleDateString(i18n.language)}</span>
                       <span className="w-1 h-1 bg-primary/20 rounded-full"></span>
-                      <span>{order.items?.length || 0} {t('vendorDashboard.items')}</span>
+                      <span>{order.ligne_commande?.length || order.items?.length || 0} {t('vendorDashboard.items')}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
-                   <div className={`px-3 py-1 border rounded-full text-[10px] font-mono uppercase tracking-widest ${getStatusColor(order.statut)}`}>
-                    {order.statut}
+                   <div className={`px-3 py-1 border rounded-full text-[10px] font-mono uppercase tracking-widest ${getStatusColor(order.statut_commande || order.statut)}`}>
+                    {t(`customerOrders.status.${order.statut_commande || order.statut}`, order.statut_commande || order.statut)}
                   </div>
                   
                   <div className="text-right px-4 border-l border-border/50">
@@ -117,14 +107,14 @@ export const VendorOrders = () => {
 
                   <div className="flex items-center gap-2 ml-4">
                     <button 
-                      onClick={() => updateStatus(order.id, t('vendorDashboard.status.processing'))}
+                      onClick={() => updateStatus(order.id, 'en_cours')}
                       className="p-2 bg-muted/30 border border-border text-primary hover:border-primary transition-colors rounded-lg shadow-sm"
                       title={t('vendorDashboard.prepare')}
                     >
                       <Clock size={16} />
                     </button>
                     <button 
-                      onClick={() => updateStatus(order.id, t('vendorDashboard.status.shipped'))}
+                      onClick={() => updateStatus(order.id, 'completer')}
                       className="p-2 bg-muted/30 border border-border text-green-500 hover:border-green-500 transition-colors rounded-lg shadow-sm"
                       title={t('vendorDashboard.ship')}
                     >

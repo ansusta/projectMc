@@ -293,3 +293,110 @@ exports.getCommandes = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get all orders that contain products from a specific vendor's store
+exports.getCommandesByVendeur = async (req, res) => {
+  try {
+    const vendeurId = req.params.id;
+
+    // 1. Find the vendor's store
+    const { data: magasin, error: magError } = await supabase
+      .from("magasin")
+      .select("id")
+      .eq("id_vendeur", vendeurId)
+      .single();
+
+    if (magError || !magasin) {
+      return res.status(200).json({ commandes: [] });
+    }
+
+    // 2. Find products belonging to this store
+    const { data: produits, error: prodError } = await supabase
+      .from("produit")
+      .select("id")
+      .eq("id_magasin", magasin.id);
+
+    if (prodError || !produits || produits.length === 0) {
+      return res.status(200).json({ commandes: [] });
+    }
+
+    const productIds = produits.map(p => p.id);
+
+    // 3. Find line items for these products
+    const { data: lignes, error: ligneError } = await supabase
+      .from("ligne_commande")
+      .select("id_commande")
+      .in("id_produit", productIds);
+
+    if (ligneError || !lignes || lignes.length === 0) {
+      return res.status(200).json({ commandes: [] });
+    }
+
+    const commandeIds = [...new Set(lignes.map(l => l.id_commande))];
+
+    // 4. Fetch full order data for those commande IDs
+    const { data: commandes, error: cmdError } = await supabase
+      .from("commande")
+      .select(`
+        id,
+        statut_commande,
+        montant_total,
+        date_commande,
+        client:id_client (
+          utilisateur:id (nom_utilisateur, email)
+        ),
+        adresse:id_adrs (ville, pays),
+        ligne_commande (
+          qte,
+          prix_at_time,
+          produit:id_produit (id, nom_produit, image_url)
+        )
+      `)
+      .in("id", commandeIds)
+      .order("date_commande", { ascending: false });
+
+    if (cmdError) return res.status(400).json({ error: cmdError.message });
+
+    // Flatten client info
+    const formatted = (commandes || []).map(c => ({
+      ...c,
+      statut: c.statut_commande,
+      client_nom: c.client?.utilisateur?.nom_utilisateur || "Client",
+      client_email: c.client?.utilisateur?.email || "",
+      items: c.ligne_commande || [],
+    }));
+
+    res.status(200).json({ commandes: formatted });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update order status (for vendors and admins)
+exports.updateStatutCommande = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { statut } = req.body;
+
+    const validStatuts = ["en_cours", "completer", "annulee"];
+    if (!validStatuts.includes(statut)) {
+      return res.status(400).json({
+        error: `statut must be one of: ${validStatuts.join(", ")}`
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("commande")
+      .update({ statut_commande: statut })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return res.status(400).json({ error: error.message });
+    if (!data) return res.status(404).json({ error: "Commande not found" });
+
+    res.status(200).json({ message: "Statut updated", commande: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

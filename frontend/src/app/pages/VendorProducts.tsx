@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Package, Edit2, Trash2, Search, Filter, AlertCircle, ShoppingBag } from 'lucide-react';
+import { Plus, Package, Edit2, Trash2, Search, Filter, AlertCircle, ShoppingBag, X, Loader2 } from 'lucide-react';
 import { produitService, Product } from '../../services/produit.service';
 import { magasinService } from '../../services/magasin.service';
+import { catalogService, Type } from '../../services/catalog.service';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -11,11 +12,23 @@ export const VendorProducts = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [types, setTypes] = useState<Type[]>([]);
   const [storeId, setStoreId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    nom_produit: '',
+    description: '',
+    prix: '',
+    qte_dispo: '',
+    image_url: '',
+    id_type: ''
+  });
 
   useEffect(() => {
     if (user?.id) {
@@ -25,7 +38,13 @@ export const VendorProducts = () => {
 
   const fetchData = async () => {
     try {
-      const storeRes = await magasinService.getByVendeur(user!.id);
+      const [storeRes, typesRes] = await Promise.all([
+        magasinService.getByVendeur(user!.id),
+        catalogService.getTypes()
+      ]);
+      
+      setTypes(typesRes.types || []);
+
       if (storeRes.magasin) {
         setStoreId(storeRes.magasin.id);
         const prodRes = await produitService.getByMagasin(storeRes.magasin.id);
@@ -35,6 +54,64 @@ export const VendorProducts = () => {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenModal = (product: Product | null = null) => {
+    if (product) {
+      setEditingProduct(product);
+      setFormData({
+        nom_produit: product.nom_produit,
+        description: product.description || '',
+        prix: product.prix.toString(),
+        qte_dispo: product.qte_dispo.toString(),
+        image_url: product.image_url || '',
+        id_type: product.type?.nom ? types.find(t => t.nom === product.type?.nom)?.id || '' : ''
+      });
+    } else {
+      setEditingProduct(null);
+      setFormData({
+        nom_produit: '',
+        description: '',
+        prix: '',
+        qte_dispo: '',
+        image_url: '',
+        id_type: ''
+      });
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!storeId) return toast.error("Store not found");
+    
+    setSubmitting(true);
+    try {
+      const payload = {
+        ...formData,
+        prix: parseFloat(formData.prix),
+        qte_dispo: parseInt(formData.qte_dispo),
+        id_magasin: storeId
+      };
+
+      if (editingProduct) {
+        const res = await produitService.update(editingProduct.id, payload);
+        toast.success(t('vendorDashboard.updateSuccess') || "Product updated");
+        // Update local list
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...payload, type: types.find(t => t.id === formData.id_type) ? { nom: types.find(t => t.id === formData.id_type)!.nom } : p.type } : p));
+      } else {
+        const res = await produitService.create(payload);
+        toast.success(t('vendorDashboard.addSuccess') || "Product added");
+        // Reload products to get the new list with relations
+        const prodRes = await produitService.getByMagasin(storeId);
+        setProducts(prodRes.produits || []);
+      }
+      setIsModalOpen(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Error saving product");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -51,13 +128,13 @@ export const VendorProducts = () => {
 
   const filteredProducts = products.filter(p => 
     p.nom_produit.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.categorie.toLowerCase().includes(searchQuery.toLowerCase())
+    (p.type?.nom || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-vh-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+        <Loader2 className="animate-spin h-12 w-12 text-primary" />
       </div>
     );
   }
@@ -70,7 +147,7 @@ export const VendorProducts = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
-              <span className="w-1.5 h-8 sm:h-10 bg-primary"></span>
+              <span className="w-1.5 h-8 sm:h-10 bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]"></span>
               {t('vendorDashboard.profiledCatalog')}
             </h1>
             <p className="mt-1 text-primary/50 font-mono text-xs uppercase tracking-tighter">
@@ -90,7 +167,7 @@ export const VendorProducts = () => {
               />
             </div>
             <button 
-              onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}
+              onClick={() => handleOpenModal()}
               className="bg-primary/10 border border-primary/50 p-2 text-primary hover:bg-primary/20 transition-all rounded-xl flex items-center gap-1.5 px-3 shadow-soft whitespace-nowrap"
             >
               <Plus size={16} />
@@ -111,11 +188,10 @@ export const VendorProducts = () => {
                 transition={{ delay: index * 0.05 }}
                 className="group relative bg-card/40 border border-border hover:border-primary/50 transition-all p-3 rounded-2xl backdrop-blur-md shadow-soft"
               >
-                {/* Status Badge */}
                 <div className={`absolute top-4 right-4 z-10 px-2 py-0.5 rounded-full text-[8px] font-mono border ${
-                  product.stock > 0 ? 'bg-green-500/10 border-green-500/50 text-green-400' : 'bg-red-500/10 border-red-500/50 text-red-400'
+                  product.qte_dispo > 0 ? 'bg-green-500/10 border-green-500/50 text-green-400' : 'bg-red-500/10 border-red-500/50 text-red-400'
                 }`}>
-                  {product.stock > 0 ? t('vendorDashboard.inStock') : t('vendorDashboard.outOfStock')}
+                  {product.qte_dispo > 0 ? t('vendorDashboard.inStock') : t('vendorDashboard.outOfStock')}
                 </div>
 
                 <div className="relative h-48 overflow-hidden rounded-xl bg-muted mb-4 border border-border/50 shadow-inner">
@@ -123,25 +199,24 @@ export const VendorProducts = () => {
                     <img src={product.image_url} alt={product.nom_produit} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center opacity-10">
-                      <ShoppingBag size={80} className="text-cyan-500" />
+                      <ShoppingBag size={80} className="text-primary" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">{product.categorie}</p>
+                  <p className="text-[10px] font-mono text-primary/60 uppercase tracking-widest">{product.type?.nom || ''}</p>
                   <h3 className="text-foreground font-mono font-bold tracking-tight text-lg line-clamp-1 group-hover:text-primary transition-colors uppercase">{product.nom_produit}</h3>
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-xl font-mono text-foreground tracking-widest">{product.prix} <small className="text-[10px] text-primary/50">XDN</small></span>
-                    <span className="text-xs font-mono text-muted-foreground/60 uppercase">{t('product.quantity')}: {product.stock}</span>
+                    <span className="text-xl font-mono text-foreground tracking-widest">{product.prix} <small className="text-[10px] text-primary/50">DZD</small></span>
+                    <span className="text-xs font-mono text-muted-foreground/60 uppercase">{t('product.quantity')}: {product.qte_dispo}</span>
                   </div>
                 </div>
 
-                {/* Hover Actions */}
                 <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 border border-primary/50 rounded-2xl">
                   <button 
-                    onClick={() => { setEditingProduct(product); setIsModalOpen(true); }}
+                    onClick={() => handleOpenModal(product)}
                     className="p-3 bg-primary/20 border border-primary/50 text-primary rounded-full hover:bg-primary hover:text-white transition-all shadow-md"
                   >
                     <Edit2 size={18} />
@@ -167,35 +242,129 @@ export const VendorProducts = () => {
         )}
       </div>
 
-      {/* Placeholder for Add/Edit Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/95 backdrop-blur-xl">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-2xl bg-card border border-border p-8 rounded-2xl overflow-hidden relative shadow-lg"
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                <Edit2 size={200} className="text-primary" />
-            </div>
-            <h2 className="text-2xl font-mono text-foreground mb-8 tracking-widest italic flex items-center gap-4">
-                <span className="w-1 h-6 bg-primary"></span>
-                {editingProduct ? t('vendorDashboard.activeModification') : t('vendorDashboard.newRecord')}
-            </h2>
-            
-            <p className="text-muted-foreground font-mono text-xs mb-8">
-                {t('vendorDashboard.secureEntryInterface')}
-            </p>
-
-            <button 
+      {/* Add/Edit Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="mt-8 w-full py-3 border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition-all font-mono uppercase text-xs tracking-[0.3em] rounded-xl"
+              className="absolute inset-0 bg-background/95 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="w-full max-w-2xl bg-card border border-border p-6 sm:p-8 rounded-2xl overflow-hidden relative shadow-2xl z-10 max-h-[90vh] overflow-y-auto custom-scrollbar"
             >
-              {t('vendorDashboard.closeConsole')}
-            </button>
-          </motion.div>
-        </div>
-      )}
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                  <Edit2 size={200} className="text-primary" />
+              </div>
+
+              <h2 className="text-2xl font-mono text-foreground mb-8 tracking-widest italic flex items-center gap-4">
+                  <span className="w-1 h-6 bg-primary"></span>
+                  {editingProduct ? t('vendorDashboard.activeModification') : t('vendorDashboard.newRecord')}
+              </h2>
+
+              <form onSubmit={handleSubmit} className="space-y-6 relative">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-primary/70">{t('product.name')}</label>
+                    <input 
+                      required
+                      type="text"
+                      value={formData.nom_produit}
+                      onChange={e => setFormData({...formData, nom_produit: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm font-mono focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="NEXUS-PRO-01"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-primary/70">{t('catalog.category')}</label>
+                    <select 
+                      required
+                      value={formData.id_type}
+                      onChange={e => setFormData({...formData, id_type: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm font-mono focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">{t('catalog.allCategories')}</option>
+                      {types.map(type => (
+                        <option key={type.id} value={type.id}>{type.nom} ({type.categorie?.nom})</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-primary/70">{t('product.price')} (DZD)</label>
+                    <input 
+                      required
+                      type="number"
+                      step="0.01"
+                      value={formData.prix}
+                      onChange={e => setFormData({...formData, prix: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm font-mono focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono uppercase tracking-widest text-primary/70">{t('product.quantity')}</label>
+                    <input 
+                      required
+                      type="number"
+                      value={formData.qte_dispo}
+                      onChange={e => setFormData({...formData, qte_dispo: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm font-mono focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-mono uppercase tracking-widest text-primary/70">{t('product.description')}</label>
+                  <textarea 
+                    rows={4}
+                    value={formData.description}
+                    onChange={e => setFormData({...formData, description: e.target.value})}
+                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm font-mono focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all resize-none"
+                    placeholder="Module description..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-mono uppercase tracking-widest text-primary/70">Image URL</label>
+                  <input 
+                    type="url"
+                    value={formData.image_url}
+                    onChange={e => setFormData({...formData, image_url: e.target.value})}
+                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm font-mono focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                    placeholder="https://images.unsplash.com/..."
+                  />
+                </div>
+
+                <button 
+                  disabled={submitting}
+                  type="submit"
+                  className="w-full py-4 bg-primary text-white font-mono uppercase text-sm tracking-[0.4em] rounded-xl hover:bg-primary/90 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)] flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {submitting && <Loader2 className="animate-spin w-4 h-4" />}
+                  {editingProduct ? t('common.save') : t('common.add')}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

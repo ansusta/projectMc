@@ -164,7 +164,7 @@ export function CustomerOrders() {
                       </Badge>
                       <div className="text-right border-l border-border/50 pl-4">
                         <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest mb-1">{t('customerOrders.totalAmount')}</p>
-                        <p className="text-2xl font-black tabular-nums text-foreground">{(order.montant_total || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
+                        <p className="text-2xl font-black tabular-nums text-foreground">{(parseFloat(order.montant_total) || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</p>
                       </div>
                     </div>
                   </div>
@@ -181,7 +181,7 @@ export function CustomerOrders() {
                           )}
                           <div className="hidden sm:block">
                             <p className="font-bold text-sm leading-tight text-foreground">{ligne.produit?.nom_produit}</p>
-                            <p className="text-xs text-muted-foreground mt-1">{t('customerOrders.qty')}: {ligne.qte} • {ligne.prix_at_time.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{t('customerOrders.qty')}: {ligne.qte} • {parseFloat(ligne.prix_at_time).toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' })}</p>
                           </div>
                         </div>
                       ))}

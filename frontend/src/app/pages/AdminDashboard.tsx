@@ -82,7 +82,7 @@ export const AdminDashboard = () => {
             </div>
             
             <div className="flex items-baseline gap-3 flex-wrap">
-                <span className="text-4xl sm:text-6xl font-bold text-foreground tracking-widest">{stats?.revenue?.toLocaleString(i18n.language) || '0'}</span>
+                <span className="text-4xl sm:text-6xl font-bold text-foreground tracking-widest">{stats?.revenue?.toLocaleString(i18n.language, { style: 'currency', currency: 'DZD' }) || '0 DZD'}</span>
                 <span className="text-green-500 font-bold tracking-widest flex items-center gap-1">
                   <Activity size={14} /> +12.5%
                 </span>

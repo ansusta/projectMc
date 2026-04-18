@@ -18,6 +18,7 @@ exports.getStats = async (req, res) => {
       { count: total_produits },
       { count: total_avis },
       { count: total_signalements },
+      { count: total_vendeurs },
     ] = await Promise.all([
       supabase.from("client").select("*", { count: "exact", head: true }),
       supabase.from("client").select("*", { count: "exact", head: true }).eq("statut", "actif"),
@@ -33,6 +34,7 @@ exports.getStats = async (req, res) => {
       supabase.from("produit").select("*", { count: "exact", head: true }),
       supabase.from("avis").select("*", { count: "exact", head: true }),
       supabase.from("signalement").select("*", { count: "exact", head: true }),
+      supabase.from("utilisateur").select("*", { count: "exact", head: true }).eq("role", "vendeur"),
     ]);
 
     // Total revenue from completed orders
@@ -46,6 +48,13 @@ exports.getStats = async (req, res) => {
       : "0.00";
 
     res.status(200).json({
+      // Flat format for frontend dashboard compatibility
+      totalUsers: total_clients || 0,
+      totalVendors: total_vendeurs || 0,
+      totalProducts: total_produits || 0,
+      totalOrders: total_commandes || 0,
+      revenue: parseFloat(revenu_total),
+      // Detailed nested format
       clients: {
         total: total_clients,
         actifs: clients_actifs,
