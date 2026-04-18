@@ -34,10 +34,10 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">{t('home.categories')}</h3>
             <ul className="space-y-2 text-sm text-text-secondary">
-              <li><Link to="/catalog?category=pc" className="hover:text-primary transition-colors hover:pl-1">PC</Link></li>
-              <li><Link to="/catalog?category=components" className="hover:text-primary transition-colors hover:pl-1">Hardware</Link></li>
-              <li><Link to="/catalog?category=gaming" className="hover:text-primary transition-colors hover:pl-1">Gaming</Link></li>
-              <li><Link to="/catalog?category=audio" className="hover:text-primary transition-colors hover:pl-1">Audio</Link></li>
+              <li><Link to="/catalog?category=pc" className="hover:text-primary transition-colors hover:pl-1">{t('footer.categories.pc')}</Link></li>
+              <li><Link to="/catalog?category=components" className="hover:text-primary transition-colors hover:pl-1">{t('footer.categories.hardware')}</Link></li>
+              <li><Link to="/catalog?category=gaming" className="hover:text-primary transition-colors hover:pl-1">{t('footer.categories.gaming')}</Link></li>
+              <li><Link to="/catalog?category=audio" className="hover:text-primary transition-colors hover:pl-1">{t('footer.categories.audio')}</Link></li>
             </ul>
           </div>
 
@@ -60,7 +60,7 @@ export function Footer() {
                 <div className="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center border border-border">
                   <MapPin className="w-4 h-4 text-primary" />
                 </div>
-                Alger, Algérie
+                {t('footer.location')}
               </li>
             </ul>
           </div>

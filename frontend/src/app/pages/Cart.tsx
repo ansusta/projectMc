@@ -11,7 +11,7 @@ export function Cart() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, total, isLoading, updateQuantity, removeItem } = useCart();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const subtotal = total;
   const shipping = subtotal > 0 ? 10 : 0; // Fixed shipping for now
@@ -20,12 +20,12 @@ export function Cart() {
 
   const handleCheckout = () => {
     if (items.length === 0) {
-      toast.error('Votre panier est vide');
+      toast.error(t('cart.emptyError'));
       return;
     }
     
     if (!user) {
-      toast.info("Prêt à passer à l'étape supérieure ? Connectez-vous ou créez un compte pour finaliser votre commande.");
+      toast.info(t('cart.authPrompt'));
       navigate('/register');
       return;
     }
@@ -38,7 +38,7 @@ export function Cart() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center">
           <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-          <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">Chargement du panier...</p>
+          <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">{t('cart.loading')}</p>
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ export function Cart() {
                       <div className="flex items-start justify-between mb-1 sm:mb-2 gap-2">
                         <div className="min-w-0">
                           <h3 className="text-base sm:text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors truncate">{item.produit.nom_produit}</h3>
-                          <p className="text-xs text-muted-foreground font-mono">SECTEUR: {item.produit.type?.categorie?.nom || 'Inconnu'}</p>
+                          <p className="text-xs text-muted-foreground font-mono">{t('cart.sector')}: {item.produit.type?.categorie?.nom || t('cart.unknown')}</p>
                         </div>
                         <button
                           onClick={() => removeItem(item.produit.id)}
@@ -108,9 +108,9 @@ export function Cart() {
                         </div>
                         <div className="text-right">
                           <p className="text-lg sm:text-2xl font-black text-foreground tabular-nums">
-                            €{(item.prix_at_time * item.qte).toFixed(2)}
+                            {(item.prix_at_time * item.qte).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}
                           </p>
-                          <p className="text-xs text-muted-foreground font-mono">UNIT: €{item.prix_at_time}</p>
+                          <p className="text-xs text-muted-foreground font-mono">{t('cart.unit')}: {item.prix_at_time.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
                         </div>
                       </div>
                     </div>
@@ -127,20 +127,20 @@ export function Cart() {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-muted-foreground font-medium">
                     <span>{t('cart.subtotal')} ({items.reduce((sum, item) => sum + item.qte, 0)} {t('cart.items')})</span>
-                    <span className="tabular-nums">€{subtotal.toFixed(2)}</span>
+                    <span className="tabular-nums">{subtotal.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground font-medium">
                     <span>{t('cart.shipping')}</span>
-                    <span className="tabular-nums">€{shipping.toFixed(2)}</span>
+                    <span className="tabular-nums">{shipping.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground font-medium">
-                    <span>TVA (20%)</span>
-                    <span className="tabular-nums">€{tax.toFixed(2)}</span>
+                    <span>{t('cart.tax')}</span>
+                    <span className="tabular-nums">{tax.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                   <Separator className="bg-white/10" />
                   <div className="flex justify-between text-2xl font-black text-foreground">
                     <span>{t('cart.total')}</span>
-                    <span className="tabular-nums">€{finalTotal.toFixed(2)}</span>
+                    <span className="tabular-nums">{finalTotal.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                 </div>
 
@@ -163,13 +163,13 @@ export function Cart() {
 
                 <div className="mt-8 p-6 bg-primary/10 rounded-2xl border border-primary/20">
                   <p className="text-sm text-primary font-bold">
-                    🎉 Livraison gratuite activée au-delà de 100€
+                    {t('cart.freeShippingPromo')}
                   </p>
-                  {subtotal < 100 && (
-                    <p className="text-xs text-primary/70 mt-2 font-mono">
-                      DELTA REQUIS: €{(100 - subtotal).toFixed(2)}
-                    </p>
-                  )}
+                    {subtotal < 100 && (
+                      <p className="text-xs text-primary/70 mt-2 font-mono">
+                        {t('cart.deltaRequired')}: {(100 - subtotal).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}
+                      </p>
+                    )}
                 </div>
               </div>
             </div>

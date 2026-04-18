@@ -27,16 +27,16 @@ export const AdminUsers = () => {
 
   const handleRoleUpdate = async (userId: string, currentRole: string) => {
     const newRole = currentRole === 'client' ? 'vendeur' : 'client';
-    const confirmMsg = `Changer le rôle vers ${newRole === 'vendeur' ? 'VENDEUR' : 'CLIENT'} ?`;
+    const confirmMsg = `${t('adminUsers.confirmRoleChange')} ${newRole === 'vendeur' ? t('adminUsers.vendeur') : t('adminUsers.client')} ?`;
     
     if (!window.confirm(confirmMsg)) return;
 
     try {
       await adminService.updateUserRole(userId, newRole);
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
-      toast.success('Privilèges mis à jour');
+      toast.success(t('adminUsers.privilegesUpdated'));
     } catch (error) {
-      toast.error('Échec de la mise à jour des droits');
+      toast.error(t('adminUsers.updateFailed'));
     }
   };
 
@@ -70,7 +70,7 @@ export const AdminUsers = () => {
                 <th className="p-4 text-primary text-[10px] uppercase tracking-widest">{t('adminUsers.identity')}</th>
                 <th className="p-4 text-primary text-[10px] uppercase tracking-widest">{t('adminUsers.contact')}</th>
                 <th className="p-4 text-primary text-[10px] uppercase tracking-widest">{t('adminUsers.currentRole')}</th>
-                <th className="p-4 text-primary text-[10px] uppercase tracking-widest text-right">Actions</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest text-right">{t('adminUsers.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -87,7 +87,7 @@ export const AdminUsers = () => {
                       <div className="w-8 h-8 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
                         <Users size={14} />
                       </div>
-                      <span className="text-foreground text-sm tracking-widest">{user.nom_utilisateur || 'ANONYME'}</span>
+                      <span className="text-foreground text-sm tracking-widest">{user.nom_utilisateur || t('adminUsers.anonymous')}</span>
                     </div>
                   </td>
                   <td className="p-4 text-primary/50 text-xs">
@@ -102,7 +102,7 @@ export const AdminUsers = () => {
                       user.role === 'vendeur' ? 'bg-blue-600/20 border-blue-500 text-blue-400' :
                       'bg-muted border-border text-foreground/50'
                     } uppercase tracking-widest font-bold shadow-sm`}>
-                      {user.role}
+                      {t(`adminUsers.${user.role}`)}
                     </span>
                   </td>
                   <td className="p-4 text-right">
@@ -111,7 +111,7 @@ export const AdminUsers = () => {
                       disabled={user.role === 'admin'}
                       className="text-[10px] text-primary disabled:opacity-20 hover:text-primary/80 transition-colors uppercase gap-2 flex items-center justify-end w-full tracking-tighter outline-none focus:ring-1 focus:ring-primary/30 rounded-md p-1"
                     >
-                      <Shield size={12} /> Modifier Privilèges
+                      <Shield size={12} /> {t('adminUsers.modifyPrivileges')}
                     </button>
                   </td>
                 </motion.tr>
@@ -121,7 +121,7 @@ export const AdminUsers = () => {
 
           {users.length === 0 && (
             <div className="p-20 text-center opacity-30 italic text-sm text-primary uppercase tracking-[0.5em] font-mono">
-              Séquence réseau vide - Aucun utilisateur détecté
+              {t('adminUsers.noUsers')}
             </div>
           )}
         </div>

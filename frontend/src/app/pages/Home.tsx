@@ -166,7 +166,7 @@ export function Home() {
                       <div className="w-10 h-10 sm:w-14 sm:h-14 bg-background/50 backdrop-blur-md rounded-xl flex items-center justify-center mb-2 sm:mb-4 border border-white/10 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors">
                         <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-primary group-hover:text-primary-foreground transition-colors" />
                       </div>
-                      <h3 className="text-base sm:text-2xl font-bold text-white mb-1 sm:mb-2 tracking-tight group-hover:text-primary transition-colors">{category.name}</h3>
+                      <h3 className="text-base sm:text-2xl font-bold text-white mb-1 sm:mb-2 tracking-tight group-hover:text-primary transition-colors">{t(category.key)}</h3>
                       <div className="hidden sm:flex items-center text-sm text-gray-300 font-medium">
                         <span>{category.count} {t('home.protocolsAvailable')}</span>
                         <ArrowRight className="w-4 h-4 ml-2 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary" />

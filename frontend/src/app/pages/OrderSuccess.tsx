@@ -3,11 +3,13 @@ import { CheckCircle2, Package, ArrowRight, Download, Share2 } from 'lucide-reac
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
 
 export function OrderSuccess() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, i18n } = useTranslation();
   const { orderId, total } = location.state || { orderId: 'NEXUS-XXXXX', total: 0 };
 
   useEffect(() => {
@@ -32,23 +34,23 @@ export function OrderSuccess() {
             <div className="absolute inset-0 rounded-full bg-green-500/20 blur-2xl animate-pulse"></div>
           </div>
 
-          <h1 className="text-4xl font-black tracking-tight mb-4">Transfert Confirmé !</h1>
+          <h1 className="text-4xl font-black tracking-tight mb-4">{t('checkoutSuccess.title')}</h1>
           <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
-            Vos modules technologiques ont été sécurisés et sont en cours de préparation logistique.
+            {t('checkoutSuccess.desc')}
           </p>
 
           <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 mb-10 text-left space-y-4">
             <div className="flex justify-between items-center text-sm font-mono uppercase tracking-widest text-muted-foreground">
-              <span>Identifiant Commande</span>
+              <span>{t('checkoutSuccess.orderId')}</span>
               <span className="text-foreground font-bold">{orderId}</span>
             </div>
             <div className="flex justify-between items-center text-sm font-mono uppercase tracking-widest text-muted-foreground">
-              <span>Montant Crédité</span>
-              <span className="text-foreground font-bold">€{total.toFixed(2)}</span>
+              <span>{t('checkoutSuccess.amountCredited')}</span>
+              <span className="text-foreground font-bold">{total.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
             </div>
             <div className="h-px bg-white/5"></div>
             <p className="text-[10px] text-muted-foreground leading-relaxed italic opacity-70">
-              Un rapport de transfert détaillé a été envoyé à votre canal de communication principal.
+              {t('checkoutSuccess.reportSent')}
             </p>
           </div>
 
@@ -60,7 +62,7 @@ export function OrderSuccess() {
               onClick={() => navigate('/customer/orders')}
             >
               <Package className="w-5 h-5 mr-2" />
-              Suivre le Signal
+              {t('checkoutSuccess.trackSignal')}
             </Button>
             <Button 
               variant="glass" 
@@ -68,17 +70,17 @@ export function OrderSuccess() {
               className="w-full h-14 font-bold"
               onClick={() => navigate('/catalog')}
             >
-              Nouveaux Modules
+              {t('checkoutSuccess.newModules')}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
 
           <div className="mt-12 flex items-center justify-center gap-6 opacity-40">
             <button className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest hover:text-primary transition-colors">
-              <Download className="w-4 h-4" /> Facture PDF
+              <Download className="w-4 h-4" /> {t('checkoutSuccess.invoicePdf')}
             </button>
             <button className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest hover:text-primary transition-colors">
-              <Share2 className="w-4 h-4" /> Partager l'Unité
+              <Share2 className="w-4 h-4" /> {t('checkoutSuccess.shareUnit')}
             </button>
           </div>
         </motion.div>

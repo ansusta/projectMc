@@ -5,9 +5,11 @@ import { adresseService, Adresse } from '../../services/adresse.service';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function AddressManager() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [adresses, setAdresses] = useState<Adresse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -34,7 +36,7 @@ export function AddressManager() {
       const data = await adresseService.getAdresses();
       setAdresses(data.adresses);
     } catch (err: any) {
-      toast.error('Erreur lors du chargement des secteurs de livraison');
+      toast.error(t('addressManager.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +47,7 @@ export function AddressManager() {
     setIsSubmitting(true);
     try {
       const res = await adresseService.addAdresse(newAddress);
-      toast.success('Nouveau point de chute synchronisé');
+      toast.success(t('addressManager.syncSuccess'));
       setAdresses([...adresses, res.adresse]);
       setShowAddForm(false);
       setNewAddress({
@@ -68,7 +70,7 @@ export function AddressManager() {
     try {
       await adresseService.deleteAdresse(id);
       setAdresses(adresses.filter(a => a.id !== id));
-      toast.success('Secteur supprimé de la matrice');
+      toast.success(t('addressManager.deleteSuccess'));
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -85,17 +87,17 @@ export function AddressManager() {
             onClick={() => navigate('/customer/dashboard')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Dashboard
+            {t('common.dashboard')}
           </Button>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 text-primary mb-3">
                 <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
-                <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Carnet de Coordonnées</span>
+                <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">{t('addressManager.subtitle')}</span>
               </div>
-              <h1 className="text-4xl font-black tracking-tight">Mes Points de Livraison</h1>
-              <p className="text-muted-foreground mt-2">Gérez vos secteurs d'expedition pour des transferts optimisés.</p>
+              <h1 className="text-4xl font-black tracking-tight">{t('addressManager.title')}</h1>
+              <p className="text-muted-foreground mt-2">{t('addressManager.description')}</p>
             </div>
 
             <Button 
@@ -105,7 +107,7 @@ export function AddressManager() {
                 className="hidden md:flex h-14 font-bold"
             >
                 <Plus className="w-5 h-5 mr-3" />
-                Nouveau Secteur
+                {t('addressManager.newSector')}
             </Button>
           </div>
         </div>
@@ -122,9 +124,9 @@ export function AddressManager() {
             ) : adresses.length === 0 ? (
               <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border shadow-inner">
                 <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-20" />
-                <p className="text-xl font-bold text-muted-foreground">Aucun secteur enregistré</p>
+                <p className="text-xl font-bold text-muted-foreground">{t('addressManager.noSectors')}</p>
                 <Button variant="glass" className="mt-6" onClick={() => setShowAddForm(true)}>
-                  Ajouter ma première adresse
+                  {t('addressManager.addFirst')}
                 </Button>
               </div>
             ) : (
@@ -181,11 +183,11 @@ export function AddressManager() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="bg-card/50 backdrop-blur-2xl border border-primary/20 rounded-2xl p-8 sticky top-12 shadow-glow"
                 >
-                    <h2 className="text-2xl font-bold mb-8">Nouveau Secteur</h2>
+                    <h2 className="text-2xl font-bold mb-8">{t('addressManager.newSector')}</h2>
                     <form onSubmit={handleAddAddress} className="space-y-4">
                       <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">N°</label>
+                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">{t('checkout.address.streetNumber')}</label>
                           <input 
                             type="text" 
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
@@ -194,7 +196,7 @@ export function AddressManager() {
                           />
                         </div>
                         <div className="col-span-2 space-y-1">
-                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">Voie / Rue</label>
+                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">{t('addressManager.street')}</label>
                           <input 
                             type="text" 
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
@@ -206,7 +208,7 @@ export function AddressManager() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">Complément (Appt, Etage...)</label>
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">{t('addressManager.complement')}</label>
                         <input 
                           type="text" 
                           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
@@ -217,7 +219,7 @@ export function AddressManager() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">Code Postal</label>
+                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">{t('addressManager.postalCode')}</label>
                           <input 
                             type="text" 
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 font-mono"
@@ -227,7 +229,7 @@ export function AddressManager() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">Ville</label>
+                          <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">{t('addressManager.city')}</label>
                           <input 
                             type="text" 
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
@@ -239,7 +241,7 @@ export function AddressManager() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">Pays / Univers</label>
+                        <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground ml-1">{t('addressManager.country')}</label>
                         <input 
                           type="text" 
                           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
@@ -256,7 +258,7 @@ export function AddressManager() {
                             className="flex-1 h-12"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Synchroniser'}
+                            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t('addressManager.sync')}
                         </Button>
                         <Button 
                             type="button" 
@@ -264,25 +266,25 @@ export function AddressManager() {
                             className="h-12"
                             onClick={() => setShowAddForm(false)}
                         >
-                            Annuler
+                            {t('common.cancel')}
                         </Button>
                       </div>
                     </form>
                 </motion.div>
-              ) : (
+               ) : (
                 <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-8 sticky top-12 shadow-soft">
-                   <h2 className="text-xl font-bold mb-6">Informations</h2>
+                   <h2 className="text-xl font-bold mb-6">{t('addressManager.info')}</h2>
                    <div className="space-y-6">
                       <div className="flex items-start gap-4">
                         <Globe className="w-5 h-5 text-primary shrink-0 mt-1" />
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          La suppression d'une adresse n'affecte pas vos transferts en cours de trajet.
+                          {t('addressManager.deleteInfo')}
                         </p>
                       </div>
                       <div className="flex items-start gap-4">
                         <Building2 className="w-5 h-5 text-secondary shrink-0 mt-1" />
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Chaque secteur enregistré permet de calculer instantanément les protocoles logistiques lors de vos achats.
+                          {t('addressManager.protocolInfo')}
                         </p>
                       </div>
                    </div>
@@ -292,7 +294,7 @@ export function AddressManager() {
                     onClick={() => setShowAddForm(true)}
                    >
                      <Plus className="w-5 h-5 mr-3" />
-                     Ajouter Adresse
+                     {t('addressManager.addAddress')}
                    </Button>
                 </div>
               )}

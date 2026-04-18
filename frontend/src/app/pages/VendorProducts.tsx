@@ -5,9 +5,11 @@ import { produitService, Product } from '../../services/produit.service';
 import { magasinService } from '../../services/magasin.service';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export const VendorProducts = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [storeId, setStoreId] = useState<string | null>(null);
@@ -37,13 +39,13 @@ export const VendorProducts = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Confirmer la suppression de ce produit ?')) return;
+    if (!window.confirm(t('vendorDashboard.confirmDelete'))) return;
     try {
       await produitService.delete(id);
       setProducts(prev => prev.filter(p => p.id !== id));
-      toast.success('Produit supprimé du catalogue');
+      toast.success(t('vendorDashboard.deleteSuccess'));
     } catch (error) {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('vendorDashboard.deleteError'));
     }
   };
 
@@ -69,19 +71,19 @@ export const VendorProducts = () => {
           <div>
             <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
               <span className="w-1.5 h-8 sm:h-10 bg-primary"></span>
-              CATALOGUE PROFILÉ
+              {t('vendorDashboard.profiledCatalog')}
             </h1>
             <p className="mt-1 text-primary/50 font-mono text-xs uppercase tracking-tighter">
-              Inventaire des actifs numériques et physiques en vente
+              {t('vendorDashboard.inventoryAssets')}
             </p>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
             <div className="relative group flex-1 sm:flex-none">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within/search:text-primary transition-colors" />
               <input 
                 type="text"
-                placeholder="Rechercher..."
+                placeholder={t('catalog.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-card/40 border border-border rounded-xl pl-10 pr-4 py-2 text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:min-w-[220px] transition-all"
@@ -92,7 +94,7 @@ export const VendorProducts = () => {
               className="bg-primary/10 border border-primary/50 p-2 text-primary hover:bg-primary/20 transition-all rounded-xl flex items-center gap-1.5 px-3 shadow-soft whitespace-nowrap"
             >
               <Plus size={16} />
-              <span className="font-mono text-xs font-bold uppercase tracking-wider hidden sm:inline">Nouveau</span>
+              <span className="font-mono text-xs font-bold uppercase tracking-wider hidden sm:inline">{t('common.add')}</span>
             </button>
           </div>
         </div>
@@ -113,7 +115,7 @@ export const VendorProducts = () => {
                 <div className={`absolute top-4 right-4 z-10 px-2 py-0.5 rounded-full text-[8px] font-mono border ${
                   product.stock > 0 ? 'bg-green-500/10 border-green-500/50 text-green-400' : 'bg-red-500/10 border-red-500/50 text-red-400'
                 }`}>
-                  {product.stock > 0 ? 'EN STOCK' : 'RUPTURE'}
+                  {product.stock > 0 ? t('vendorDashboard.inStock') : t('vendorDashboard.outOfStock')}
                 </div>
 
                 <div className="relative h-48 overflow-hidden rounded-xl bg-muted mb-4 border border-border/50 shadow-inner">
@@ -132,7 +134,7 @@ export const VendorProducts = () => {
                   <h3 className="text-foreground font-mono font-bold tracking-tight text-lg line-clamp-1 group-hover:text-primary transition-colors uppercase">{product.nom_produit}</h3>
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-xl font-mono text-foreground tracking-widest">{product.prix} <small className="text-[10px] text-primary/50">XDN</small></span>
-                    <span className="text-xs font-mono text-muted-foreground/60 uppercase">Stock: {product.stock}</span>
+                    <span className="text-xs font-mono text-muted-foreground/60 uppercase">{t('product.quantity')}: {product.stock}</span>
                   </div>
                 </div>
 
@@ -159,8 +161,8 @@ export const VendorProducts = () => {
         {filteredProducts.length === 0 && (
           <div className="text-center py-20 bg-muted/20 border border-dashed border-border rounded-2xl">
             <Package size={48} className="mx-auto text-muted-foreground/30 mb-4 animate-pulse" />
-            <h3 className="text-muted-foreground font-mono text-sm tracking-widest uppercase italic">0 produits détectés dans le sous-secteur</h3>
-            <p className="text-muted-foreground/30 font-mono text-[10px] mt-2 uppercase">Initialisation de l'inventaire requise</p>
+            <h3 className="text-muted-foreground font-mono text-sm tracking-widest uppercase italic">{t('vendorDashboard.zeroProducts')}</h3>
+            <p className="text-muted-foreground/30 font-mono text-[10px] mt-2 uppercase">{t('vendorDashboard.initInventory')}</p>
           </div>
         )}
       </div>
@@ -178,18 +180,18 @@ export const VendorProducts = () => {
             </div>
             <h2 className="text-2xl font-mono text-foreground mb-8 tracking-widest italic flex items-center gap-4">
                 <span className="w-1 h-6 bg-primary"></span>
-                {editingProduct ? 'MODIFICATION ACTIF' : 'NOUVEL ENREGISTREMENT'}
+                {editingProduct ? t('vendorDashboard.activeModification') : t('vendorDashboard.newRecord')}
             </h2>
             
             <p className="text-muted-foreground font-mono text-xs mb-8">
-                Interface de saisie sécurisée pour catalogue marchand. Veuillez remplir tous les champs requis.
+                {t('vendorDashboard.secureEntryInterface')}
             </p>
 
             <button 
               onClick={() => setIsModalOpen(false)}
               className="mt-8 w-full py-3 border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition-all font-mono uppercase text-xs tracking-[0.3em] rounded-xl"
             >
-              Fermer la console de saisie
+              {t('vendorDashboard.closeConsole')}
             </button>
           </motion.div>
         </div>

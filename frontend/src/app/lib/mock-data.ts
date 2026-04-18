@@ -58,12 +58,12 @@ export interface Vendor {
 }
 
 export const categories = [
-  { id: '1', name: 'PC & Laptops', icon: 'Monitor', count: 234 },
-  { id: '2', name: 'Composants', icon: 'Cpu', count: 456 },
-  { id: '3', name: 'Périphériques', icon: 'Mouse', count: 189 },
-  { id: '4', name: 'Gaming', icon: 'Gamepad2', count: 167 },
-  { id: '5', name: 'Stockage', icon: 'HardDrive', count: 98 },
-  { id: '6', name: 'Audio', icon: 'Headphones', count: 145 },
+  { id: '1', name: 'PC & Laptops', key: 'home.category.pc', icon: 'Monitor', count: 234 },
+  { id: '2', name: 'Composants', key: 'home.category.components', icon: 'Cpu', count: 456 },
+  { id: '3', name: 'Périphériques', key: 'home.category.peripherals', icon: 'Mouse', count: 189 },
+  { id: '4', name: 'Gaming', key: 'home.category.gaming', icon: 'Gamepad2', count: 167 },
+  { id: '5', name: 'Stockage', key: 'home.category.storage', icon: 'HardDrive', count: 98 },
+  { id: '6', name: 'Audio', key: 'home.category.audio', icon: 'Headphones', count: 145 },
 ];
 
 export const mockProducts: Product[] = [

@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
-import { XCircle, ShieldAlert, RefreshCcw, Home, MessageCircle } from 'lucide-react';
+import { XCircle, ShieldAlert, RefreshCcw, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 export function OrderFailure() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden relative">
@@ -25,28 +27,28 @@ export function OrderFailure() {
             <div className="absolute inset-0 rounded-full bg-red-500/20 blur-2xl animate-pulse"></div>
           </div>
 
-          <h1 className="text-4xl font-black tracking-tight mb-4 text-red-500">Flux de Crédit Rejeté !</h1>
+          <h1 className="text-4xl font-black tracking-tight mb-4 text-red-500">{t('checkoutFailure.title')}</h1>
           <p className="text-muted-foreground text-lg mb-10 leading-relaxed px-4">
-            Le protocole de paiement a été interrompu par le réseau bancaire ou une synchronisation Nexus a échoué.
+            {t('checkoutFailure.desc')}
           </p>
 
           <div className="bg-card/20 backdrop-blur-xl border border-red-500/10 rounded-3xl p-8 mb-10 text-left space-y-4">
             <div className="flex items-center gap-3 text-red-500 font-bold mb-4">
               <ShieldAlert className="w-5 h-5" />
-              <h3 className="text-xl">Origine de l'Interruption</h3>
+              <h3 className="text-xl">{t('checkoutFailure.originTitle')}</h3>
             </div>
             <ul className="space-y-3 text-sm text-muted-foreground font-mono">
               <li className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500/40"></div>
-                Vérification d'identité échouée (3D-Secure).
+                {t('checkoutFailure.reason-1')}
               </li>
               <li className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500/40"></div>
-                Plafond de crédit insuffisant sur le canal.
+                {t('checkoutFailure.reason-2')}
               </li>
               <li className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500/40"></div>
-                Désynchronisation avec le fournisseur de services.
+                {t('checkoutFailure.reason-3')}
               </li>
             </ul>
           </div>
@@ -59,7 +61,7 @@ export function OrderFailure() {
               onClick={() => navigate('/checkout/payment')}
             >
               <RefreshCcw className="w-5 h-5 mr-2" />
-              Réessayer Transaction
+              {t('checkoutFailure.retry')}
             </Button>
             <Button 
               variant="glass" 
@@ -68,12 +70,12 @@ export function OrderFailure() {
               onClick={() => navigate('/catalog')}
             >
               <Home className="w-5 h-5 mr-2" />
-              Menu Principal
+              {t('checkoutFailure.mainMenu')}
             </Button>
           </div>
 
           <p className="mt-12 text-xs text-muted-foreground font-mono uppercase tracking-widest opacity-40">
-            Besoin d'assistance ? <a href="/contact" className="underline hover:text-primary transition-colors">Contacter le support Nexus</a>
+            {t('checkoutFailure.needHelp')} <a href="/contact" className="underline hover:text-primary transition-colors">{t('checkoutFailure.contactSupport')}</a>
           </p>
         </motion.div>
       </div>

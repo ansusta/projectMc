@@ -5,39 +5,41 @@ import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { useCart } from '../contexts/CartContext';
 import { useEffect } from 'react';
-
-const shippingMethods = [
-  {
-    id: 'standard',
-    name: 'Logistique Standard',
-    desc: 'Livraison sous 5-7 cycles standards.',
-    price: 0,
-    icon: Calendar,
-  },
-  {
-    id: 'express',
-    name: 'Transfert Warp',
-    desc: 'Livraison prioritaire sous 2-3 cycles.',
-    price: 9.99,
-    icon: Truck,
-  },
-  {
-    id: 'nexus_prime',
-    name: 'Nexus Prime Instant',
-    desc: 'Livraison sous 24h avec drone porteur.',
-    price: 24.99,
-    icon: Zap,
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 export function CheckoutShipping() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { items, isLoading: cartLoading } = useCart();
   const [selectedMethod, setSelectedMethod] = useState('standard');
 
+  const shippingMethods = [
+    {
+      id: 'standard',
+      name: t('checkout.standardLogistics'),
+      desc: t('checkout.standardLogisticsDesc'),
+      price: 0,
+      icon: Calendar,
+    },
+    {
+      id: 'express',
+      name: t('checkout.warpTransfer'),
+      desc: t('checkout.warpTransferDesc'),
+      price: 9.99,
+      icon: Truck,
+    },
+    {
+      id: 'nexus_prime',
+      name: t('checkout.nexusPrimeInstant'),
+      desc: t('checkout.nexusPrimeInstantDesc'),
+      price: 24.99,
+      icon: Zap,
+    },
+  ];
+
   useEffect(() => {
     if (!cartLoading && items.length === 0) {
-      toast.error('Votre panier est vide. Redirection vers le catalogue...');
+      toast.error(t('cart.emptyRedirect'));
       navigate('/catalog');
     }
   }, [items, cartLoading, navigate]);
@@ -56,10 +58,10 @@ export function CheckoutShipping() {
         <div className="flex items-center justify-between mb-12 relative px-4">
            <div className="absolute top-1/2 left-0 w-full h-px bg-white/5 -translate-y-1/2 z-0"></div>
            {[
-             { step: 1, label: 'Panier', active: true, done: true },
-             { step: 2, label: 'Adresse', active: true, done: true },
-             { step: 3, label: 'Livraison', active: true, done: false },
-             { step: 4, label: 'Paiement', active: false, done: false },
+             { step: 1, label: t('cart.title'), active: true, done: true },
+             { step: 2, label: t('checkout.address.title'), active: true, done: true },
+             { step: 3, label: t('checkout.shipping.title'), active: true, done: false },
+             { step: 4, label: t('checkout.payment.title'), active: false, done: false },
            ].map((s) => (
              <div key={s.step} className="relative z-10 flex flex-col items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs border transition-all ${
@@ -76,7 +78,7 @@ export function CheckoutShipping() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="md:col-span-2 space-y-8">
-            <h1 className="text-3xl font-black tracking-tight">Vitesse de transfert</h1>
+            <h1 className="text-3xl font-black tracking-tight">{t('checkout.shippingSpeed')}</h1>
 
             <div className="space-y-4">
               {shippingMethods.map((method) => (
@@ -100,7 +102,7 @@ export function CheckoutShipping() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-black">{method.price === 0 ? 'GRATUIT' : `€${method.price}`}</p>
+                      <p className="text-xl font-black">{method.price === 0 ? t('cart.free') : method.price.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
                       {selectedMethod === method.id && <Check className="text-primary w-6 h-6 ml-auto mt-2" />}
                     </div>
                   </div>
@@ -112,13 +114,13 @@ export function CheckoutShipping() {
           {/* Sidebar Info */}
           <div className="space-y-6">
             <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 sticky top-28">
-              <h2 className="text-xl font-bold mb-6">Résumé de l'expédition</h2>
+              <h2 className="text-xl font-bold mb-6">{t('checkout.shippingSummary')}</h2>
               <div className="space-y-4 mb-8">
-                <p className="text-sm text-muted-foreground">Sélectionnez le protocole de livraison optimal pour vos modules technologiques.</p>
+                <p className="text-sm text-muted-foreground">{t('checkout.shippingProtocolInfo')}</p>
                 <div className="h-px bg-white/5"></div>
                 <div className="flex justify-between font-mono text-xs uppercase tracking-widest text-primary">
-                  <span>Frais logistique</span>
-                  <span>{selectedMethod === 'standard' ? '0.00' : shippingMethods.find(m => m.id === selectedMethod)?.price} €</span>
+                  <span>{t('checkout.logisticFees')}</span>
+                  <span>{(selectedMethod === 'standard' ? 0 : shippingMethods.find(m => m.id === selectedMethod)?.price || 0).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                 </div>
               </div>
               <Button 
@@ -126,7 +128,7 @@ export function CheckoutShipping() {
                 className="w-full h-14 font-bold text-lg"
                 onClick={handleContinue}
               >
-                Paiement
+                {t('checkout.shipping.continue')}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <Button 
@@ -135,7 +137,7 @@ export function CheckoutShipping() {
                 onClick={() => navigate('/checkout/address')}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Détails Adresse
+                {t('checkout.addressDetails')}
               </Button>
             </div>
           </div>

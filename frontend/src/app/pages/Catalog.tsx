@@ -35,7 +35,7 @@ export function Catalog() {
       });
       setProducts(res.produits);
     } catch (err) {
-      toast.error('Erreur lors du chargement des modules');
+      toast.error(t('catalog.loadError'));
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ export function Catalog() {
               <span className="text-xs sm:text-sm font-mono tracking-widest uppercase">{t('catalog.subtitle')}</span>
             </div>
             <h1 className="text-xl sm:text-4xl font-extrabold tracking-tight mb-1">{t('catalog.title')}</h1>
-            <p className="text-sm text-muted-foreground">{sortedProducts.length} {t('catalog.noResults') === t('catalog.noResults') ? 'produits' : 'products'}</p>
+            <p className="text-sm text-muted-foreground">{sortedProducts.length} {t('catalog.products')}</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <Button variant="glass" onClick={() => setShowFilters(!showFilters)} className="lg:hidden h-10 sm:h-11 text-sm">
@@ -96,7 +96,7 @@ export function Catalog() {
                 <SelectItem value="popular">{t('catalog.newest')}</SelectItem>
                 <SelectItem value="price-asc">{t('catalog.priceAsc')}</SelectItem>
                 <SelectItem value="price-desc">{t('catalog.priceDesc')}</SelectItem>
-                <SelectItem value="rating">Meilleures notes</SelectItem>
+                <SelectItem value="rating">{t('catalog.bestRatings')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -107,7 +107,7 @@ export function Catalog() {
           <aside className={`${showFilters ? 'block' : 'hidden'} lg:block w-full sm:w-72 shrink-0`}>
             <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border p-5 sm:p-8 lg:sticky top-28 shadow-soft">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold tracking-tight">Filtres</h2>
+                <h2 className="text-xl font-bold tracking-tight">{t('catalog.filters')}</h2>
                 <button
                   onClick={() => {
                     setSelectedCategories([]);
@@ -115,13 +115,13 @@ export function Catalog() {
                   }}
                   className="text-xs font-bold text-primary hover:text-primary/80 transition-colors uppercase tracking-widest"
                 >
-                  Reset
+                  {t('catalog.reset')}
                 </button>
               </div>
 
               {/* Categories */}
               <div className="mb-10">
-                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">SECTEURS</h3>
+                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">{t('catalog.sectors')}</h3>
                 <div className="space-y-4">
                   {categories.map((category) => (
                     <div key={category.id} className="flex items-center group cursor-pointer" onClick={() => toggleCategory(category.name)}>
@@ -131,7 +131,7 @@ export function Catalog() {
                         className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
                       <Label htmlFor={category.id} className="ml-3 text-sm font-medium text-foreground/70 group-hover:text-foreground cursor-pointer transition-colors flex justify-between w-full">
-                        <span>{category.name}</span>
+                        <span>{t(category.key)}</span>
                         <span className="text-xs text-muted-foreground tabular-nums">{category.count}</span>
                       </Label>
                     </div>
@@ -141,7 +141,7 @@ export function Catalog() {
 
               {/* Price Range */}
               <div className="mb-10">
-                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">BUDGET (EUR)</h3>
+                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">{t('catalog.budget')} (EUR)</h3>
                 <Slider
                   value={priceRange}
                   onValueChange={setPriceRange}
@@ -157,18 +157,18 @@ export function Catalog() {
 
               {/* Stock Status */}
               <div>
-                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">DISPONIBILITÉ</h3>
+                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-6 font-mono">{t('catalog.availability')}</h3>
                 <div className="space-y-4">
                   <div className="flex items-center group">
                     <Checkbox id="in-stock" defaultChecked className="border-white/20 data-[state=checked]:bg-primary" />
                     <Label htmlFor="in-stock" className="ml-3 text-sm font-medium text-foreground/70 group-hover:text-foreground cursor-pointer transition-colors">
-                      Unités en stock
+                      {t('catalog.inStock')}
                     </Label>
                   </div>
                   <div className="flex items-center group">
                     <Checkbox id="on-sale" className="border-white/20 data-[state=checked]:bg-primary" />
                     <Label htmlFor="on-sale" className="ml-3 text-sm font-medium text-foreground/70 group-hover:text-foreground cursor-pointer transition-colors">
-                      Offres spéciales
+                      {t('catalog.specialOffers')}
                     </Label>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export function Catalog() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 bg-card/20 backdrop-blur-md rounded-3xl border border-white/5">
                 <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">Initialisation du flux...</p>
+                <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">{t('catalog.initFlow')}</p>
               </div>
             ) : sortedProducts.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6 sm:gap-8">
@@ -198,8 +198,8 @@ export function Catalog() {
                 <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                   <X className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Aucun signal détecté</h3>
-                <p className="text-muted-foreground mb-8">Essayez de modifier vos paramètres de recherche pour localiser d'autres produits.</p>
+                <h3 className="text-xl font-bold mb-2">{t('catalog.noSignal')}</h3>
+                <p className="text-muted-foreground mb-8">{t('catalog.noSignalDesc')}</p>
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -208,7 +208,7 @@ export function Catalog() {
                   }}
                   className="border-white/10 hover:bg-white/5 text-foreground"
                 >
-                  Réinitialiser tous les filtres
+                  {t('catalog.resetAll')}
                 </Button>
               </div>
             )}

@@ -7,9 +7,11 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { User, Mail, Shield, LogOut, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Profile() {
     const { user, logout, updateUser } = useAuth();
+    const { t } = useTranslation();
     const [isUpdating, setIsUpdating] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -42,9 +44,9 @@ export function Profile() {
                 email: formData.email,
             });
 
-            toast.success('Profil mis à jour avec succès !');
+            toast.success(t('profile.updateSuccess'));
         } catch (error: any) {
-            toast.error('Erreur lors de la mise à jour: ' + error.message);
+            toast.error(t('profile.updateError') + ': ' + error.message);
         } finally {
             setIsUpdating(false);
         }
@@ -87,13 +89,13 @@ export function Profile() {
                                         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                                             <Shield className="w-4 h-4" />
                                         </div>
-                                        <span>Statut du compte : Vérifié</span>
+                                        <span>{t('profile.accountStatus')} : {t('profile.verified')}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-sm font-medium text-foreground">
                                         <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500">
                                             <CheckCircle2 className="w-4 h-4" />
                                         </div>
-                                        <span>Membre depuis : Décembre 2024</span>
+                                        <span>{t('profile.memberSince')} : {t('profile.memberDate')}</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-sm font-medium text-foreground">
                                         <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
@@ -110,7 +112,7 @@ export function Profile() {
                                     onClick={logout}
                                 >
                                     <LogOut className="mr-2 w-4 h-4" />
-                                    Se déconnecter
+                                    {t('profile.logout')}
                                 </Button>
                             </CardFooter>
                         </Card>
@@ -121,16 +123,16 @@ export function Profile() {
                         <Card className="border-border/50 bg-background/50 backdrop-blur-sm shadow-lg overflow-hidden relative">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary/50 to-transparent"></div>
                             <CardHeader className="pb-8">
-                                <CardTitle className="text-2xl font-bold">Éditer le profil</CardTitle>
+                                <CardTitle className="text-2xl font-bold">{t('profile.editProfile')}</CardTitle>
                                 <CardDescription className="text-muted-foreground">
-                                    Gérez vos informations de compte et vos préférences de contact.
+                                    {t('profile.manageInfo')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                         <div className="space-y-2.5">
-                                            <Label htmlFor="name" className="text-sm font-semibold ml-1">Nom Complet</Label>
+                                            <Label htmlFor="name" className="text-sm font-semibold ml-1">{t('profile.fullName')}</Label>
                                             <div className="relative group">
                                                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                                 <Input
@@ -144,7 +146,7 @@ export function Profile() {
                                         </div>
 
                                         <div className="space-y-2.5">
-                                            <Label htmlFor="email" className="text-sm font-semibold ml-1">Adresse Email</Label>
+                                            <Label htmlFor="email" className="text-sm font-semibold ml-1">{t('profile.emailAddress')}</Label>
                                             <div className="relative group">
                                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                                 <Input
@@ -164,10 +166,10 @@ export function Profile() {
                                             {isUpdating ? (
                                                 <>
                                                     <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                                                    Mise à jour en cours...
+                                                    {t('profile.updating')}
                                                 </>
                                             ) : (
-                                                'Enregistrer les modifications'
+                                                t('profile.saveChanges')
                                             )}
                                         </Button>
                                     </div>
@@ -182,12 +184,12 @@ export function Profile() {
                                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-2 group-hover:bg-primary group-hover:text-white transition-all">
                                         <Shield className="w-6 h-6" />
                                     </div>
-                                    <CardTitle className="text-lg">Sécurité</CardTitle>
-                                    <CardDescription>Double authentification et mot de passe.</CardDescription>
+                                    <CardTitle className="text-lg">{t('profile.security')}</CardTitle>
+                                    <CardDescription>{t('profile.securityDesc')}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <Button variant="ghost" className="p-0 h-auto font-semibold text-primary hover:bg-transparent">
-                                        Gérer la sécurité →
+                                        {t('profile.manageSecurity')} →
                                     </Button>
                                 </CardContent>
                             </Card>
@@ -197,12 +199,12 @@ export function Profile() {
                                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-2 group-hover:bg-primary group-hover:text-white transition-all">
                                         <Mail className="w-6 h-6" />
                                     </div>
-                                    <CardTitle className="text-lg">Notifications</CardTitle>
-                                    <CardDescription>Alertes email et marketing.</CardDescription>
+                                    <CardTitle className="text-lg">{t('profile.notifications')}</CardTitle>
+                                    <CardDescription>{t('profile.notificationsDesc')}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <Button variant="ghost" className="p-0 h-auto font-semibold text-primary hover:bg-transparent">
-                                        Configurer les alertes →
+                                        {t('profile.configureAlerts')} →
                                     </Button>
                                 </CardContent>
                             </Card>

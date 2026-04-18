@@ -16,10 +16,8 @@ const statusColors: Record<string, string> = {
   annulee: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
 
-const statusLabels: Record<string, string> = {
-  en_cours: 'En cours',
-  completer: 'Livrée',
-  annulee: 'Annulée',
+const getStatusLabel = (status: string, t: any) => {
+  return t(`customerDashboard.status.${status}`);
 };
 
 export function CustomerDashboard() {
@@ -29,7 +27,7 @@ export function CustomerDashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const loadData = async () => {
@@ -80,9 +78,10 @@ export function CustomerDashboard() {
             <p className="text-3xl font-black mt-1">{orders.length}</p>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
-            <ShoppingBag className="w-6 h-6 text-purple-400 mb-3" />
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">{t('customerDashboard.totalSpent')}</p>
-            <p className="text-3xl font-black mt-1">€{totalSpent.toFixed(0)}</p>
+            <div className="bg-card/30 backdrop-blur-xl border border-white/5 rounded-3xl p-8">
+            <h3 className="text-secondary text-xs font-mono uppercase tracking-[0.3em] font-black">{t('customerDashboard.totalCredits')}</h3>
+            <p className="text-3xl font-black mt-1">{totalSpent.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })}</p>
+          </div>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
             <TrendingUp className="w-6 h-6 text-green-400 mb-3" />
@@ -115,8 +114,8 @@ export function CustomerDashboard() {
               {recentOrders.length === 0 ? (
                 <div className="p-12 text-center">
                   <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
-                  <p className="text-muted-foreground">Aucune commande pour l'instant</p>
-                  <Button variant="glow" className="mt-4" onClick={() => navigate('/catalog')}>Explorer le catalogue</Button>
+                  <p className="text-muted-foreground">{t('customerDashboard.noOrders')}</p>
+                  <Button variant="glow" className="mt-4" onClick={() => navigate('/catalog')}>{t('customerDashboard.exploreCatalog')}</Button>
                 </div>
               ) : (
                 <div className="divide-y divide-border">
@@ -128,16 +127,16 @@ export function CustomerDashboard() {
                             #{order.id.substring(0, 8).toUpperCase()}
                           </p>
                           <p className="text-xs font-mono text-muted-foreground">
-                            {new Date(order.date_commande).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            {new Date(order.date_commande).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' })}
                           </p>
                         </div>
                         <Badge className={`${statusColors[order.statut_commande] || 'bg-gray-500/20 text-gray-400'} border font-bold uppercase tracking-widest text-[10px] px-2 py-0.5 rounded-full`}>
-                          {statusLabels[order.statut_commande] || order.statut_commande}
+                          {getStatusLabel(order.statut_commande, t) || order.statut_commande}
                         </Badge>
                       </div>
                       <div className="flex items-center justify-between">
                         <p className="text-xs font-mono text-muted-foreground">
-                          {order.ligne_commande?.length || 0} article(s) • {order.adresse?.ville}
+                          {order.ligne_commande?.length || 0} {t('customerDashboard.articles')} • {order.adresse?.ville}
                         </p>
                         <p className="text-xl font-black text-foreground tabular-nums">€{(order.montant_total || 0).toFixed(2)}</p>
                       </div>
@@ -151,19 +150,19 @@ export function CustomerDashboard() {
           {/* Quick Actions */}
           <div className="space-y-4 sm:space-y-6">
             <div className="bg-card/40 backdrop-blur-2xl rounded-2xl border border-border p-5 sm:p-8 shadow-soft">
-              <h2 className="text-base sm:text-xl font-bold mb-4 sm:mb-6 tracking-tight">Actions Rapides</h2>
+              <h2 className="text-base sm:text-xl font-bold mb-4 sm:mb-6 tracking-tight">{t('customerDashboard.quickActions')}</h2>
               <div className="grid grid-cols-1 gap-3">
                 <Button onClick={() => navigate('/catalog')} variant="glow" className="w-full h-11 justify-start pl-5">
                   <ShoppingBag className="w-4 h-4 mr-3" />
-                  Explorer le Catalogue
+                  {t('customerDashboard.exploreBtn')}
                 </Button>
                 <Button onClick={() => navigate('/customer/orders')} variant="glass" className="w-full h-11 justify-start pl-5">
                   <Package className="w-4 h-4 mr-3" />
-                  Mes Commandes
+                  {t('customerDashboard.ordersBtn')}
                 </Button>
                 <Button onClick={() => navigate('/customer/favorites')} variant="glass" className="w-full h-11 justify-start pl-5">
                   <Heart className="w-4 h-4 mr-3" />
-                  Mes Favoris
+                  {t('customerDashboard.favoritesBtn')}
                 </Button>
               </div>
             </div>
@@ -171,12 +170,12 @@ export function CustomerDashboard() {
             {/* Promo banner */}
             <div className="bg-gradient-to-br from-primary to-primary/60 rounded-2xl p-5 sm:p-6 relative overflow-hidden group shadow-md">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-3xl rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700"></div>
-              <h3 className="text-xl font-black mb-2">OFFRE NEXUS</h3>
+              <h3 className="text-xl font-black mb-2">{t('customerDashboard.promoTitle')}</h3>
               <p className="text-white/80 text-xs sm:text-sm mb-4 leading-relaxed">
-                Livraison gratuite à partir de 100€ d'achat.
+                {t('customerDashboard.promoDesc')}
               </p>
               <Button className="w-full bg-white text-primary border-none hover:bg-white/90 font-bold h-11 rounded-xl text-sm" onClick={() => navigate('/catalog')}>
-                Découvrir
+                {t('customerDashboard.promoBtn')}
               </Button>
             </div>
           </div>
@@ -187,10 +186,10 @@ export function CustomerDashboard() {
           <div className="mt-10 sm:mt-16">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl sm:text-3xl font-black tracking-tight">Produits Populaires</h2>
-                <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-mono mt-1">Sélection du catalogue</p>
+                <h2 className="text-xl sm:text-3xl font-black tracking-tight">{t('customerDashboard.popularProducts')}</h2>
+                <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-mono mt-1">{t('customerDashboard.catalogSelection')}</p>
               </div>
-              <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/catalog')}>Tout voir</Button>
+              <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/catalog')}>{t('customerDashboard.viewAll')}</Button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {products.map((product) => (
@@ -204,13 +203,13 @@ export function CustomerDashboard() {
                   </div>
                   <div className="p-4">
                     <p className="font-bold text-sm truncate">{product.nom_produit}</p>
-                    <p className="text-primary font-black text-lg mt-1">€{product.prix}</p>
+                    <p className="text-primary font-black text-lg mt-1">{product.prix.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</p>
                     <Button
                       variant="glow"
                       className="w-full mt-3 h-9 text-xs"
                       onClick={(e) => { e.stopPropagation(); addItem(product, 1); }}
                     >
-                      Ajouter
+                      {t('common.add') || 'Ajouter'}
                     </Button>
                   </div>
                 </div>

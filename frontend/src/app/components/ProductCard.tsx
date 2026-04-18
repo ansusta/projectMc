@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface ProductCardProps {
   product: Product;
@@ -13,14 +14,15 @@ interface ProductCardProps {
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Mapping backend fields to component fields
-  const name = (product as any).nom_produit || (product as any).name || 'Produit sans nom';
+  const name = (product as any).nom_produit || (product as any).name || t('product.unnamed');
   const price = (product as any).prix || (product as any).price || 0;
   const image = (product as any).image_url || (product as any).image || '';
   const stock = (product as any).qte_dispo ?? (product as any).stock ?? 0;
-  const vendor = (product as any).magasin?.nom_magasin || (product as any).vendor || 'Inconnu';
-  const category = (product as any).type?.categorie?.nom || (product as any).category || 'Général';
+  const vendor = (product as any).magasin?.nom_magasin || (product as any).vendor || t('product.unknown');
+  const category = (product as any).type?.categorie?.nom || (product as any).category || t('product.general');
   const rating = (product as any).note_moyenne || (product as any).rating || 0;
   const reviews = (product as any).nb_avis ?? (product as any).reviews ?? 0;
   const originalPrice = (product as any).originalPrice;
@@ -61,9 +63,9 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         >
           <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-destructive text-destructive' : 'text-muted-foreground hover:text-foreground'}`} />
         </button>
-        {stock < 10 && (
+        {stock < 10 && stock > 0 && (
           <Badge variant="neon" className="absolute bottom-3 left-3 border-orange-500/50 text-orange-600 dark:text-orange-400 bg-orange-500/10">
-            Seulement {stock} restants
+            {t('product.onlyLeft', { count: stock })}
           </Badge>
         )}
       </div>
@@ -96,7 +98,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           className="w-full opacity-90 group-hover:opacity-100 transition-opacity"
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          Ajouter au panier
+          {t('product.addToCart')}
         </Button>
       </div>
     </div>

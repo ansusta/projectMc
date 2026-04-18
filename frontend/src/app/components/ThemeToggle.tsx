@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function ThemeToggle() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
+    const { i18n } = useTranslation();
 
     useEffect(() => {
         setMounted(true);
@@ -16,6 +18,7 @@ export function ThemeToggle() {
     }
 
     const isDark = theme === 'dark';
+    const isRTL = i18n.dir() === 'rtl';
 
     return (
         <button
@@ -25,6 +28,7 @@ export function ThemeToggle() {
                 backgroundColor: isDark ? 'var(--secondary)' : '#e2e8f0',
             }}
             aria-label="Changer de thème"
+            dir="ltr"
         >
             {/* Track Background Accent */}
             <motion.div

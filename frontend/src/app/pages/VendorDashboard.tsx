@@ -4,6 +4,7 @@ import { salesData, topProductsData, mockOrders } from '../lib/mock-data';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 const statusColors = {
   pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
@@ -13,15 +14,18 @@ const statusColors = {
   cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
 
-const statusLabels = {
-  pending: 'En attente',
-  processing: 'En cours',
-  shipped: 'Expédiée',
-  delivered: 'Livrée',
-  cancelled: 'Annulée',
-};
+// Move statusLabels inside component to use t()
 
 export function VendorDashboard() {
+  const { t, i18n } = useTranslation();
+  
+  const statusLabels = {
+    pending: t('vendorDashboard.status.pending'),
+    processing: t('vendorDashboard.status.processing'),
+    shipped: t('vendorDashboard.status.shipped'),
+    delivered: t('vendorDashboard.status.delivered'),
+    cancelled: t('vendorDashboard.status.cancelled'),
+  };
   const revenue = 45670;
   const activeProducts = 23;
   const pendingOrders = mockOrders.filter(o => o.status === 'pending' || o.status === 'processing').length;
@@ -33,43 +37,43 @@ export function VendorDashboard() {
           <div>
             <div className="flex items-center gap-3 text-primary mb-2 sm:mb-3">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
-              <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Secteur Marchand Alpha</span>
+              <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">{t('vendorDashboard.merchantSector')}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 text-foreground">Centre de Distribution</h1>
-            <p className="text-muted-foreground text-sm sm:text-lg italic">Gerez vos modules et optimisez votre flux de données</p>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 text-foreground">{t('vendorDashboard.distributionCenter')}</h1>
+            <p className="text-muted-foreground text-sm sm:text-lg italic">{t('vendorDashboard.manageModules')}</p>
           </div>
           <Button variant="glow" className="h-11 sm:h-14 px-5 sm:px-8 text-sm sm:text-lg font-bold self-start sm:self-auto">
             <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
-            <span className="hidden sm:inline">Injecter Nouveau Module</span>
-            <span className="sm:hidden">Nouveau Module</span>
+            <span className="hidden sm:inline">{t('vendorDashboard.injectModule')}</span>
+            <span className="sm:hidden">{t('vendorDashboard.injectModuleShort')}</span>
           </Button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <StatCard
-            title="Flux de Revenus"
-            value={`€${revenue.toLocaleString()}`}
+            title={t('vendorDashboard.revenueStream')}
+            value={revenue.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}
             icon={DollarSign}
             trend={{ value: 12.5, isPositive: true }}
             className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
-            title="Inventaire Nexus"
+            title={t('vendorDashboard.nexusInventory')}
             value={activeProducts}
             icon={Package}
             trend={{ value: 8, isPositive: true }}
             className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
-            title="Signaux de Vente"
+            title={t('vendorDashboard.salesSignals')}
             value={pendingOrders}
             icon={ShoppingCart}
-            description="Transferts requis"
+            description={t('vendorDashboard.transfersRequired')}
             className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
           />
           <StatCard
-            title="Courbe d'Expansion"
+            title={t('vendorDashboard.expansionCurve')}
             value="+23.5%"
             icon={TrendingUp}
             trend={{ value: 4.2, isPositive: true }}
@@ -80,7 +84,7 @@ export function VendorDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-10 mb-8 sm:mb-12">
           {/* Sales Chart */}
           <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border p-4 sm:p-8 shadow-soft">
-            <h2 className="text-lg sm:text-2xl font-bold tracking-tight mb-4 sm:mb-8">Fluctuations des Ventes</h2>
+            <h2 className="text-lg sm:text-2xl font-bold tracking-tight mb-4 sm:mb-8">{t('vendorDashboard.salesFluctuations')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={salesData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
@@ -110,7 +114,7 @@ export function VendorDashboard() {
 
           {/* Top Products Chart */}
           <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border p-4 sm:p-8 shadow-soft">
-            <h2 className="text-lg sm:text-2xl font-bold tracking-tight mb-4 sm:mb-8">Efficacité des Modules</h2>
+            <h2 className="text-lg sm:text-2xl font-bold tracking-tight mb-4 sm:mb-8">{t('vendorDashboard.moduleEfficiency')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topProductsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
@@ -134,19 +138,19 @@ export function VendorDashboard() {
         {/* Recent Orders */}
         <div className="bg-card/40 backdrop-blur-xl rounded-2xl border border-border overflow-hidden shadow-soft">
           <div className="p-4 sm:p-8 border-b border-border bg-muted/30">
-            <h2 className="text-lg sm:text-2xl font-bold tracking-tight">Signal des Transactions</h2>
-            <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">Base de données synchronisée</p>
+            <h2 className="text-lg sm:text-2xl font-bold tracking-tight">{t('vendorDashboard.transactionSignal')}</h2>
+            <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">{t('vendorDashboard.syncedDb')}</p>
           </div>
           <div className="overflow-x-auto -mx-0">
             <table className="w-full min-w-[600px]">
               <thead className="bg-muted/20 border-b border-border">
                 <tr>
-                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">ID</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">Client</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">Date</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">Total</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">Statut</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">Action</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">{t('customerOrders.orderId') || 'ID'}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">{t('auth.name') || 'Client'}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">{t('customerOrders.date') || 'Date'}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">{t('customerOrders.total') || 'Total'}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">{t('customerOrders.status')}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] font-mono">{t('vendorDashboard.table.action')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -160,11 +164,11 @@ export function VendorDashboard() {
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-5 whitespace-nowrap">
                       <div className="text-xs font-mono text-muted-foreground">
-                        {new Date(order.date).toLocaleDateString('fr-FR')}
+                        {new Date(order.date).toLocaleDateString(i18n.language)}
                       </div>
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-5 whitespace-nowrap">
-                      <div className="font-black text-foreground tabular-nums">€{order.total}</div>
+                      <div className="font-black text-foreground tabular-nums">{order.total.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</div>
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-5 whitespace-nowrap">
                       <Badge className={`${statusColors[order.status]} border font-bold uppercase tracking-widest text-[10px] px-2 py-0.5 rounded-full`}>
@@ -173,7 +177,7 @@ export function VendorDashboard() {
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-5 whitespace-nowrap text-sm">
                       <Button variant="glass" size="sm" className="h-8 sm:h-10 px-3 sm:px-5 rounded-xl hover:bg-primary hover:text-white transition-all text-xs">
-                        Analyse
+                        {t('vendorDashboard.analysis')}
                       </Button>
                     </td>
                   </tr>

@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, Clock, MapPin, CreditCard, ShieldCheck, Download, Printer } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '../components/ui/badge';
 import { mockOrders } from '../lib/mock-data';
 import { motion } from 'framer-motion';
@@ -13,17 +14,14 @@ const statusColors = {
   cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
 
-const statusLabels = {
-  pending: 'En attente',
-  processing: 'En cours',
-  shipped: 'Expédiée',
-  delivered: 'Livrée',
-  cancelled: 'Annulée',
+const getStatusLabel = (status: keyof typeof statusColors, t: any) => {
+  return t(`orderDetails.status.${status}`);
 };
 
 export function OrderDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   
   // Find order in mock data
   const order = mockOrders.find(o => o.id === id) || mockOrders[0];
@@ -40,10 +38,10 @@ export function OrderDetails() {
               onClick={() => navigate('/customer/orders')}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour à l'Historique
+              {t('orderDetails.backToHistory')}
             </Button>
             <div className="flex items-center gap-3 text-primary mb-2">
-              <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Rapport de Flux détaillée</span>
+              <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">{t('orderDetails.flowReport')}</span>
             </div>
             <h1 className="text-4xl font-black tracking-tight">{order.id}</h1>
           </div>
@@ -51,11 +49,11 @@ export function OrderDetails() {
           <div className="flex items-center gap-4">
             <Button variant="glass" size="lg">
               <Printer className="w-5 h-5 mr-3" />
-              Imprimer Ticket
+              {t('orderDetails.printTicket')}
             </Button>
             <Button variant="glow" size="lg">
               <Download className="w-5 h-5 mr-3" />
-              Facture PDF
+              {t('orderDetails.invoicePdf')}
             </Button>
           </div>
         </div>
@@ -64,7 +62,7 @@ export function OrderDetails() {
           {/* Main Content: Order Items */}
           <div className="lg:col-span-2 space-y-8">
             <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl">
-              <h2 className="text-2xl font-bold mb-8">Modules Inclus</h2>
+              <h2 className="text-2xl font-bold mb-8">{t('orderDetails.includedModules')}</h2>
               <div className="space-y-6">
                 {order.items.map((item, idx) => (
                   <div key={idx} className="flex gap-6 p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5 group">
@@ -77,9 +75,9 @@ export function OrderDetails() {
                         <p className="text-xl font-black tabular-nums">€{(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground font-mono">
-                        <span>Quantité: {item.quantity}</span>
+                        <span>{t('orderDetails.quantity')}: {item.quantity}</span>
                         <span>•</span>
-                        <span>Unité: €{item.price}</span>
+                        <span>{t('orderDetails.unit')}: €{item.price}</span>
                       </div>
                     </div>
                   </div>
@@ -91,14 +89,14 @@ export function OrderDetails() {
             <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8">
               <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
                 <Clock className="w-6 h-6 text-primary" />
-                Chronologie du Signal
+                {t('orderDetails.timelineTitle')}
               </h2>
               <div className="space-y-8 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
                 {[
-                  { title: 'Commande Finalisée', date: '09 Avr 2026, 14:13', done: true },
-                  { title: 'Traitement Nexus en cours', date: '09 Avr 2026, 14:45', done: true },
-                  { title: 'Expédition Station Orbit', date: 'Prevu le 10 Avr', done: false },
-                  { title: 'Livraison Certifiée', date: 'En attente', done: false },
+                  { title: t('orderDetails.step1'), date: '09 Avr 2026, 14:13', done: true },
+                  { title: t('orderDetails.step2'), date: '09 Avr 2026, 14:45', done: true },
+                  { title: t('orderDetails.step3'), date: `${t('orderDetails.planned')} 10 Avr`, done: false },
+                  { title: t('orderDetails.step4'), date: t('orderDetails.awaiting'), done: false },
                 ].map((item, i) => (
                   <div key={i} className={`relative pl-10 ${item.done ? 'opacity-100' : 'opacity-40'}`}>
                     <div className={`absolute left-0 top-1.5 w-6 h-6 rounded-full border-4 border-background z-10 ${
@@ -116,14 +114,14 @@ export function OrderDetails() {
           <div className="space-y-8">
             <div className="bg-card/30 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-[0_0_30px_rgba(139,92,246,0.1)]">
               <Badge className={`${statusColors[order.status]} border font-mono uppercase tracking-widest text-xs px-6 py-2 rounded-full mb-8 w-full justify-center`}>
-                {statusLabels[order.status]}
+                {getStatusLabel(order.status, t)}
               </Badge>
 
               <div className="space-y-6">
                 <div>
                   <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-3 flex items-center gap-2">
                     <MapPin className="w-3 h-3" />
-                    Point d'Expédition
+                    {t('orderDetails.shippingPoint')}
                   </h3>
                   <p className="text-sm leading-relaxed text-foreground/90 font-bold">
                     {order.customer}<br />
@@ -137,44 +135,44 @@ export function OrderDetails() {
                 <div>
                   <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-3 flex items-center gap-2">
                     <CreditCard className="w-3 h-3" />
-                    Protocole de Paiement
+                    {t('orderDetails.paymentProtocol')}
                   </h3>
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="w-5 h-5 text-green-500" />
                     <div>
-                      <p className="text-sm font-bold">Carte Visa **** 4242</p>
-                      <p className="text-xs text-muted-foreground italic">Autorisation: OK-TX99</p>
+                      <p className="text-sm font-bold">{t('orderDetails.card')} Visa **** 4242</p>
+                      <p className="text-xs text-muted-foreground italic">{t('orderDetails.authorization')}: OK-TX99</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="h-px bg-white/5"></div>
 
-                <div className="space-y-3 pt-2">
+                 <div className="space-y-3 pt-2">
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Modules (Subtotal)</span>
-                    <span className="tabular-nums">€{(order.total * 0.8).toFixed(2)}</span>
+                    <span>{t('orderDetails.subtotal')}</span>
+                    <span className="tabular-nums">{(order.total * 0.8).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Logistique Warp</span>
-                    <span className="tabular-nums">€12.99</span>
+                    <span>{t('orderDetails.logistics')}</span>
+                    <span className="tabular-nums">{(12.99).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>TVA (20%)</span>
-                    <span className="tabular-nums">€{(order.total * 0.2).toFixed(2)}</span>
+                    <span>{t('orderDetails.tax')}</span>
+                    <span className="tabular-nums">{(order.total * 0.2).toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                   <div className="flex justify-between text-xl font-black text-primary pt-4">
-                    <span>TOTAL</span>
-                    <span className="tabular-nums">€{order.total.toFixed(2)}</span>
+                    <span>{t('orderDetails.total')}</span>
+                    <span className="tabular-nums">{order.total.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6">
-              <p className="text-[10px] text-primary leading-relaxed uppercase tracking-widest font-bold mb-4">Besoin d'aide sur cet unité ?</p>
+              <p className="text-[10px] text-primary leading-relaxed uppercase tracking-widest font-bold mb-4">{t('orderDetails.needHelp')}</p>
               <Button variant="ghost" className="w-full hover:bg-primary/10 hover:text-primary transition-all text-xs border border-primary/20 h-10">
-                Signaler un bug matériel
+                {t('orderDetails.reportBug')}
               </Button>
             </div>
           </div>

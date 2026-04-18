@@ -6,9 +6,11 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { User, Mail, Shield, ArrowLeft, Loader2, Key } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function ProfileSettings() {
   const { user, updateUser } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,9 +35,9 @@ export function ProfileSettings() {
         email: formData.email,
       });
 
-      toast.success('Profil synchronisé avec succès.');
+      toast.success(t('profileSettings.syncSuccess'));
     } catch (err: any) {
-      toast.error(err.message || 'Erreur lors de la synchronisation.');
+      toast.error(err.message || t('profileSettings.syncError'));
     } finally {
       setIsLoading(false);
     }
@@ -50,16 +52,16 @@ export function ProfileSettings() {
           onClick={() => navigate('/customer/dashboard')}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Dashboard
+          {t('customerOrders.backToDashboard') || 'Dashboard'}
         </Button>
 
         <div className="mb-8 sm:mb-12">
           <div className="flex items-center gap-3 text-secondary mb-2 sm:mb-3">
             <div className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(34,211,238,1)]"></div>
-            <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Configuration Système</span>
+            <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">{t('profileSettings.subtitle')}</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight">Paramètres du Profil</h1>
-          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm">Gérez vos identifiants et vos protocoles de communication.</p>
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight">{t('profileSettings.title')}</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm">{t('profileSettings.description')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12">
@@ -72,12 +74,12 @@ export function ProfileSettings() {
             >
               <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
                 <User className="w-5 h-5 text-primary" />
-                Informations d'Identité
+                {t('profileSettings.identityInfo')}
               </h2>
 
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest ml-1">Nom d'utilisateur</label>
+                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest ml-1">{t('profileSettings.username')}</label>
                   <div className="relative">
                     <input 
                       type="text" 
@@ -91,7 +93,7 @@ export function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest ml-1">Canal de Communication (Email)</label>
+                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest ml-1">{t('profileSettings.emailChannel')}</label>
                   <div className="relative">
                     <input 
                       type="email" 
@@ -105,7 +107,7 @@ export function ProfileSettings() {
                 </div>
 
                 <Button variant="glow" size="lg" className="w-full h-14 font-bold" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Mettre à jour le Signal'}
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('profileSettings.updateSignal')}
                 </Button>
               </form>
             </motion.div>
@@ -118,13 +120,13 @@ export function ProfileSettings() {
             >
               <h2 className="text-xl font-bold mb-8 flex items-center gap-3 text-red-400">
                 <Key className="w-5 h-5" />
-                Sécurité & Chiffrement
+                {t('profileSettings.securityEncryption')}
               </h2>
               <p className="text-sm text-muted-foreground mb-6">
-                Pour modifier votre clé d'accès (mot de passe), un protocole de vérification par email est requis.
+                {t('profileSettings.resetPasswordDesc')}
               </p>
               <Button variant="glass" className="w-full border-red-500/20 hover:bg-red-500/10 text-red-400">
-                Réinitialiser le Mot de Passe
+                {t('profileSettings.resetPassword')}
               </Button>
             </motion.div>
           </div>
@@ -141,11 +143,11 @@ export function ProfileSettings() {
               
               <div className="mt-8 space-y-4 pt-8 border-t border-border">
                 <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                    <span>Statut Compte</span>
-                    <span className="text-green-500 font-bold">Actif</span>
+                    <span>{t('profileSettings.accountStatus')}</span>
+                    <span className="text-green-500 font-bold">{t('profileSettings.active')}</span>
                 </div>
                 <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                    <span>Niveau Sécurité</span>
+                    <span>{t('profileSettings.securityLevel')}</span>
                     <span className="text-secondary font-bold">Clas 4</span>
                 </div>
               </div>
@@ -155,7 +157,7 @@ export function ProfileSettings() {
               <div className="flex gap-4 items-start">
                 <Shield className="w-5 h-5 text-primary shrink-0 mt-1" />
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Votre identifiant de session est authentifié via Supabase Auth System. Ne partagez jamais vos jetons JWT.
+                  {t('profileSettings.sessionInfo')}
                 </p>
               </div>
             </div>

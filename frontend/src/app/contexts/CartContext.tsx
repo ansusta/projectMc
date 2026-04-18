@@ -3,6 +3,7 @@ import { panierService, PanierItem } from '../../services/panier.service';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 import { Product } from '../../services/produit.service';
+import { useTranslation } from 'react-i18next';
 
 interface CartContextType {
     items: PanierItem[];
@@ -21,6 +22,7 @@ const LOCAL_CART_KEY = 'nexus_local_cart';
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [items, setItems] = useState<PanierItem[]>([]);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +80,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                                 }
                             }
                             localStorage.removeItem(LOCAL_CART_KEY);
-                            toast.success('Panier local synchronisé avec votre compte');
+                            toast.success(t('cart.syncSuccess'));
                         }
                         await refresh();
                     } catch (e) {
@@ -100,9 +102,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             try {
                 await panierService.add(product.id, quantite);
                 await refresh();
-                toast.success('Produit ajouté au panier');
+                toast.success(t('cart.addSuccess'));
             } catch (err: any) {
-                toast.error(err.message || 'Erreur lors de l\'ajout au panier');
+                toast.error(err.message || t('cart.addError'));
                 throw err;
             }
         } else {
@@ -134,7 +136,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             setItems(updatedItems);
             calculateTotal(updatedItems);
             localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(updatedItems));
-            toast.success('Produit ajouté (Mode Invité)');
+            toast.success(t('cart.addGuestSuccess'));
         }
     };
 
@@ -143,9 +145,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             try {
                 await panierService.remove(produit_id);
                 await refresh();
-                toast.success('Produit retiré du panier');
+                toast.success(t('cart.removeSuccess'));
             } catch (err: any) {
-                toast.error(err.message || 'Erreur lors de la suppression');
+                toast.error(err.message || t('cart.removeError'));
                 throw err;
             }
         } else {
@@ -153,7 +155,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             setItems(updatedItems);
             calculateTotal(updatedItems);
             localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(updatedItems));
-            toast.success('Produit retiré (Mode Invité)');
+            toast.success(t('cart.removeGuestSuccess'));
         }
     };
 
@@ -163,7 +165,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 await panierService.updateQuantity(produit_id, quantite);
                 await refresh();
             } catch (err: any) {
-                toast.error(err.message || 'Erreur lors de la mise à jour');
+                toast.error(err.message || t('cart.updateError'));
                 throw err;
             }
         } else {

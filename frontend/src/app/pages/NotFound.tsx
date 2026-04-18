@@ -2,9 +2,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Home, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 export function NotFound() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 overflow-hidden relative">
@@ -32,12 +34,12 @@ export function NotFound() {
 
           <div className="flex items-center justify-center gap-3 text-red-500/80 mb-6 font-mono text-xs uppercase tracking-[0.3em]">
             <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></div>
-            Signal Interrompu : Nexus-Error-04
+            {t('notFound.signalInterrupted')}
           </div>
 
-          <h2 className="text-2xl font-bold mb-4">Secteur Non Répertorié</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('notFound.unlistedSector')}</h2>
           <p className="text-muted-foreground mb-10 leading-relaxed">
-            Vous avez atteint une zone morte du Nexus. Les données que vous recherchez ont été cryptées ou déplacées vers un autre secteur.
+            {t('notFound.deadZone')}
           </p>
 
           <div className="grid grid-cols-1 gap-4">
@@ -48,7 +50,7 @@ export function NotFound() {
               onClick={() => navigate('/')}
             >
               <Home className="w-5 h-5 mr-2" />
-              Retour à la Base
+              {t('notFound.backToBase')}
             </Button>
             
             <Button 
@@ -57,14 +59,14 @@ export function NotFound() {
               className="w-full h-14 font-mono text-sm uppercase tracking-widest"
               onClick={() => navigate(-1)}
             >
-              Réinitialiser Session
+              {t('notFound.resetSession')}
             </Button>
           </div>
         </motion.div>
 
         {/* Technical Footer */}
         <div className="mt-16 pt-8 border-t border-white/5 opacity-30 font-mono text-[10px] uppercase tracking-widest">
-          Transmis par : SYSTÈME AUTOMATISÉ NEXUS // V.0.0.1
+          {t('notFound.automatedSystem')}
         </div>
       </div>
     </div>

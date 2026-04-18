@@ -4,9 +4,11 @@ import { Store, Save, Image as ImageIcon, Layout, AlertCircle } from 'lucide-rea
 import { useAuth } from '../contexts/AuthContext';
 import { magasinService, Magasin } from '../../services/magasin.service';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export const VendorStore = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [store, setStore] = useState<Magasin | null>(null);
@@ -41,9 +43,9 @@ export const VendorStore = () => {
         photo_url: store.photo_url,
         banner_url: store.banner_url
       });
-      toast.success('Configuration du magasin mise à jour');
+      toast.success(t('vendorDashboard.storeUpdateSuccess'));
     } catch (error) {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('vendorDashboard.updateError'));
     } finally {
       setSaving(false);
     }
@@ -61,12 +63,12 @@ export const VendorStore = () => {
     return (
       <div className="p-8 text-center bg-card/20 rounded-2xl border border-border min-h-screen pt-24 text-foreground">
         <AlertCircle className="w-16 h-16 text-primary mx-auto mb-4" />
-        <h2 className="text-2xl font-mono mb-2 tracking-widest">MAGASIN NON TROUVÉ</h2>
+        <h2 className="text-2xl font-mono mb-2 tracking-widest">{t('vendorDashboard.storeNotFound')}</h2>
         <p className="text-muted-foreground font-mono mb-8 opacity-70 italic small uppercase">
-            Aucun module de vente n'est associé à cette signature id numérique
+            {t('vendorDashboard.noStoreAssociated')}
         </p>
         <button className="px-6 py-2 bg-primary/20 border border-primary/50 text-primary rounded-sm hover:bg-primary/30 transition-all font-mono">
-            INITIALISER LE MODULE MAGASIN
+            {t('vendorDashboard.initStoreModule')}
         </button>
       </div>
     );
@@ -84,10 +86,10 @@ export const VendorStore = () => {
           <div className="relative z-10">
             <h1 className="text-xl sm:text-3xl font-mono text-foreground tracking-widest flex items-center gap-3 italic">
               <span className="w-2 h-6 sm:h-8 bg-primary"></span>
-              CONFIGURATION MAGASIN
+              {t('vendorDashboard.storeConfig')}
             </h1>
             <p className="mt-2 text-primary/60 font-mono text-xs tracking-tight uppercase">
-              Gestion des paramètres de l'interface de vente - ID: {store?.id.substring(0, 8)}
+              {t('vendorDashboard.storeSettings')} - ID: {store?.id.substring(0, 8)}
             </p>
           </div>
         </div>
@@ -104,12 +106,12 @@ export const VendorStore = () => {
             >
               <div className="bg-card/40 border border-border p-6 rounded-2xl backdrop-blur-md shadow-soft">
                 <h3 className="text-foreground font-mono mb-6 flex items-center gap-2 text-sm tracking-wider opacity-80 uppercase">
-                  <Layout size={16} className="text-primary" /> Informations Générales
+                  <Layout size={16} className="text-primary" /> {t('vendorDashboard.generalInfo')}
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-mono text-muted-foreground uppercase mb-1">Nom du magasin</label>
+                    <label className="block text-xs font-mono text-muted-foreground uppercase mb-1">{t('vendorDashboard.storeName')}</label>
                     <input 
                       type="text"
                       value={store?.nom_magasin || ''}
@@ -118,7 +120,7 @@ export const VendorStore = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono text-muted-foreground uppercase mb-1">Description / Bio</label>
+                    <label className="block text-xs font-mono text-muted-foreground uppercase mb-1">{t('vendorDashboard.descriptionBio')}</label>
                     <textarea 
                       rows={4}
                       value={store?.description || ''}
@@ -139,7 +141,7 @@ export const VendorStore = () => {
             >
               <div className="bg-card/40 border border-border p-6 rounded-2xl backdrop-blur-md shadow-soft">
                 <h3 className="text-foreground font-mono mb-6 flex items-center gap-2 text-sm tracking-wider opacity-80 uppercase">
-                  <ImageIcon size={16} className="text-primary" /> Identité Visuelle
+                  <ImageIcon size={16} className="text-primary" /> {t('vendorDashboard.visualIdentity')}
                 </h3>
                 
                 <div className="space-y-6">
@@ -152,17 +154,17 @@ export const VendorStore = () => {
                       )}
                     </div>
                     <button type="button" className="text-[10px] font-mono text-primary hover:text-primary transition-colors uppercase tracking-tighter">
-                      Modifier le logo
+                      {t('vendorDashboard.changeLogo')}
                     </button>
                   </div>
 
                   <div className="p-3 border border-dashed border-border rounded-xl bg-muted/40">
-                    <label className="block text-[10px] font-mono text-muted-foreground/60 uppercase mb-2">Bannière Storefront</label>
+                    <label className="block text-[10px] font-mono text-muted-foreground/60 uppercase mb-2">{t('vendorDashboard.storeBanner')}</label>
                     <div className="h-20 bg-muted rounded-xl flex items-center justify-center border border-border/50">
                       <ImageIcon size={20} className="text-muted-foreground/30" />
                     </div>
                     <button type="button" className="w-full mt-2 text-[10px] font-mono text-primary hover:text-primary transition-colors uppercase tracking-tighter">
-                      Importer une bannière
+                      {t('vendorDashboard.importBanner')}
                     </button>
                   </div>
                 </div>
@@ -181,7 +183,7 @@ export const VendorStore = () => {
               ) : (
                 <Save size={18} />
               )}
-              Mettre à jour le système
+              {t('vendorDashboard.updateSystem')}
             </button>
           </div>
         </form>

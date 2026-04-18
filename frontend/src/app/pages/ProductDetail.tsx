@@ -9,10 +9,12 @@ import { toast } from 'sonner';
 import { produitService, Product } from '../../services/produit.service';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { addItem } = useCart();
   
@@ -40,7 +42,7 @@ export function ProductDetail() {
       setRelatedProducts(relatedRes.produits.filter(p => p.id !== productId).slice(0, 4));
       
     } catch (err) {
-      toast.error('Module introuvable dans la base Nexus');
+      toast.error(t('product.notFoundDb'));
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,7 @@ export function ProductDetail() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center">
           <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-          <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-[0.3em]">Décryptage des données...</p>
+          <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-[0.3em]">{t('product.decrypting')}</p>
         </div>
       </div>
     );
@@ -70,8 +72,8 @@ export function ProductDetail() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center bg-card/20 backdrop-blur-xl p-12 rounded-3xl border border-white/5">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Module introuvable</h2>
-          <Button variant="glow" onClick={() => navigate('/catalog')}>Retour au catalogue</Button>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('product.notFound')}</h2>
+          <Button variant="glow" onClick={() => navigate('/catalog')}>{t('product.backToCatalog')}</Button>
         </div>
       </div>
     );
@@ -108,7 +110,7 @@ export function ProductDetail() {
               )}
               <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground mb-2 sm:mb-3 tracking-tight">{product.nom_produit}</h1>
               <p className="text-muted-foreground flex items-center gap-2">
-                <span className="text-sm uppercase tracking-widest font-mono">Fournisseur:</span>
+                <span className="text-sm uppercase tracking-widest font-mono">{t('product.supplier')}:</span>
                 <span className="text-primary font-bold">{product.magasin?.nom_magasin || 'Nexus Partner'}</span>
               </p>
             </div>
@@ -125,13 +127,13 @@ export function ProductDetail() {
                   />
                 ))}
               </div>
-              <span className="text-sm font-medium">{product.note_moyenne || 'N/A'}</span>
-              <span className="text-sm text-gray-500">({product.nb_avis || 0} avis)</span>
+              <span className="text-sm font-medium">{product.note_moyenne || '0'}</span>
+              <span className="text-sm text-gray-500">({product.nb_avis || 0} {t('product.reviews')})</span>
             </div>
 
             <div className="mb-5 sm:mb-8 p-4 sm:p-6 bg-card/40 backdrop-blur-md rounded-2xl border border-border shadow-inner">
               <div className="flex items-baseline gap-3 sm:gap-4 mb-3 flex-wrap">
-                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">€{product.prix}</span>
+                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">{product.prix.toLocaleString(i18n.language, { style: 'currency', currency: 'EUR' })}</span>
               </div>
             </div>
 
@@ -146,19 +148,19 @@ export function ProductDetail() {
               {product.qte_dispo > 0 ? (
                 <div className="flex items-center gap-3 bg-green-500/10 w-fit px-4 py-2 rounded-full border border-green-500/20">
                   <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></div>
-                  <span className="text-green-400 text-sm font-bold uppercase tracking-wider">Interface Stock: {product.qte_dispo} unités</span>
+                  <span className="text-green-400 text-sm font-bold uppercase tracking-wider">{t('product.inStock')}: {product.qte_dispo} {t('product.units')}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-3 bg-red-500/10 w-fit px-4 py-2 rounded-full border border-red-500/20">
                   <div className="w-2.5 h-2.5 bg-red-500 rounded-full"></div>
-                  <span className="text-red-400 text-sm font-bold uppercase tracking-wider">Secteur hors stock</span>
+                  <span className="text-red-400 text-sm font-bold uppercase tracking-wider">{t('product.outOfStock')}</span>
                 </div>
               )}
             </div>
 
             {/* Quantity */}
             <div className="mb-8">
-              <label className="block text-xs font-black text-muted-foreground uppercase tracking-widest mb-3 font-mono">Configuration Quantité</label>
+              <label className="block text-xs font-black text-muted-foreground uppercase tracking-widest mb-3 font-mono">{t('product.qtyConfig')}</label>
               <div className="flex items-center gap-4 bg-white/5 w-fit p-1 rounded-xl border border-white/10">
                 <Button
                   variant="ghost"
@@ -186,7 +188,7 @@ export function ProductDetail() {
             <div className="flex gap-3 sm:gap-4 mb-8 sm:mb-10">
               <Button variant="glow" onClick={handleAddToCart} disabled={product.qte_dispo === 0} className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold">
                 <ShoppingCart className="w-5 h-5 mr-2 sm:mr-3" />
-                Initialiser l'achat
+                {t('product.initPurchase')}
               </Button>
               <Button variant="glass" size="icon" onClick={() => setIsFavorite(!isFavorite)} className="h-12 sm:h-14 w-12 sm:w-14">
                 <Heart className={`w-5 h-5 sm:w-6 sm:h-6 transition-all ${isFavorite ? 'fill-primary text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'text-foreground'}`} />
@@ -199,10 +201,10 @@ export function ProductDetail() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-10 sm:mt-20">
-            <h2 className="text-xl sm:text-3xl font-extrabold text-foreground mb-5 sm:mb-8 tracking-tight">Modules Similaires</h2>
+            <h2 className="text-xl sm:text-3xl font-extrabold text-foreground mb-5 sm:mb-8 tracking-tight">{t('product.similarModules')}</h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {relatedProducts.map((p) => (
-                <ProductCard key={p.id} product={p} onAddToCart={() => toast.success('Produit ajouté !')} />
+                <ProductCard key={p.id} product={p} onAddToCart={() => toast.success(t('product.addToCartSuccess'))} />
               ))}
             </div>
           </div>

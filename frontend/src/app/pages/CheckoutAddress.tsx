@@ -6,9 +6,11 @@ import { adresseService, Adresse } from '../../services/adresse.service';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { useCart } from '../contexts/CartContext';
+import { useTranslation } from 'react-i18next';
 
 export function CheckoutAddress() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { items, isLoading: cartLoading } = useCart();
   const [adresses, setAdresses] = useState<Adresse[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -18,7 +20,7 @@ export function CheckoutAddress() {
   // Guard: Redirect if cart is empty
   useEffect(() => {
     if (!cartLoading && items.length === 0) {
-      toast.error('Votre panier est vide. Redirection vers le catalogue...');
+      toast.error(t('cart.emptyRedirect'));
       navigate('/catalog');
     }
   }, [items, cartLoading, navigate]);
@@ -45,7 +47,7 @@ export function CheckoutAddress() {
         setSelectedId(data.adresses[0].id);
       }
     } catch (err: any) {
-      toast.error('Erreur lors du chargement des adresses');
+      toast.error(t('checkout.address.errorLoading'));
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +57,7 @@ export function CheckoutAddress() {
     e.preventDefault();
     try {
       const res = await adresseService.addAdresse(newAddress);
-      toast.success('Adresse ajoutée à votre carnet');
+      toast.success(t('checkout.addressDetail.saveSuccess'));
       setAdresses([...adresses, res.adresse]);
       setSelectedId(res.adresse.id);
       setShowAddForm(false);
@@ -74,7 +76,7 @@ export function CheckoutAddress() {
 
   const handleContinue = () => {
     if (!selectedId) {
-      toast.error('Veuillez sélectionner ou ajouter une adresse de livraison');
+      toast.error(t('checkout.address.selectError'));
       return;
     }
     // Store selected address ID in session or pass via state
@@ -88,12 +90,12 @@ export function CheckoutAddress() {
         {/* Stepper */}
         <div className="flex items-center justify-between mb-12 relative px-4">
            <div className="absolute top-1/2 left-0 w-full h-px bg-white/5 -translate-y-1/2 z-0"></div>
-           {[
-             { step: 1, label: 'Panier', active: true, done: true },
-             { step: 2, label: 'Adresse', active: true, done: false },
-             { step: 3, label: 'Livraison', active: false, done: false },
-             { step: 4, label: 'Paiement', active: false, done: false },
-           ].map((s) => (
+            {[
+              { step: 1, label: t('cart.title'), active: true, done: true },
+              { step: 2, label: t('checkout.address.title'), active: true, done: false },
+              { step: 3, label: t('checkout.shipping.title'), active: false, done: false },
+              { step: 4, label: t('checkout.payment.title'), active: false, done: false },
+            ].map((s) => (
              <div key={s.step} className="relative z-10 flex flex-col items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs border transition-all ${
                   s.active ? 'bg-primary border-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]' : 'bg-background border-white/20 text-muted-foreground'
@@ -109,7 +111,7 @@ export function CheckoutAddress() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="md:col-span-2 space-y-8">
-            <h1 className="text-3xl font-black tracking-tight">Où expédier vos modules ?</h1>
+            <h1 className="text-3xl font-black tracking-tight">{t('checkout.addressTitle')}</h1>
 
             {isLoading ? (
               <div className="space-y-4">
@@ -146,7 +148,7 @@ export function CheckoutAddress() {
                     onClick={() => setShowAddForm(true)}
                   >
                     <Plus className="w-5 h-5 mr-3" />
-                    Ajouter une nouvelle adresse
+                    {t('checkout.addAddress')}
                   </Button>
                 )}
 
@@ -156,19 +158,19 @@ export function CheckoutAddress() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-card/30 backdrop-blur-xl border border-primary/20 rounded-3xl p-8"
                   >
-                    <h3 className="text-xl font-bold mb-6">Nouvelle Destination</h3>
+                    <h3 className="text-xl font-bold mb-6">{t('checkout.newDestination')}</h3>
                     <form onSubmit={handleAddAddress} className="space-y-4">
                       <div className="grid grid-cols-3 gap-4">
                         <input 
                           type="text" 
-                          placeholder="N°" 
+                          placeholder={t('checkout.address.streetNumber')} 
                           className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                           value={newAddress.numero_rue}
                           onChange={e => setNewAddress({...newAddress, numero_rue: e.target.value})}
                         />
                         <input 
                           type="text" 
-                          placeholder="Rue" 
+                          placeholder={t('checkout.address.street')} 
                           className="col-span-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                           value={newAddress.nom_rue}
                           onChange={e => setNewAddress({...newAddress, nom_rue: e.target.value})}
@@ -177,7 +179,7 @@ export function CheckoutAddress() {
                       </div>
                       <input 
                         type="text" 
-                        placeholder="Complément d'adresse (optionnel)" 
+                        placeholder={t('checkout.address.complement')} 
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                         value={newAddress.complement_adresse}
                         onChange={e => setNewAddress({...newAddress, complement_adresse: e.target.value})}
@@ -185,7 +187,7 @@ export function CheckoutAddress() {
                       <div className="grid grid-cols-2 gap-4">
                         <input 
                           type="text" 
-                          placeholder="Code Postal" 
+                          placeholder={t('checkout.address.postalCode')} 
                           className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                           value={newAddress.code_postal}
                           onChange={e => setNewAddress({...newAddress, code_postal: e.target.value})}
@@ -193,7 +195,7 @@ export function CheckoutAddress() {
                         />
                         <input 
                           type="text" 
-                          placeholder="Ville" 
+                          placeholder={t('checkout.address.city')} 
                           className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                           value={newAddress.ville}
                           onChange={e => setNewAddress({...newAddress, ville: e.target.value})}
@@ -202,15 +204,15 @@ export function CheckoutAddress() {
                       </div>
                       <input 
                         type="text" 
-                        placeholder="Pays" 
+                        placeholder={t('checkout.address.country')} 
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                         value={newAddress.pays}
                         onChange={e => setNewAddress({...newAddress, pays: e.target.value})}
                         required
                       />
                       <div className="flex gap-3 pt-4">
-                        <Button type="submit" variant="glow" className="flex-1">Sauvegarder</Button>
-                        <Button type="button" variant="glass" onClick={() => setShowAddForm(false)}>Annuler</Button>
+                        <Button type="submit" variant="glow" className="flex-1">{t('checkout.saveAddress')}</Button>
+                        <Button type="button" variant="glass" onClick={() => setShowAddForm(false)}>{t('checkout.address.back')}</Button>
                       </div>
                     </form>
                   </motion.div>
@@ -222,20 +224,20 @@ export function CheckoutAddress() {
           {/* Sidebar Info */}
           <div className="space-y-6">
             <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-8 sticky top-28">
-              <h2 className="text-xl font-bold mb-6">Résumé du Transfert</h2>
+              <h2 className="text-xl font-bold mb-6">{t('checkout.transferSummary')}</h2>
               <div className="space-y-4 mb-8">
                 <p className="text-sm text-muted-foreground flex justify-between">
-                  <span>Articles Nexus</span>
-                  <span className="font-mono">Sync OK</span>
+                  <span>{t('checkout.nexusArticles')}</span>
+                  <span className="font-mono">{t('checkout.address.syncOk')}</span>
                 </p>
-                <p className="text-sm text-muted-foreground">Les frais de livraison seront calculés à l'étape suivante selon votre destination.</p>
+                <p className="text-sm text-muted-foreground">{t('checkout.shippingCalcInfo')}</p>
               </div>
               <Button 
                 variant="glow" 
                 className="w-full h-14 font-bold text-lg"
                 onClick={handleContinue}
               >
-                Continuer
+                {t('checkout.address.continue')}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <Button 
@@ -244,7 +246,7 @@ export function CheckoutAddress() {
                 onClick={() => navigate('/customer/cart')}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Retour au Panier
+                {t('checkout.backToCart')}
               </Button>
             </div>
           </div>

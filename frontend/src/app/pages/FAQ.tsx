@@ -1,40 +1,34 @@
-import { motion } from 'framer-motion';
-import { HelpCircle, ChevronDown, ChevronUp, Zap, Radio, Database } from 'lucide-react';
+import { HelpCircle, ChevronDown, ChevronUp, Zap, Radio, Database, Shield } from 'lucide-react';
 import { useState } from 'react';
-
-const faqs = [
-  {
-    icon: Zap,
-    question: "Quelle est la rapidité de livraison des modules ?",
-    answer: "Grâce à nos protocoles de logistique Warp, vos unités sont expédiées sous 24h et livrées en moyenne sous 2 à 4 cycles standards (jours ouvrés) en zone Nexus-Prime."
-  },
-  {
-    icon: Radio,
-    question: "Le support technique est-il assuré par des IA ?",
-    answer: "Le premier niveau de support (Support Cybo) est géré par nos IA de classe 5. Pour les requêtes complexes, un agent humain prendra le relais sur le même canal."
-  },
-  {
-    icon: Database,
-    question: "Les produits sont-ils certifiés d'origine ?",
-    answer: "Chaque produit vendu sur Nexus subit une vérification holographique de son code source et de ses composants avant d'être listé dans le catalogue."
-  },
-  {
-    icon: Shield,
-    question: "Puis-je retourner une unité défectueuse ?",
-    answer: "Oui, vous disposez de 14 cycles après réception pour signaler une anomalie et obtenir un renvoi vers le marchand pour réparation ou échange standard."
-  }
-];
-
-function Shield({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-    </svg>
-  );
-}
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useTranslation();
+
+  const faqs = [
+    {
+      icon: Zap,
+      question: t('faq.q1'),
+      answer: t('faq.a1')
+    },
+    {
+      icon: Radio,
+      question: t('faq.q2'),
+      answer: t('faq.a2')
+    },
+    {
+      icon: Database,
+      question: t('faq.q3'),
+      answer: t('faq.a3')
+    },
+    {
+      icon: Shield,
+      question: t('faq.q4'),
+      answer: t('faq.a4')
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background py-20 px-4">
@@ -43,8 +37,8 @@ export function FAQ() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-secondary/10 border border-secondary/20 mb-6">
             <HelpCircle className="w-8 h-8 text-secondary shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-4">Base de Connaissances</h1>
-          <p className="text-muted-foreground font-mono text-sm uppercase tracking-widest">Réponses aux interrogations fréquentes dans le Nexus</p>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-4">{t('faq.title')}</h1>
+          <p className="text-muted-foreground font-mono text-sm uppercase tracking-widest">{t('faq.subtitle')}</p>
         </div>
 
         <div className="space-y-4">
@@ -86,10 +80,10 @@ export function FAQ() {
         </div>
 
         <div className="mt-16 bg-primary/10 border border-primary/20 rounded-3xl p-8 text-center">
-          <h3 className="text-xl font-bold mb-2">Encore des zones d'ombre ?</h3>
-          <p className="text-muted-foreground mb-6">Nos agents sont prêts à synchroniser vos données.</p>
+          <h3 className="text-xl font-bold mb-2">{t('faq.stillQuestions')}</h3>
+          <p className="text-muted-foreground mb-6">{t('faq.contactDesc')}</p>
           <a href="/contact" className="inline-flex items-center text-primary font-bold hover:gap-3 transition-all">
-            Contacter le support <Radio className="w-4 h-4 ml-2" />
+            {t('faq.contactBtn')} <Radio className="w-4 h-4 ml-2" />
           </a>
         </div>
       </div>
