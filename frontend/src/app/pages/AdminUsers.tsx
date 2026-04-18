@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import { Users, Shield, Mail, ShieldAlert, CheckCircle } from 'lucide-react';
 import { adminService } from '../../services/admin.service';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchUsers();
@@ -53,10 +55,10 @@ export const AdminUsers = () => {
         <div>
           <h1 className="text-xl sm:text-3xl text-foreground tracking-[0.3em] flex items-center gap-4 italic font-bold">
             <span className="w-2 h-10 bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"></span>
-            CONTRÔLE DES ACCÈS
+            {t('adminUsers.title')}
           </h1>
           <p className="mt-1 text-primary/50 text-[10px] uppercase tracking-tighter">
-            Gestion globale des identités et des niveaux de privilèges utilisateurs
+            {t('adminUsers.subtitle')}
           </p>
         </div>
 
@@ -65,9 +67,9 @@ export const AdminUsers = () => {
           <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr className="border-b border-primary/30 bg-primary/10">
-                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Identité</th>
-                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Contact</th>
-                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">Rôle Actuel</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">{t('adminUsers.identity')}</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">{t('adminUsers.contact')}</th>
+                <th className="p-4 text-primary text-[10px] uppercase tracking-widest">{t('adminUsers.currentRole')}</th>
                 <th className="p-4 text-primary text-[10px] uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>

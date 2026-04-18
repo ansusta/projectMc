@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { motion } from 'framer-motion';
 import { commandeService } from '../../services/commande.service';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const statusColors: Record<string, string> = {
   en_cours: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -25,6 +26,7 @@ export function CustomerOrders() {
   const [filtered, setFiltered] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -110,9 +112,9 @@ export function CustomerOrders() {
             <div>
               <div className="flex items-center gap-3 text-primary mb-3">
                 <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
-                <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">Journal des Flux</span>
+                <span className="text-sm font-mono tracking-[0.3em] uppercase opacity-70">{t('customerOrders.subtitle')}</span>
               </div>
-              <h1 className="text-2xl sm:text-4xl font-black tracking-tight">Mes Commandes</h1>
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight">{t('customerOrders.title')}</h1>
               <p className="text-muted-foreground mt-1 sm:mt-2 text-sm">
                 {orders.length} commande{orders.length !== 1 ? 's' : ''} au total
               </p>

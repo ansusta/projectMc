@@ -6,6 +6,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ export function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,14 +55,14 @@ export function Login() {
             </div>
             <span className="text-2xl sm:text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">NEXUS</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2 tracking-tight">Interface de Connexion</h1>
-          <p className="text-sm text-muted-foreground font-medium">Accédez à la matrice technologique</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2 tracking-tight">{t('login.title')}</h1>
+          <p className="text-sm text-muted-foreground font-medium">{t('login.subtitle')}</p>
         </div>
 
         <div className="bg-card/20 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-border/30 p-6 sm:p-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Protocol Identifier (Email)</Label>
+              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t('login.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -73,7 +75,7 @@ export function Login() {
             </div>
 
             <div>
-              <Label htmlFor="password" title="Accès crypté" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Clé d'Accès</Label>
+              <Label htmlFor="password" title="Accès crypté" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t('login.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -101,7 +103,7 @@ export function Login() {
               variant="glow"
               className="w-full h-14 text-lg font-bold"
             >
-              {isLoading ? 'Initialisation...' : 'S\'authentifier'}
+              {isLoading ? t('login.loading') : t('login.submit')}
             </Button>
           </form>
 
@@ -136,12 +138,12 @@ export function Login() {
         </div>
 
         <p className="mt-10 text-center text-sm text-muted-foreground font-medium">
-          Nouveau dans l'écosystème ?{' '}
+          {t('login.noAccount')}{' '}
           <button
             onClick={() => navigate('/register')}
             className="text-primary hover:text-primary-foreground font-bold transition-all"
           >
-            Créer un profil
+            {t('login.register')}
           </button>
         </p>
 

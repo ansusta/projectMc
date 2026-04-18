@@ -9,6 +9,7 @@ import { SplineScene } from '../components/ui/splite';
 import { Spotlight } from '../components/ui/spotlight';
 import { produitService, Product } from '../../services/produit.service';
 import { useCart } from '../contexts/CartContext';
+import { useTranslation } from 'react-i18next';
 
 const categoryIcons = {
   Monitor,
@@ -33,6 +34,7 @@ export function Home() {
   const { addItem } = useCart();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -67,19 +69,19 @@ export function Home() {
               {/* Left content */}
               <div className="flex-1 max-w-2xl text-center lg:text-left animate-in fade-in slide-in-from-left-8 duration-1000">
                 <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-foreground to-primary/80">
-                  <span className="block">Bienvenue dans votre</span>
-                  <span className="block">boutique en ligne</span>
+                  <span className="block">{t('home.heroWelcome')}</span>
+                  <span className="block">{t('home.heroShop')}</span>
                 </h1>
                 <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-7 sm:mb-10 max-w-xl mx-auto lg:mx-0 font-light">
-                  Accédez à des milliers de produits soigneusement sélectionnés, aux meilleurs prix.
+                  {t('home.heroDesc')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center lg:justify-start">
                   <Button size="lg" variant="glow" onClick={() => navigate('/catalog')} className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-semibold">
-                    Explorer les produits
+                    {t('home.exploreProducts')}
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                   <Button size="lg" variant="glass" onClick={() => navigate('/register')} className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-semibold">
-                    Devenir vendeur
+                    {t('home.becomeVendor')}
                   </Button>
                 </div>
               </div>
@@ -107,8 +109,8 @@ export function Home() {
                 <Truck className="w-6 h-6 sm:w-8 sm:h-8 text-primary group-hover:text-white transition-colors" />
               </div>
               <div>
-                <h3 className="font-bold text-foreground text-base sm:text-xl mb-1 sm:mb-2">Livraison gratuite</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Dans les 58 wilayas en moins de 48h en Algérie</p>
+                <h3 className="font-bold text-foreground text-base sm:text-xl mb-1 sm:mb-2">{t('home.freeShipping')}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{t('home.freeShippingDesc')}</p>
               </div>
             </div>
 
@@ -117,8 +119,8 @@ export function Home() {
                 <Gift className="w-6 h-6 sm:w-8 sm:h-8 text-primary group-hover:text-white transition-colors" />
               </div>
               <div>
-                <h3 className="font-bold text-foreground text-base sm:text-xl mb-1 sm:mb-2">Offre exclusive</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Avantages exclusifs (cadeaux, promos) selon votre achat</p>
+                <h3 className="font-bold text-foreground text-base sm:text-xl mb-1 sm:mb-2">{t('home.exclusiveOffer')}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{t('home.exclusiveOfferDesc')}</p>
               </div>
             </div>
 
@@ -127,8 +129,8 @@ export function Home() {
                 <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary group-hover:text-white transition-colors" />
               </div>
               <div>
-                <h3 className="font-bold text-foreground text-base sm:text-xl mb-1 sm:mb-2">Adapté à vos besoins</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Produits high-tech sélectionnés pour votre performance</p>
+                <h3 className="font-bold text-foreground text-base sm:text-xl mb-1 sm:mb-2">{t('home.adaptedNeeds')}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{t('home.adaptedNeedsDesc')}</p>
               </div>
             </div>
           </div>
@@ -141,8 +143,8 @@ export function Home() {
           <div className="absolute inset-0 bg-primary/5 pointer-events-none"></div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-8 sm:mb-16">
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-3 sm:mb-4 tracking-tight">Dimensions technologiques</h2>
-              <p className="text-sm sm:text-lg text-gray-400">Naviguez à travers nos écosystèmes d'innovation</p>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-3 sm:mb-4 tracking-tight">{t('home.categoriesTitle')}</h2>
+              <p className="text-sm sm:text-lg text-gray-400">{t('home.categoriesSubtitle')}</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
               {categories.slice(0, 6).map((category, index) => {
@@ -166,7 +168,7 @@ export function Home() {
                       </div>
                       <h3 className="text-base sm:text-2xl font-bold text-white mb-1 sm:mb-2 tracking-tight group-hover:text-primary transition-colors">{category.name}</h3>
                       <div className="hidden sm:flex items-center text-sm text-gray-300 font-medium">
-                        <span>{category.count} protocoles disponibles</span>
+                        <span>{category.count} {t('home.protocolsAvailable')}</span>
                         <ArrowRight className="w-4 h-4 ml-2 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary" />
                       </div>
                     </div>
@@ -184,11 +186,11 @@ export function Home() {
 
         <div className="flex items-end justify-between mb-7 sm:mb-12 relative z-10 gap-4 flex-wrap">
           <div>
-            <h2 className="text-xl sm:text-4xl font-extrabold text-foreground mb-1 sm:mb-3 tracking-tight">Recommandations pour vous</h2>
-            <p className="text-sm sm:text-lg text-muted-foreground">Sélection personnalisée pour vos besoins</p>
+            <h2 className="text-xl sm:text-4xl font-extrabold text-foreground mb-1 sm:mb-3 tracking-tight">{t('home.recommendations')}</h2>
+            <p className="text-sm sm:text-lg text-muted-foreground">{t('home.recommendationsDesc')}</p>
           </div>
           <Button variant="outline" onClick={() => navigate('/catalog')} className="shrink-0 hidden sm:flex border-border hover:border-primary/50 text-foreground hover:bg-primary/5">
-            Explorer le catalogue
+            {t('home.exploreCatalog')}
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
         </div>
@@ -196,7 +198,7 @@ export function Home() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 bg-card/20 backdrop-blur-md rounded-3xl border border-white/5">
             <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-            <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">Initialisation du flux...</p>
+            <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">{t('home.initFlux')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative z-10">
@@ -206,7 +208,7 @@ export function Home() {
           </div>
         )}
         <Button variant="outline" onClick={() => navigate('/catalog')} className="w-full mt-6 sm:hidden border-border hover:border-primary/50 text-foreground hover:bg-primary/5">
-          Voir tout le catalogue
+          {t('home.viewCatalog')}
           <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </section>
@@ -219,12 +221,12 @@ export function Home() {
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
             <div className="text-center max-w-2xl mx-auto bg-card/60 backdrop-blur-xl p-6 sm:p-12 rounded-2xl sm:rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-              <h2 className="text-2xl sm:text-4xl font-bold mb-3 sm:mb-6 text-white">Vendez avec nous</h2>
+              <h2 className="text-2xl sm:text-4xl font-bold mb-3 sm:mb-6 text-white">{t('home.sellWithUs')}</h2>
               <p className="text-sm sm:text-lg text-gray-400 mb-6 sm:mb-10">
-                Rejoignez notre plateforme et développez vos ventes en touchant des milliers de clients potentiels.
+                {t('home.sellWithUsDesc')}
               </p>
               <Button size="lg" variant="glow" onClick={() => navigate('/register?role=vendor')} className="h-12 sm:h-14 px-8 sm:px-10 text-base sm:text-lg w-full sm:w-auto hover:-translate-y-1 transition-transform">
-                Intégrer le réseau
+                {t('home.joinNetwork')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>

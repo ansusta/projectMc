@@ -9,11 +9,12 @@ import { Filter, X, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { produitService, Product } from '../../services/produit.service';
-
+import { useTranslation } from 'react-i18next';
 import { useCart } from '../contexts/CartContext';
 
 export function Catalog() {
   const { addItem } = useCart();
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [priceRange, setPriceRange] = useState([0, 5000]);
@@ -77,24 +78,24 @@ export function Catalog() {
           <div>
             <div className="flex items-center gap-2 text-primary mb-1 sm:mb-2">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-              <span className="text-xs sm:text-sm font-mono tracking-widest uppercase">Base de données Nexus</span>
+              <span className="text-xs sm:text-sm font-mono tracking-widest uppercase">{t('catalog.subtitle')}</span>
             </div>
-            <h1 className="text-xl sm:text-4xl font-extrabold tracking-tight mb-1">Catalogue produits</h1>
-            <p className="text-sm text-muted-foreground">{sortedProducts.length} unités identifiées dans le secteur</p>
+            <h1 className="text-xl sm:text-4xl font-extrabold tracking-tight mb-1">{t('catalog.title')}</h1>
+            <p className="text-sm text-muted-foreground">{sortedProducts.length} {t('catalog.noResults') === t('catalog.noResults') ? 'produits' : 'products'}</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <Button variant="glass" onClick={() => setShowFilters(!showFilters)} className="lg:hidden h-10 sm:h-11 text-sm">
               <Filter className="w-4 h-4 mr-2" />
-              Filtres {selectedCategories.length > 0 && `(${selectedCategories.length})`}
+              {t('catalog.filters')} {selectedCategories.length > 0 && `(${selectedCategories.length})`}
             </Button>
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-40 sm:w-56 h-10 sm:h-11 bg-card/40 border-border backdrop-blur-md rounded-xl focus:ring-primary/50 text-foreground text-sm">
-                <SelectValue placeholder="Trier par" />
+                <SelectValue placeholder={t('catalog.sortBy')} />
               </SelectTrigger>
               <SelectContent className="bg-background/90 backdrop-blur-xl border-border text-foreground text-sm">
-                <SelectItem value="popular">Popularité</SelectItem>
-                <SelectItem value="price-asc">Prix croissant</SelectItem>
-                <SelectItem value="price-desc">Prix décroissant</SelectItem>
+                <SelectItem value="popular">{t('catalog.newest')}</SelectItem>
+                <SelectItem value="price-asc">{t('catalog.priceAsc')}</SelectItem>
+                <SelectItem value="price-desc">{t('catalog.priceDesc')}</SelectItem>
                 <SelectItem value="rating">Meilleures notes</SelectItem>
               </SelectContent>
             </Select>

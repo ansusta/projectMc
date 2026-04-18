@@ -8,6 +8,7 @@ import { useCart } from '../contexts/CartContext';
 import { commandeService } from '../../services/commande.service';
 import { produitService, Product } from '../../services/produit.service';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const statusColors: Record<string, string> = {
   en_cours: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -28,6 +29,7 @@ export function CustomerDashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loadData = async () => {
@@ -64,32 +66,32 @@ export function CustomerDashboard() {
         <div className="mb-8 sm:mb-12">
           <div className="flex items-center gap-3 text-primary mb-2 sm:mb-3">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,1)]"></div>
-            <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Système Operational</span>
+            <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">{t('customerDashboard.systemOnline')}</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 text-foreground">Interface Client</h1>
-          <p className="text-muted-foreground text-sm sm:text-lg italic">Bienvenue, <span className="text-primary font-bold">{user?.name}</span></p>
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 text-foreground">{t('customerDashboard.title')}</h1>
+          <p className="text-muted-foreground text-sm sm:text-lg italic">{t('customerDashboard.welcome')} <span className="text-primary font-bold">{user?.name}</span></p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
             <Package className="w-6 h-6 text-blue-400 mb-3" />
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">Commandes Total</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">{t('customerDashboard.totalOrders')}</p>
             <p className="text-3xl font-black mt-1">{orders.length}</p>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
             <ShoppingBag className="w-6 h-6 text-purple-400 mb-3" />
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">Dépenses Totales</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">{t('customerDashboard.totalSpent')}</p>
             <p className="text-3xl font-black mt-1">€{totalSpent.toFixed(0)}</p>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
             <TrendingUp className="w-6 h-6 text-green-400 mb-3" />
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">Commandes Livrées</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">{t('customerDashboard.delivered')}</p>
             <p className="text-3xl font-black mt-1">{orders.filter(o => o.statut_commande === 'completer').length}</p>
           </div>
           <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
             <Heart className="w-6 h-6 text-red-400 mb-3" />
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">En cours</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">{t('customerDashboard.inProgress')}</p>
             <p className="text-3xl font-black mt-1">{orders.filter(o => o.statut_commande === 'en_cours').length}</p>
           </div>
         </div>
@@ -101,11 +103,11 @@ export function CustomerDashboard() {
               <div className="p-4 sm:p-8 border-b border-border bg-muted/30">
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h2 className="text-lg sm:text-2xl font-bold tracking-tight">Dernières Commandes</h2>
-                    <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">Historique d'achats</p>
+                    <h2 className="text-lg sm:text-2xl font-bold tracking-tight">{t('customerDashboard.recentOrders')}</h2>
+                    <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">{t('customerDashboard.orderHistory')}</p>
                   </div>
                   <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/customer/orders')}>
-                    Tout voir
+                    {t('customerDashboard.viewAll')}
                   </Button>
                 </div>
               </div>

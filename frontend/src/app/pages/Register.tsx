@@ -7,6 +7,7 @@ import { Label } from '../components/ui/label';
 import { Package } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Register() {
   const [name, setName] = useState('');
@@ -16,6 +17,7 @@ export function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,14 +57,14 @@ export function Register() {
             </div>
             <span className="text-2xl sm:text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">NEXUS</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2 tracking-tight">Nouveau Profil</h1>
-          <p className="text-sm text-muted-foreground font-medium">Rejoignez l'écosystème Nexus Prime</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2 tracking-tight">{t('register.title')}</h1>
+          <p className="text-sm text-muted-foreground font-medium">{t('register.subtitle')}</p>
         </div>
 
         <div className="bg-card/20 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-border/30 p-6 sm:p-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Nom Complet</Label>
+              <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t('register.name')}</Label>
               <Input
                 id="name"
                 type="text"
@@ -75,7 +77,7 @@ export function Register() {
             </div>
 
             <div>
-              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Protocol Identifier (Email)</Label>
+              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t('register.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -88,7 +90,7 @@ export function Register() {
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Clé d'Accès</Label>
+              <Label htmlFor="password" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t('register.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -102,19 +104,19 @@ export function Register() {
             </div>
 
             <div>
-              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Catégorie d'Accès</Label>
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t('register.role')}</Label>
               <RadioGroup value={role} onValueChange={(value) => setRole(value as 'customer' | 'vendor')} className="mt-4 space-y-3">
                 <div className="flex items-center space-x-3 border border-white/5 bg-white/5 rounded-xl p-4 hover:border-primary/50 transition-all cursor-pointer group">
                   <RadioGroupItem value="customer" id="customer" className="border-white/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary" />
                   <Label htmlFor="customer" className="flex-1 cursor-pointer">
-                    <div className="font-bold text-foreground group-hover:text-primary transition-colors">Opérateur (Client)</div>
+                    <div className="font-bold text-foreground group-hover:text-primary transition-colors">{t('register.customer')}</div>
                     <div className="text-xs text-muted-foreground">Acquisition de ressources technologiques</div>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-3 border border-white/5 bg-white/5 rounded-xl p-4 hover:border-primary/50 transition-all cursor-pointer group">
                   <RadioGroupItem value="vendor" id="vendor" className="border-white/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary" />
                   <Label htmlFor="vendor" className="flex-1 cursor-pointer">
-                    <div className="font-bold text-foreground group-hover:text-primary transition-colors">Fournisseur (Vendeur)</div>
+                    <div className="font-bold text-foreground group-hover:text-primary transition-colors">{t('register.vendor')}</div>
                     <div className="text-xs text-muted-foreground">Distribution de modules Nexus</div>
                   </Label>
                 </div>
@@ -141,17 +143,17 @@ export function Register() {
               variant="glow"
               className="w-full h-14 text-lg font-bold"
             >
-              {isLoading ? 'Initialisation...' : 'Créer le Profil Nexus'}
+              {isLoading ? t('register.loading') : t('register.submit')}
             </Button>
           </form>
 
           <p className="mt-10 text-center text-sm text-muted-foreground font-medium">
-            Déjà identifié ?{' '}
+            {t('register.hasAccount')}{' '}
             <button
               onClick={() => navigate('/login')}
               className="text-primary hover:text-primary-foreground font-bold transition-all"
             >
-              S'authentifier
+              {t('register.login')}
             </button>
           </p>
         </div>

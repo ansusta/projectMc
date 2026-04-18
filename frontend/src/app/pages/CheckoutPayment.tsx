@@ -6,6 +6,7 @@ import { useCart } from '../contexts/CartContext';
 import { commandeService, MethodePaiement } from '../../services/commande.service';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const paymentMethods = [
   { id: 'carteVisa', name: 'Carte Bancaire', icon: CreditCard, desc: 'Visa, Mastercard, Amex' },

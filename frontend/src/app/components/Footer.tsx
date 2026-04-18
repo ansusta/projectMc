@@ -1,7 +1,9 @@
 import { Package, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="bg-background border-t border-border mt-16 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
@@ -16,32 +18,31 @@ export function Footer() {
               <span className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70 dark:from-white dark:to-white/70">NEXUS</span>
             </div>
             <p className="text-sm text-text-secondary leading-relaxed">
-              Votre hub technologique premium de confiance pour découvrir le futur de l'innovation.
+              {t('home.heroDesc')}
             </p>
           </div>
 
           <div>
-            <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">LIENS RAPIDES</h3>
+            <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">{t('catalog.title')}</h3>
             <ul className="space-y-2 text-sm text-text-secondary">
-              <li><Link to="/catalog" className="hover:text-primary transition-colors hover:pl-1">Catalogue</Link></li>
-              <li><Link to="/faq" className="hover:text-primary transition-colors hover:pl-1">FAQ / Support</Link></li>
-              <li><Link to="/vendors" className="hover:text-primary transition-colors hover:pl-1">Réseau Vendeurs</Link></li>
-              <li><Link to="/contact" className="hover:text-primary transition-colors hover:pl-1">Nous Contacter</Link></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors hover:pl-1">{t('catalog.title')}</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors hover:pl-1">{t('footer.faq')}</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors hover:pl-1">{t('footer.contact')}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">SECTEURS</h3>
+            <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">{t('home.categories')}</h3>
             <ul className="space-y-2 text-sm text-text-secondary">
-              <li><Link to="/catalog?category=pc" className="hover:text-primary transition-colors hover:pl-1">Stations Orbit</Link></li>
+              <li><Link to="/catalog?category=pc" className="hover:text-primary transition-colors hover:pl-1">PC</Link></li>
               <li><Link to="/catalog?category=components" className="hover:text-primary transition-colors hover:pl-1">Hardware</Link></li>
-              <li><Link to="/catalog?category=gaming" className="hover:text-primary transition-colors hover:pl-1">Simulateurs</Link></li>
-              <li><Link to="/catalog?category=audio" className="hover:text-primary transition-colors hover:pl-1">Acoustique</Link></li>
+              <li><Link to="/catalog?category=gaming" className="hover:text-primary transition-colors hover:pl-1">Gaming</Link></li>
+              <li><Link to="/catalog?category=audio" className="hover:text-primary transition-colors hover:pl-1">Audio</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">CONTACT</h3>
+            <h3 className="font-bold text-text-primary mb-4 tracking-wider text-xs uppercase">{t('footer.contact')}</h3>
             <ul className="space-y-3 text-sm text-text-secondary">
               <li className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center border border-border">
@@ -66,15 +67,11 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-text-secondary flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>&copy; 2026 NEXUS. Protocoles sécurisés.</p>
+          <p>&copy; 2026 NEXUS. {t('footer.rights')}.</p>
           <div className="flex gap-6">
-            <Link to="/terms" className="hover:text-primary">Conditions</Link>
-            <Link to="/privacy" className="hover:text-primary">Confidentialité</Link>
-            <Link to="/legal" className="hover:text-primary">Mentions</Link>
-          </div>
-          <div className="flex gap-4">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse mt-1.5 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-            <span>Systèmes opérationnels</span>
+            <Link to="/terms" className="hover:text-primary">{t('footer.terms')}</Link>
+            <Link to="/privacy" className="hover:text-primary">{t('footer.privacy')}</Link>
+            <Link to="/legal" className="hover:text-primary">{t('footer.legal')}</Link>
           </div>
         </div>
       </div>

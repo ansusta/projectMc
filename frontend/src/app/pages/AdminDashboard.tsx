@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import { Users, Store, Package, ShoppingCart, DollarSign, Activity, ChevronRight, ShieldCheck } from 'lucide-react';
 import { adminService, AdminStats } from '../../services/admin.service';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchStats();
@@ -24,10 +26,10 @@ export const AdminDashboard = () => {
   };
 
   const statCards = [
-    { label: 'Utilisateurs', value: stats?.totalUsers, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Vendeurs Actifs', value: stats?.totalVendors, icon: ShieldCheck, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-    { label: 'Produits Indexés', value: stats?.totalProducts, icon: Package, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { label: 'Volume Ventes', value: stats?.totalOrders, icon: Activity, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { label: t('adminDashboard.users'), value: stats?.totalUsers, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: t('adminDashboard.activeVendors'), value: stats?.totalVendors, icon: ShieldCheck, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+    { label: t('adminDashboard.indexedProducts'), value: stats?.totalProducts, icon: Package, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { label: t('adminDashboard.salesVolume'), value: stats?.totalOrders, icon: Activity, color: 'text-green-500', bg: 'bg-green-500/10' },
   ];
 
   return (
@@ -41,11 +43,11 @@ export const AdminDashboard = () => {
                 <Activity size={180} className="text-primary hidden sm:block" />
             </div>
             <div className="relative z-10">
-                <h1 className="text-2xl sm:text-4xl text-foreground font-bold tracking-[0.1em] sm:tracking-[0.2em] italic uppercase">Terminal de Commandement</h1>
-                <p className="text-primary font-bold mt-2 tracking-widest text-xs opacity-70">ADMINISTRATEUR SYSTÈME - ACCÈS NIVEAU 100</p>
+                <h1 className="text-2xl sm:text-4xl text-foreground font-bold tracking-[0.1em] sm:tracking-[0.2em] italic uppercase">{t('adminDashboard.title')}</h1>
+                <p className="text-primary font-bold mt-2 tracking-widest text-xs opacity-70">{t('adminDashboard.subtitle')}</p>
                 <div className="mt-4 sm:mt-6 flex flex-wrap gap-3">
-                    <Link to="/admin/users" className="px-4 py-2 border border-primary/40 text-primary text-[10px] hover:bg-primary/10 transition-all rounded-lg uppercase tracking-widest font-bold">Gérer les Accès</Link>
-                    <Link to="/admin/stores" className="px-4 py-2 border border-primary/40 text-primary text-[10px] hover:bg-primary/10 transition-all rounded-lg uppercase tracking-widest font-bold">Vérification Marchande</Link>
+                    <Link to="/admin/users" className="px-4 py-2 border border-primary/40 text-primary text-[10px] hover:bg-primary/10 transition-all rounded-lg uppercase tracking-widest font-bold">{t('adminDashboard.manageAccess')}</Link>
+                    <Link to="/admin/stores" className="px-4 py-2 border border-primary/40 text-primary text-[10px] hover:bg-primary/10 transition-all rounded-lg uppercase tracking-widest font-bold">{t('adminDashboard.storeVerification')}</Link>
                 </div>
             </div>
         </div>

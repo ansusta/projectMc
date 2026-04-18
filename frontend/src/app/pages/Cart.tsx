@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export function Cart() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, total, isLoading, updateQuantity, removeItem } = useCart();
+  const { t } = useTranslation();
 
   const subtotal = total;
   const shipping = subtotal > 0 ? 10 : 0; // Fixed shipping for now
@@ -45,17 +47,17 @@ export function Cart() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
-        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-5 sm:mb-8">Panier d'achat</h1>
+        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-5 sm:mb-8">{t('cart.title')}</h1>
 
         {items.length === 0 ? (
           <div className="bg-card/20 backdrop-blur-xl border border-white/5 rounded-3xl p-16 text-center shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20">
               <ShoppingCart className="w-12 h-12 text-primary drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-3">Votre panier est vide</h2>
-            <p className="text-muted-foreground mb-8">Propulsez votre setup avec nos modules technologiques.</p>
+            <h2 className="text-2xl font-bold text-foreground mb-3">{t('cart.empty')}</h2>
+            <p className="text-muted-foreground mb-8">{t('cart.emptyDesc')}</p>
             <Button variant="glow" onClick={() => navigate('/catalog')}>
-              Explorer le catalogue
+              {t('cart.exploreCatalog')}
             </Button>
           </div>
         ) : (
@@ -120,15 +122,15 @@ export function Cart() {
             {/* Order Summary */}
             <div>
               <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-5 sm:p-8 lg:sticky top-28 shadow-soft">
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-5 sm:mb-8 tracking-tight">Récapitulatif</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-5 sm:mb-8 tracking-tight">{t('cart.subtotal')}</h2>
 
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-muted-foreground font-medium">
-                    <span>Sous-total ({items.reduce((sum, item) => sum + item.qte, 0)} articles)</span>
+                    <span>{t('cart.subtotal')} ({items.reduce((sum, item) => sum + item.qte, 0)} {t('cart.items')})</span>
                     <span className="tabular-nums">€{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground font-medium">
-                    <span>Logistique Warp</span>
+                    <span>{t('cart.shipping')}</span>
                     <span className="tabular-nums">€{shipping.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground font-medium">
@@ -137,7 +139,7 @@ export function Cart() {
                   </div>
                   <Separator className="bg-white/10" />
                   <div className="flex justify-between text-2xl font-black text-foreground">
-                    <span>Total</span>
+                    <span>{t('cart.total')}</span>
                     <span className="tabular-nums">€{finalTotal.toFixed(2)}</span>
                   </div>
                 </div>
@@ -147,7 +149,7 @@ export function Cart() {
                   variant="glow"
                   className="w-full h-14 text-lg font-bold mb-4"
                 >
-                  Procéder au paiement
+                  {t('cart.checkout')}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
 
@@ -156,7 +158,7 @@ export function Cart() {
                   onClick={() => navigate('/catalog')}
                   className="w-full h-12"
                 >
-                  Continuer mes achats
+                  {t('cart.continueShopping')}
                 </Button>
 
                 <div className="mt-8 p-6 bg-primary/10 rounded-2xl border border-primary/20">

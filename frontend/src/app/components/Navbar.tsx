@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, User, Menu, Heart, Package, Languages } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, Heart, Package, Languages, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useAuth } from '../contexts/AuthContext';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from './ui/badge';
 import { useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,16 +21,27 @@ interface NavbarProps {
   onMenuClick?: () => void;
 }
 
+const languages = [
+  { code: 'fr', label: 'Français', flag: '🇫🇷' },
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'ar', label: 'العربية', flag: '🇩🇿' },
+];
+
 export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const { t, i18n } = useTranslation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/catalog?search=${encodeURIComponent(searchQuery)}`);
     }
+  };
+
+  const switchLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
   };
 
   const getDashboardRoute = () => {
@@ -67,7 +79,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 type="text"
-                placeholder="Rechercher dans la matrice..."
+                placeholder={t('nav.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/50 focus-visible:bg-secondary transition-all rounded-xl"
@@ -103,16 +115,27 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
 
             <ThemeToggle />
 
+            {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="hover:bg-accent ring-offset-background transition-colors">
                   <Languages className="w-5 h-5 text-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border">
-                <DropdownMenuItem className="focus:bg-primary/20 cursor-pointer">Français (FR)</DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-primary/20 cursor-pointer">English (EN)</DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-primary/20 cursor-pointer text-right">العربية (AR)</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border min-w-[160px]">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => switchLanguage(lang.code)}
+                    className="focus:bg-primary/20 cursor-pointer flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{lang.flag}</span>
+                      <span>{lang.label}</span>
+                    </span>
+                    {i18n.language === lang.code && <Check className="w-4 h-4 text-primary" />}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -127,60 +150,60 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('nav.myAccount')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(getDashboardRoute())}>
-                    Dashboard
+                    {t('nav.dashboard')}
                   </DropdownMenuItem>
                   {user.role === 'customer' && (
                     <>
                       <DropdownMenuItem onClick={() => navigate('/customer/orders')}>
-                        Mes commandes
+                        {t('nav.myOrders')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/customer/favorites')}>
-                        Mes favoris
+                        {t('nav.myFavorites')}
                       </DropdownMenuItem>
                     </>
                   )}
                   {user.role === 'vendor' && (
                     <>
                       <DropdownMenuItem onClick={() => navigate('/vendor/store')}>
-                        Configuration Magasin
+                        {t('nav.storeConfig')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/vendor/products')}>
-                        Catalogue Produits
+                        {t('nav.productCatalog')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/vendor/orders')}>
-                        Commandes Reçues
+                        {t('nav.receivedOrders')}
                       </DropdownMenuItem>
                     </>
                   )}
                   {user.role === 'admin' && (
                     <>
                       <DropdownMenuItem onClick={() => navigate('/admin/users')}>
-                        Gestion Utilisateurs
+                        {t('nav.userManagement')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/admin/stores')}>
-                        Validation Magasins
+                        {t('nav.storeValidation')}
                       </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuItem onClick={() => navigate('/profile')}>
-                    Profil Personnel
+                    {t('nav.profile')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600">
-                    Déconnexion
+                    {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-2">
                 <Button variant="ghost" onClick={() => navigate('/login')} className="hover:bg-accent">
-                  Connexion
+                  {t('nav.login')}
                 </Button>
                 <Button variant="glow" onClick={() => navigate('/register')}>
-                  S'inscrire
+                  {t('nav.register')}
                 </Button>
               </div>
             )}
@@ -195,7 +218,7 @@ export function Navbar({ cartItemsCount = 0, onMenuClick }: NavbarProps) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Rechercher..."
+              placeholder={t('nav.searchMobile')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-secondary border-border"
