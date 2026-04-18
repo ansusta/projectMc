@@ -6,7 +6,7 @@ const produitController = require("../controllers/produit.controller");
 // Middleware Imports
 // ==========================================
 const auth = require("../middleware/auth.middleware"); 
-const upload = require("../middleware/upload"); 
+const { upload } = require("../middleware/upload");
 
 // ==========================================
 // Public Routes (Visitors, Clients, Sellers, Admins)

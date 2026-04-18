@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const clientController = require("../controllers/client.controller");
 const verifyToken = require("../middleware/auth.middleware");
-const upload = require("../middleware/upload");
+const { upload } = require("../middleware/upload");
 
 router.get("/profile", verifyToken, clientController.getProfile);
 router.put("/profile", verifyToken, clientController.updateProfile);

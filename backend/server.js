@@ -19,6 +19,14 @@ const catalogRoutes = require("./routes/catalog.routes");
 const app = express();
 const PORT = 5000;
 
+//test with html
+app.use(cors({
+    origin: '*', // Accepts requests from any origin (including your Live Server)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'] // Explicitly allows your JWT token header!
+}));
+//end test
+
 app.use((req, res, next) => {
   console.log(` ${req.method} ${req.originalUrl}`);
   console.log(` Body:`, req.body ? JSON.stringify(req.body, null, 2) : 'EMPTY');
@@ -26,7 +34,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
