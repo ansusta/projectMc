@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreditCard, Wallet, ShieldCheck, ArrowRight, ArrowLeft, Check, Lock, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -18,9 +18,10 @@ export function CheckoutPayment() {
   const { total: cartTotal, items, isLoading: cartLoading, refresh: refreshCart } = useCart();
   const [selectedMethod, setSelectedMethod] = useState<MethodePaiement>('carteVisa');
   const [isProcessing, setIsProcessing] = useState(false);
+  const isPaid = useRef(false);
 
   useEffect(() => {
-    if (!cartLoading && items.length === 0) {
+    if (!cartLoading && items.length === 0 && !isPaid.current) {
       toast.error('Votre panier est vide. Redirection vers le catalogue...');
       navigate('/catalog');
     }
@@ -51,9 +52,10 @@ export function CheckoutPayment() {
       localStorage.removeItem('checkout_shipping_method');
       localStorage.removeItem('checkout_shipping_price');
       
-      await refreshCart(); // Empty the cart
-      
+      // Mark as paid BEFORE refreshing cart to prevent empty-cart guard from firing
+      isPaid.current = true;
       navigate('/checkout/success', { state: { orderId: res.commande_id, total: finalTotal } });
+      await refreshCart(); // Empty the cart after navigation
     } catch (err: any) {
       toast.error(err.message || 'La transaction a été rejetée par le réseau Nexus.');
       navigate('/checkout/failure');

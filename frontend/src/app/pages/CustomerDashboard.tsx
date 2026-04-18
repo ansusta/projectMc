@@ -1,33 +1,62 @@
-import { ShoppingBag, Heart, Package, TrendingUp } from 'lucide-react';
-import { StatCard } from '../components/StatCard';
-import { mockOrders, mockProducts } from '../lib/mock-data';
+import { useState, useEffect } from 'react';
+import { ShoppingBag, Heart, Package, TrendingUp, Loader2 } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { ProductCard } from '../components/ProductCard';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
+import { commandeService } from '../../services/commande.service';
+import { produitService, Product } from '../../services/produit.service';
 import { toast } from 'sonner';
 
-const statusColors = {
-  pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  processing: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  shipped: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  delivered: 'bg-green-500/20 text-green-400 border-green-500/30',
-  cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
+const statusColors: Record<string, string> = {
+  en_cours: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  completer: 'bg-green-500/20 text-green-400 border-green-500/30',
+  annulee: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
 
-const statusLabels = {
-  pending: 'En attente',
-  processing: 'En cours',
-  shipped: 'Expédiée',
-  delivered: 'Livrée',
-  cancelled: 'Annulée',
+const statusLabels: Record<string, string> = {
+  en_cours: 'En cours',
+  completer: 'Livrée',
+  annulee: 'Annulée',
 };
 
 export function CustomerDashboard() {
   const navigate = useNavigate();
-  const recentOrders = mockOrders.slice(0, 3);
-  const recommendedProducts = mockProducts.slice(0, 4);
-  const totalSpent = mockOrders.reduce((sum, order) => sum + order.total, 0);
+  const { user } = useAuth();
+  const { addItem } = useCart();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [ordersRes, productsRes] = await Promise.all([
+          commandeService.getHistorique(),
+          produitService.search({ limit: 4 }),
+        ]);
+        setOrders(ordersRes.historique || []);
+        setProducts(productsRes.produits || []);
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const totalSpent = orders.reduce((sum, o) => sum + (o.montant_total || 0), 0);
+  const recentOrders = orders.slice(0, 3);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -38,39 +67,31 @@ export function CustomerDashboard() {
             <span className="text-xs sm:text-sm font-mono tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-70">Système Operational</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-1 sm:mb-2 text-foreground">Interface Client</h1>
-          <p className="text-muted-foreground text-sm sm:text-lg italic">Bienvenue dans votre centre de contrôle Nexus</p>
+          <p className="text-muted-foreground text-sm sm:text-lg italic">Bienvenue, <span className="text-primary font-bold">{user?.name}</span></p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard
-            title="Secteurs Actifs"
-            value={mockOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length}
-            icon={Package}
-            trend={{ value: 12, isPositive: true }}
-            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
-          />
-          <StatCard
-            title="Flux de Crédits"
-            value={`€${totalSpent.toLocaleString()}`}
-            icon={ShoppingBag}
-            trend={{ value: 8, isPositive: true }}
-            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
-          />
-          <StatCard
-            title="Modules Favoris"
-            value="23"
-            icon={Heart}
-            description="Unités mémorisées"
-            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
-          />
-          <StatCard
-            title="Index Fidélité"
-            value="1,245"
-            icon={TrendingUp}
-            trend={{ value: 15, isPositive: true }}
-            className="bg-card/40 backdrop-blur-xl border-border shadow-soft hover:shadow-md transition-all"
-          />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
+          <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
+            <Package className="w-6 h-6 text-blue-400 mb-3" />
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">Commandes Total</p>
+            <p className="text-3xl font-black mt-1">{orders.length}</p>
+          </div>
+          <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
+            <ShoppingBag className="w-6 h-6 text-purple-400 mb-3" />
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">Dépenses Totales</p>
+            <p className="text-3xl font-black mt-1">€{totalSpent.toFixed(0)}</p>
+          </div>
+          <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
+            <TrendingUp className="w-6 h-6 text-green-400 mb-3" />
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">Commandes Livrées</p>
+            <p className="text-3xl font-black mt-1">{orders.filter(o => o.statut_commande === 'completer').length}</p>
+          </div>
+          <div className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-soft">
+            <Heart className="w-6 h-6 text-red-400 mb-3" />
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono">En cours</p>
+            <p className="text-3xl font-black mt-1">{orders.filter(o => o.statut_commande === 'en_cours').length}</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
@@ -80,98 +101,121 @@ export function CustomerDashboard() {
               <div className="p-4 sm:p-8 border-b border-border bg-muted/30">
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h2 className="text-lg sm:text-2xl font-bold tracking-tight">Signal des Commandes</h2>
-                    <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">Derniers transferts de données</p>
+                    <h2 className="text-lg sm:text-2xl font-bold tracking-tight">Dernières Commandes</h2>
+                    <p className="text-xs text-muted-foreground font-mono mt-1 uppercase tracking-widest">Historique d'achats</p>
                   </div>
                   <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/customer/orders')}>
                     Tout voir
                   </Button>
                 </div>
               </div>
-              <div className="divide-y divide-border">
-                {recentOrders.map((order) => (
-                  <div key={order.id} className="p-4 sm:p-6 hover:bg-muted/30 transition-all group">
-                    <div className="flex items-start justify-between mb-3 sm:mb-4">
-                      <div>
-                        <p className="font-bold text-base sm:text-lg text-foreground mb-0.5 group-hover:text-primary transition-colors">{order.id}</p>
-                        <p className="text-xs font-mono text-muted-foreground">{new Date(order.date).toLocaleDateString('fr-FR')}</p>
+
+              {recentOrders.length === 0 ? (
+                <div className="p-12 text-center">
+                  <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
+                  <p className="text-muted-foreground">Aucune commande pour l'instant</p>
+                  <Button variant="glow" className="mt-4" onClick={() => navigate('/catalog')}>Explorer le catalogue</Button>
+                </div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {recentOrders.map((order) => (
+                    <div key={order.id} className="p-4 sm:p-6 hover:bg-muted/30 transition-all group">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="font-bold text-base text-foreground font-mono group-hover:text-primary transition-colors">
+                            #{order.id.substring(0, 8).toUpperCase()}
+                          </p>
+                          <p className="text-xs font-mono text-muted-foreground">
+                            {new Date(order.date_commande).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </p>
+                        </div>
+                        <Badge className={`${statusColors[order.statut_commande] || 'bg-gray-500/20 text-gray-400'} border font-bold uppercase tracking-widest text-[10px] px-2 py-0.5 rounded-full`}>
+                          {statusLabels[order.statut_commande] || order.statut_commande}
+                        </Badge>
                       </div>
-                      <Badge className={`${statusColors[order.status]} border font-bold uppercase tracking-widest text-[10px] px-2 py-0.5 rounded-full`}>
-                        {statusLabels[order.status]}
-                      </Badge>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-mono text-muted-foreground">
+                          {order.ligne_commande?.length || 0} article(s) • {order.adresse?.ville}
+                        </p>
+                        <p className="text-xl font-black text-foreground tabular-nums">€{(order.montant_total || 0).toFixed(2)}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4 flex-wrap">
-                      {order.items.slice(0, 3).map((item, idx) => (
-                        <div key={idx} className="relative overflow-hidden rounded-lg border border-border w-14 h-14 sm:w-20 sm:h-20 shadow-sm">
-                          <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
-                        </div>
-                      ))}
-                      {order.items.length > 3 && (
-                        <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-lg border border-border bg-muted/50 flex items-center justify-center text-xs text-muted-foreground font-mono">
-                          +{order.items.length - 3}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest">
-                        {order.items.length} article{order.items.length > 1 ? 's' : ''}
-                      </p>
-                      <p className="text-xl sm:text-2xl font-black text-foreground tabular-nums">€{order.total}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="space-y-4 sm:space-y-8">
+          <div className="space-y-4 sm:space-y-6">
             <div className="bg-card/40 backdrop-blur-2xl rounded-2xl border border-border p-5 sm:p-8 shadow-soft">
-              <h2 className="text-base sm:text-xl font-bold mb-4 sm:mb-6 tracking-tight">Protocoles Rapides</h2>
+              <h2 className="text-base sm:text-xl font-bold mb-4 sm:mb-6 tracking-tight">Actions Rapides</h2>
               <div className="grid grid-cols-1 gap-3">
                 <Button onClick={() => navigate('/catalog')} variant="glow" className="w-full h-11 justify-start pl-5">
                   <ShoppingBag className="w-4 h-4 mr-3" />
-                  Initialiser Catalogue
+                  Explorer le Catalogue
                 </Button>
                 <Button onClick={() => navigate('/customer/orders')} variant="glass" className="w-full h-11 justify-start pl-5">
                   <Package className="w-4 h-4 mr-3" />
-                  Base Commandes
+                  Mes Commandes
                 </Button>
                 <Button onClick={() => navigate('/customer/favorites')} variant="glass" className="w-full h-11 justify-start pl-5">
                   <Heart className="w-4 h-4 mr-3" />
-                  Modules Favoris
+                  Mes Favoris
                 </Button>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-primary to-primary/60 rounded-2xl p-5 sm:p-8 relative overflow-hidden group shadow-md">
+            {/* Promo banner */}
+            <div className="bg-gradient-to-br from-primary to-primary/60 rounded-2xl p-5 sm:p-6 relative overflow-hidden group shadow-md">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-3xl rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700"></div>
-              <h3 className="text-xl sm:text-2xl font-black mb-2 sm:mb-3">OFFRE NEXUS</h3>
-              <p className="text-white/80 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
-                Optimisez votre prochain transfert (-15%) avec la clé: <span className="font-mono bg-white/20 px-2 py-0.5 rounded ml-1 font-bold">WELCOME15</span>
+              <h3 className="text-xl font-black mb-2">OFFRE NEXUS</h3>
+              <p className="text-white/80 text-xs sm:text-sm mb-4 leading-relaxed">
+                Livraison gratuite à partir de 100€ d'achat.
               </p>
-              <Button className="w-full bg-white text-primary border-none hover:bg-white/90 font-bold h-11 rounded-xl text-sm">
-                Injecter Code
+              <Button className="w-full bg-white text-primary border-none hover:bg-white/90 font-bold h-11 rounded-xl text-sm" onClick={() => navigate('/catalog')}>
+                Découvrir
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Recommended Products */}
-        <div className="mt-10 sm:mt-20">
-          <div className="flex items-center justify-between mb-6 sm:mb-10">
-            <div>
-              <h2 className="text-xl sm:text-3xl font-black tracking-tight">Analyse Prédictive</h2>
-              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-mono mt-1">Modules suggérés par l'IA</p>
+        {/* Suggested Products */}
+        {products.length > 0 && (
+          <div className="mt-10 sm:mt-16">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl sm:text-3xl font-black tracking-tight">Produits Populaires</h2>
+                <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-mono mt-1">Sélection du catalogue</p>
+              </div>
+              <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/catalog')}>Tout voir</Button>
             </div>
-            <Button variant="ghost" className="hover:bg-muted text-sm" onClick={() => navigate('/catalog')}>Tout voir</Button>
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-card/40 backdrop-blur-xl border border-border rounded-2xl overflow-hidden cursor-pointer group hover:border-primary/40 transition-all"
+                  onClick={() => navigate(`/product/${product.id}`)}
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <img src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400'} alt={product.nom_produit} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                  <div className="p-4">
+                    <p className="font-bold text-sm truncate">{product.nom_produit}</p>
+                    <p className="text-primary font-black text-lg mt-1">€{product.prix}</p>
+                    <Button
+                      variant="glow"
+                      className="w-full mt-3 h-9 text-xs"
+                      onClick={(e) => { e.stopPropagation(); addItem(product, 1); }}
+                    >
+                      Ajouter
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {recommendedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} onAddToCart={() => toast.success('Produit ajouté au panier !')} />
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

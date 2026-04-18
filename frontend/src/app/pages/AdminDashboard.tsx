@@ -18,14 +18,6 @@ export const AdminDashboard = () => {
       setStats(response);
     } catch (error) {
       console.error('Error fetching admin stats:', error);
-      // Hardcoded fallback stats for UI demo if API fails
-      setStats({
-        totalUsers: 1248,
-        totalVendors: 42,
-        totalProducts: 156,
-        totalOrders: 890,
-        revenue: 45670
-      });
     } finally {
       setLoading(false);
     }
