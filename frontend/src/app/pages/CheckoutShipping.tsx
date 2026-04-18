@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Truck, Zap, Calendar, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
+import { useCart } from '../contexts/CartContext';
+import { useEffect } from 'react';
 
 const shippingMethods = [
   {
@@ -30,7 +32,15 @@ const shippingMethods = [
 
 export function CheckoutShipping() {
   const navigate = useNavigate();
+  const { items, isLoading: cartLoading } = useCart();
   const [selectedMethod, setSelectedMethod] = useState('standard');
+
+  useEffect(() => {
+    if (!cartLoading && items.length === 0) {
+      toast.error('Votre panier est vide. Redirection vers le catalogue...');
+      navigate('/catalog');
+    }
+  }, [items, cartLoading, navigate]);
 
   const handleContinue = () => {
     localStorage.setItem('checkout_shipping_method', selectedMethod);

@@ -5,15 +5,27 @@ export interface Product {
   nom_produit: string;
   description: string;
   prix: number;
-  stock: number;
-  categorie: string;
+  qte_dispo: number;
   image_url?: string;
-  id_magasin: string;
-  en_vente: boolean;
   date_ajout?: string;
+  type?: {
+    nom: string;
+    categorie?: { nom: string };
+  };
+  magasin?: {
+    nom_magasin: string;
+  };
 }
 
 export const produitService = {
+  // Get all products with filters
+  search: (params: { search?: string; categorie?: string; page?: number; limit?: number } = {}) =>
+    api.get<{ produits: Product[]; total: number; page: number; limit: number }>('/produit', params),
+
+  // Get a single product by ID
+  getById: (id: string) =>
+    api.get<{ produit: Product & { note_moyenne: string | null; nb_avis: number } }>(`/produit/${id}`),
+
   // Get all products for a specific store
   getByMagasin: (magasinId: string) => 
     api.get<{ produits: Product[] }>(`/produit/magasin/${magasinId}`),

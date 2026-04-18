@@ -62,10 +62,27 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-    get: <T>(path: string) => request<T>(path, { method: 'GET' }),
+    get: <T>(path: string, params?: Record<string, any>) => {
+        let fullPath = path;
+        if (params) {
+            const query = new URLSearchParams();
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    query.append(key, String(value));
+                }
+            });
+            const queryString = query.toString();
+            if (queryString) {
+                fullPath += (fullPath.includes('?') ? '&' : '?') + queryString;
+            }
+        }
+        return request<T>(fullPath, { method: 'GET' });
+    },
     post: <T>(path: string, body: unknown) =>
         request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
     patch: <T>(path: string, body: unknown) =>
         request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
+    put: <T>(path: string, body: unknown) =>
+        request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
     delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };

@@ -27,10 +27,10 @@ export const panierService = {
     get: () => api.get<PanierResponse>('/panier'),
 
     add: (produit_id: string, quantite: number = 1) =>
-        api.post<{ message: string; item: PanierItem }>('/panier/add', { produit_id, quantite }),
+        api.post<{ message: string; item: PanierItem }>('/panier', { produit_id, quantite }),
 
     updateQuantity: (produit_id: string, quantite: number) =>
-        api.patch<{ message: string; item: PanierItem }>(`/panier/${produit_id}`, { quantite }),
+        api.put<{ message: string; item: PanierItem }>(`/panier/${produit_id}`, { quantite }),
 
     remove: (produit_id: string) =>
         api.delete<{ message: string }>(`/panier/${produit_id}`),

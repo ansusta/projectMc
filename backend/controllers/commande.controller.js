@@ -47,11 +47,11 @@ exports.passerCommande = async (req, res) => {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    // Validate stock
+    // Final stock validation before processing payment/order
     for (const item of items) {
       if (item.qte > item.produit.qte_dispo) {
         return res.status(400).json({
-          error: `Stock insuffisant pour "${item.produit.nom_produit}"`
+          error: `Alerte Stock: La quantité demandée pour "${item.produit.nom_produit}" (${item.qte}) dépasse le stock disponible (${item.produit.qte_dispo}). Veuillez ajuster votre panier.`
         });
       }
     }
@@ -293,36 +293,3 @@ exports.getCommandes = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
- 
-exports.annulerCommande = async (req, res) => {
-  try {
-    const { id } = req.params;
- 
-    const { data: commande, error: fetchError } = await supabase
-      .from("commande")
-      .select("id, statut_commande")
-      .eq("id", id)
-      .single();
- 
-    if (fetchError || !commande) return res.status(404).json({ error: "Commande not found" });
- 
-    if (commande.statut_commande === "annulee") {
-      return res.status(400).json({ error: "Commande already cancelled" });
-    }
-    if (commande.statut_commande === "completer") {
-      return res.status(400).json({ error: "Cannot cancel a completed order" });
-    }
- 
-    const { error } = await supabase
-      .from("commande")
-      .update({ statut_commande: "annulee" })
-      .eq("id", id);
- 
-    if (error) return res.status(400).json({ error: error.message });
- 
-    res.status(200).json({ message: "Commande annulée avec succès" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
- 

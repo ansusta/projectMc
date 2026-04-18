@@ -5,13 +5,23 @@ import { Button } from '../components/ui/button';
 import { adresseService, Adresse } from '../../services/adresse.service';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useCart } from '../contexts/CartContext';
 
 export function CheckoutAddress() {
   const navigate = useNavigate();
+  const { items, isLoading: cartLoading } = useCart();
   const [adresses, setAdresses] = useState<Adresse[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Guard: Redirect if cart is empty
+  useEffect(() => {
+    if (!cartLoading && items.length === 0) {
+      toast.error('Votre panier est vide. Redirection vers le catalogue...');
+      navigate('/catalog');
+    }
+  }, [items, cartLoading, navigate]);
 
   // Form state
   const [newAddress, setNewAddress] = useState({

@@ -1,38 +1,81 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { mockProducts } from '../lib/mock-data';
-import { Star, ShoppingCart, Heart, Flag, Minus, Plus, Package, Shield, Truck } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Minus, Plus, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { ProductCard } from '../components/ProductCard';
 import { Separator } from '../components/ui/separator';
 import { toast } from 'sonner';
+import { produitService, Product } from '../../services/produit.service';
+import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = mockProducts.find(p => p.id === id);
+  const { user } = useAuth();
+  const { addItem } = useCart();
+  
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  if (!product) {
+  useEffect(() => {
+    if (id) fetchProduct(id);
+  }, [id]);
+
+  const fetchProduct = async (productId: string) => {
+    try {
+      setLoading(true);
+      const res = await produitService.getById(productId);
+      setProduct(res.produit);
+      
+      // Fetch related products (same category)
+      const relatedRes = await produitService.search({ 
+        categorie: res.produit.type?.categorie?.nom,
+        limit: 5 
+      });
+      setRelatedProducts(relatedRes.produits.filter(p => p.id !== productId).slice(0, 4));
+      
+    } catch (err) {
+      toast.error('Module introuvable dans la base Nexus');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      if (!product) return;
+      await addItem(product as Product, quantity);
+    } catch (err) {
+      // Error handled in context
+    }
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center bg-card/20 backdrop-blur-xl p-12 rounded-3xl border border-white/5">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Produit non trouvé</h2>
-          <Button variant="glow" onClick={() => navigate('/catalog')}>Retour au catalogue</Button>
+        <div className="flex flex-col items-center">
+          <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
+          <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-[0.3em]">Décryptage des données...</p>
         </div>
       </div>
     );
   }
 
-  const relatedProducts = mockProducts
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
-
-  const handleAddToCart = () => {
-    toast.success(`${quantity} × ${product.name} ajouté au panier !`);
-  };
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center bg-card/20 backdrop-blur-xl p-12 rounded-3xl border border-white/5">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Module introuvable</h2>
+          <Button variant="glow" onClick={() => navigate('/catalog')}>Retour au catalogue</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -43,15 +86,15 @@ export function ProductDetail() {
           <div>
             <div className="aspect-square rounded-3xl overflow-hidden bg-card/20 border border-white/5 mb-6 group">
               <img
-                src={product.image}
-                alt={product.name}
+                src={product.image_url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&h=500&fit=crop'}
+                alt={product.nom_produit}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
             </div>
             <div className="grid grid-cols-4 gap-4">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="aspect-square rounded-xl overflow-hidden bg-card/20 border border-white/5 hover:border-primary/50 cursor-pointer transition-all">
-                  <img src={product.image} alt="" className="w-full h-full object-cover opacity-50 hover:opacity-100 transition-opacity" />
+                  <img src={product.image_url} alt="" className="w-full h-full object-cover opacity-50 hover:opacity-100 transition-opacity" />
                 </div>
               ))}
             </div>
@@ -60,11 +103,13 @@ export function ProductDetail() {
           {/* Info */}
           <div>
             <div className="mb-4 sm:mb-6">
-              <Badge variant="neon" className="mb-3 sm:mb-4">{product.category}</Badge>
-              <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground mb-2 sm:mb-3 tracking-tight">{product.name}</h1>
+              {product.type?.categorie?.nom && (
+                <Badge variant="neon" className="mb-3 sm:mb-4">{product.type.categorie.nom}</Badge>
+              )}
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-foreground mb-2 sm:mb-3 tracking-tight">{product.nom_produit}</h1>
               <p className="text-muted-foreground flex items-center gap-2">
                 <span className="text-sm uppercase tracking-widest font-mono">Fournisseur:</span>
-                <span className="text-primary font-bold">{product.vendor}</span>
+                <span className="text-primary font-bold">{product.magasin?.nom_magasin || 'Nexus Partner'}</span>
               </p>
             </div>
 
@@ -73,29 +118,21 @@ export function ProductDetail() {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`w-5 h-5 ${star <= product.rating
+                    className={`w-5 h-5 ${star <= (product.note_moyenne || 0)
                       ? 'fill-yellow-400 text-yellow-400'
                       : 'text-gray-300'
                       }`}
                   />
                 ))}
               </div>
-              <span className="text-sm font-medium">{product.rating}</span>
-              <span className="text-sm text-gray-500">({product.reviews} avis)</span>
+              <span className="text-sm font-medium">{product.note_moyenne || 'N/A'}</span>
+              <span className="text-sm text-gray-500">({product.nb_avis || 0} avis)</span>
             </div>
 
             <div className="mb-5 sm:mb-8 p-4 sm:p-6 bg-card/40 backdrop-blur-md rounded-2xl border border-border shadow-inner">
               <div className="flex items-baseline gap-3 sm:gap-4 mb-3 flex-wrap">
-                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">€{product.price}</span>
-                {product.originalPrice && (
-                  <span className="text-2xl text-muted-foreground line-through tabular-nums">€{product.originalPrice}</span>
-                )}
+                <span className="text-3xl sm:text-5xl font-black text-foreground tabular-nums">€{product.prix}</span>
               </div>
-              {product.originalPrice && (
-                <Badge variant="destructive" className="animate-pulse">
-                  Économisez €{product.originalPrice - product.price} (-{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%)
-                </Badge>
-              )}
             </div>
 
             <div className="mb-8">
@@ -106,10 +143,10 @@ export function ProductDetail() {
 
             {/* Stock */}
             <div className="mb-8">
-              {product.stock > 0 ? (
+              {product.qte_dispo > 0 ? (
                 <div className="flex items-center gap-3 bg-green-500/10 w-fit px-4 py-2 rounded-full border border-green-500/20">
                   <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></div>
-                  <span className="text-green-400 text-sm font-bold uppercase tracking-wider">Interface Stock: {product.stock} unités</span>
+                  <span className="text-green-400 text-sm font-bold uppercase tracking-wider">Interface Stock: {product.qte_dispo} unités</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-3 bg-red-500/10 w-fit px-4 py-2 rounded-full border border-red-500/20">
@@ -119,7 +156,6 @@ export function ProductDetail() {
               )}
             </div>
 
-            {/* Quantity */}
             {/* Quantity */}
             <div className="mb-8">
               <label className="block text-xs font-black text-muted-foreground uppercase tracking-widest mb-3 font-mono">Configuration Quantité</label>
@@ -138,8 +174,8 @@ export function ProductDetail() {
                   variant="ghost"
                   size="icon"
                   className="h-10 w-10 hover:bg-white/10 rounded-lg text-foreground"
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  disabled={quantity >= product.stock}
+                  onClick={() => setQuantity(Math.min(product.qte_dispo, quantity + 1))}
+                  disabled={quantity >= product.qte_dispo}
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
@@ -148,7 +184,7 @@ export function ProductDetail() {
 
             {/* Actions */}
             <div className="flex gap-3 sm:gap-4 mb-8 sm:mb-10">
-              <Button variant="glow" onClick={handleAddToCart} disabled={product.stock === 0} className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold">
+              <Button variant="glow" onClick={handleAddToCart} disabled={product.qte_dispo === 0} className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-bold">
                 <ShoppingCart className="w-5 h-5 mr-2 sm:mr-3" />
                 Initialiser l'achat
               </Button>

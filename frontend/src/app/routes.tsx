@@ -28,6 +28,11 @@ import { Legal } from './pages/Legal';
 import { AddressManager } from './pages/AddressManager';
 import { ProfileSettings } from './pages/ProfileSettings';
 import { OrderDetails } from './pages/OrderDetails';
+import { CheckoutAddress } from './pages/CheckoutAddress';
+import { CheckoutShipping } from './pages/CheckoutShipping';
+import { CheckoutPayment } from './pages/CheckoutPayment';
+import { OrderSuccess } from './pages/OrderSuccess';
+import { OrderFailure } from './pages/OrderFailure';
 
 const Root = ({ children }: { children: React.ReactNode }) => (
   <Layout>{children}</Layout>
@@ -79,6 +84,28 @@ export const router = createBrowserRouter([
     element: <Root><Cart /></Root>,
   },
   
+  // Checkout Flow
+  {
+    path: '/checkout/address',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><CheckoutAddress /></ProtectedRoute></Root>,
+  },
+  {
+    path: '/checkout/shipping',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><CheckoutShipping /></ProtectedRoute></Root>,
+  },
+  {
+    path: '/checkout/payment',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><CheckoutPayment /></ProtectedRoute></Root>,
+  },
+  {
+    path: '/checkout/success',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><OrderSuccess /></ProtectedRoute></Root>,
+  },
+  {
+    path: '/checkout/failure',
+    element: <Root><ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']}><OrderFailure /></ProtectedRoute></Root>,
+  },
+
   // Protected Routes - Client
   {
     path: '/profile',

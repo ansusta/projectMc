@@ -1,22 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProductCard } from '../components/ProductCard';
-import { mockProducts, categories } from '../lib/mock-data';
+import { categories } from '../lib/mock-data';
 import { Slider } from '../components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '../components/ui/select';
 import { Checkbox } from '../components/ui/checkbox';
 import { Label } from '../components/ui/label';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
+import { produitService, Product } from '../../services/produit.service';
+
+import { useCart } from '../contexts/CartContext';
 
 export function Catalog() {
-  const [priceRange, setPriceRange] = useState([0, 3500]);
+  const { addItem } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('popular');
   const [showFilters, setShowFilters] = useState(false);
 
-  const handleAddToCart = (product: any) => {
-    toast.success(`${product.name} ajouté au panier !`);
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategories]); // Re-fetch when categories change
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      // We pass the first selected category if any (backend supports one category filter)
+      const res = await produitService.search({
+        categorie: selectedCategories.length > 0 ? selectedCategories[0] : undefined
+      });
+      setProducts(res.produits);
+    } catch (err) {
+      toast.error('Erreur lors du chargement des modules');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await addItem(product, 1);
+    } catch (err) {}
   };
 
   const toggleCategory = (categoryId: string) => {
@@ -27,22 +54,19 @@ export function Catalog() {
     );
   };
 
-  const filteredProducts = mockProducts.filter(product => {
-    const inPriceRange = product.price >= priceRange[0] && product.price <= priceRange[1];
-    const inCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-    return inPriceRange && inCategory;
+  const filteredProducts = products.filter(product => {
+    const inPriceRange = product.prix >= priceRange[0] && product.prix <= priceRange[1];
+    return inPriceRange;
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-asc':
-        return a.price - b.price;
+        return a.prix - b.prix;
       case 'price-desc':
-        return b.price - a.price;
-      case 'rating':
-        return b.rating - a.rating;
+        return b.prix - a.prix;
       default:
-        return b.reviews - a.reviews;
+        return 0; // Backend handles sorting better, but we keep this for local filtering
     }
   });
 
@@ -153,7 +177,12 @@ export function Catalog() {
 
           {/* Products Grid */}
           <div className="flex-1 min-w-0">
-            {sortedProducts.length > 0 ? (
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-card/20 backdrop-blur-md rounded-3xl border border-white/5">
+                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+                <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">Initialisation du flux...</p>
+              </div>
+            ) : sortedProducts.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6 sm:gap-8">
                 {sortedProducts.map((product) => (
                   <ProductCard
@@ -174,7 +203,7 @@ export function Catalog() {
                   variant="outline"
                   onClick={() => {
                     setSelectedCategories([]);
-                    setPriceRange([0, 3500]);
+                    setPriceRange([0, 5000]);
                   }}
                   className="border-white/10 hover:bg-white/5 text-foreground"
                 >

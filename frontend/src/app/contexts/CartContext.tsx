@@ -2,13 +2,14 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { panierService, PanierItem } from '../../services/panier.service';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
+import { Product } from '../../services/produit.service';
 
 interface CartContextType {
     items: PanierItem[];
     total: number;
     count: number;
     isLoading: boolean;
-    addItem: (produit_id: string, quantite?: number) => Promise<void>;
+    addItem: (product: Product, quantite?: number) => Promise<void>;
     removeItem: (produit_id: string) => Promise<void>;
     updateQuantity: (produit_id: string, quantite: number) => Promise<void>;
     refresh: () => Promise<void>;
@@ -16,63 +17,162 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const LOCAL_CART_KEY = 'nexus_local_cart';
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuth();
     const [items, setItems] = useState<PanierItem[]>([]);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
+    const calculateTotal = (cartItems: PanierItem[]) => {
+        const t = cartItems.reduce((sum, item) => sum + (item.prix_at_time * item.qte), 0);
+        setTotal(t);
+    };
+
     const refresh = async () => {
-        if (!user) {
-            setItems([]);
-            setTotal(0);
-            return;
-        }
+        if (!user) return;
         try {
             setIsLoading(true);
             const data = await panierService.get();
             setItems(data.panier?.item ?? []);
             setTotal(data.total || 0);
         } catch {
-            // Silently fail — user may not be logged in
+            // Silently fail if not authorized
         } finally {
             setIsLoading(false);
         }
     };
 
+    // Initial load from localStorage for guests
     useEffect(() => {
-        refresh();
+        if (!user) {
+            const saved = localStorage.getItem(LOCAL_CART_KEY);
+            if (saved) {
+                try {
+                    const localItems = JSON.parse(saved);
+                    setItems(localItems);
+                    calculateTotal(localItems);
+                } catch (e) {
+                    localStorage.removeItem(LOCAL_CART_KEY);
+                }
+            }
+        }
     }, [user]);
 
-    const addItem = async (produit_id: string, quantite: number = 1) => {
-        try {
-            await panierService.add(produit_id, quantite);
-            await refresh();
-            toast.success('Produit ajouté au panier');
-        } catch (err: any) {
-            toast.error(err.message || 'Erreur lors de l\'ajout au panier');
-            throw err;
+    // Sync local cart to DB when user logs in
+    useEffect(() => {
+        const syncCart = async () => {
+            if (user) {
+                const saved = localStorage.getItem(LOCAL_CART_KEY);
+                if (saved) {
+                    try {
+                        const localItems: PanierItem[] = JSON.parse(saved);
+                        if (localItems.length > 0) {
+                            setIsLoading(true);
+                            for (const item of localItems) {
+                                try {
+                                    await panierService.add(item.produit.id, item.qte);
+                                } catch (e) {
+                                    console.error('Failed to sync item:', item.produit.nom_produit);
+                                }
+                            }
+                            localStorage.removeItem(LOCAL_CART_KEY);
+                            toast.success('Panier local synchronisé avec votre compte');
+                        }
+                        await refresh();
+                    } catch (e) {
+                        console.error('Cart sync error:', e);
+                    } finally {
+                        setIsLoading(false);
+                    }
+                } else {
+                    refresh();
+                }
+            }
+        };
+
+        syncCart();
+    }, [user]);
+
+    const addItem = async (product: Product, quantite: number = 1) => {
+        if (user) {
+            try {
+                await panierService.add(product.id, quantite);
+                await refresh();
+                toast.success('Produit ajouté au panier');
+            } catch (err: any) {
+                toast.error(err.message || 'Erreur lors de l\'ajout au panier');
+                throw err;
+            }
+        } else {
+            // Guest mode
+            const newItem: PanierItem = {
+                qte: quantite,
+                prix_at_time: product.prix,
+                produit: {
+                    id: product.id,
+                    nom_produit: product.nom_produit,
+                    prix: product.prix,
+                    image_url: product.image_url || '',
+                    qte_dispo: product.qte_dispo,
+                    magasin: product.magasin,
+                    type: product.type
+                }
+            };
+
+            const existingIndex = items.findIndex(i => i.produit.id === product.id);
+            let updatedItems: PanierItem[];
+
+            if (existingIndex > -1) {
+                updatedItems = [...items];
+                updatedItems[existingIndex].qte += quantite;
+            } else {
+                updatedItems = [...items, newItem];
+            }
+
+            setItems(updatedItems);
+            calculateTotal(updatedItems);
+            localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(updatedItems));
+            toast.success('Produit ajouté (Mode Invité)');
         }
     };
 
     const removeItem = async (produit_id: string) => {
-        try {
-            await panierService.remove(produit_id);
-            await refresh();
-            toast.success('Produit retiré du panier');
-        } catch (err: any) {
-            toast.error(err.message || 'Erreur lors de la suppression');
-            throw err;
+        if (user) {
+            try {
+                await panierService.remove(produit_id);
+                await refresh();
+                toast.success('Produit retiré du panier');
+            } catch (err: any) {
+                toast.error(err.message || 'Erreur lors de la suppression');
+                throw err;
+            }
+        } else {
+            const updatedItems = items.filter(i => i.produit.id !== produit_id);
+            setItems(updatedItems);
+            calculateTotal(updatedItems);
+            localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(updatedItems));
+            toast.success('Produit retiré (Mode Invité)');
         }
     };
 
     const updateQuantity = async (produit_id: string, quantite: number) => {
-        try {
-            await panierService.updateQuantity(produit_id, quantite);
-            await refresh();
-        } catch (err: any) {
-            toast.error(err.message || 'Erreur lors de la mise à jour');
-            throw err;
+        if (user) {
+            try {
+                await panierService.updateQuantity(produit_id, quantite);
+                await refresh();
+            } catch (err: any) {
+                toast.error(err.message || 'Erreur lors de la mise à jour');
+                throw err;
+            }
+        } else {
+            const updatedItems = items.map(i =>
+                i.produit.id === produit_id ? { ...i, qte: quantite } : i
+            );
+            setItems(updatedItems);
+            calculateTotal(updatedItems);
+            localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(updatedItems));
         }
     };
 

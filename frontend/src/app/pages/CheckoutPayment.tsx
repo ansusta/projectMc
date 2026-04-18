@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreditCard, Wallet, ShieldCheck, ArrowRight, ArrowLeft, Check, Lock, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -15,9 +15,16 @@ const paymentMethods = [
 
 export function CheckoutPayment() {
   const navigate = useNavigate();
-  const { total: cartTotal, refresh: refreshCart } = useCart();
+  const { total: cartTotal, items, isLoading: cartLoading, refresh: refreshCart } = useCart();
   const [selectedMethod, setSelectedMethod] = useState<MethodePaiement>('carteVisa');
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    if (!cartLoading && items.length === 0) {
+      toast.error('Votre panier est vide. Redirection vers le catalogue...');
+      navigate('/catalog');
+    }
+  }, [items, cartLoading, navigate]);
 
   const shippingPrice = parseFloat(localStorage.getItem('checkout_shipping_price') || '0');
   const addressId = localStorage.getItem('checkout_address_id');

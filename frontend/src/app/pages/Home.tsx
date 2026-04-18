@@ -1,11 +1,14 @@
-import { ArrowRight, Monitor, Cpu, Mouse, Gamepad2, HardDrive, Headphones, Truck, Gift, Settings } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Monitor, Cpu, Mouse, Gamepad2, HardDrive, Headphones, Truck, Gift, Settings, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { ProductCard } from '../components/ProductCard';
-import { mockProducts, categories } from '../lib/mock-data';
+import { categories } from '../lib/mock-data';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { SplineScene } from '../components/ui/splite';
 import { Spotlight } from '../components/ui/spotlight';
+import { produitService, Product } from '../../services/produit.service';
+import { useCart } from '../contexts/CartContext';
 
 const categoryIcons = {
   Monitor,
@@ -27,12 +30,31 @@ const categoryImages: Record<string, string> = {
 
 export function Home() {
   const navigate = useNavigate();
-  const featuredProducts = mockProducts.filter(p => p.featured);
+  const { addItem } = useCart();
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAddToCart = (product: any) => {
-    toast.success(`${product.name} ajouté au panier !`);
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await produitService.search({ limit: 8 });
+      setFeaturedProducts(res.produits);
+    } catch (err) {
+      console.error('Failed to fetch featured products');
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await addItem(product, 1);
+    } catch (err) { }
+  };
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans">
       {/* Hero Section - FORCED DARK */}
@@ -170,11 +192,19 @@ export function Home() {
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative z-10">
-          {featuredProducts.slice(0, 8).map((product) => (
-            <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
-          ))}
-        </div>
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-card/20 backdrop-blur-md rounded-3xl border border-white/5">
+            <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+            <p className="text-muted-foreground font-mono animate-pulse uppercase tracking-widest text-sm">Initialisation du flux...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative z-10">
+            {featuredProducts.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+            ))}
+          </div>
+        )}
         <Button variant="outline" onClick={() => navigate('/catalog')} className="w-full mt-6 sm:hidden border-border hover:border-primary/50 text-foreground hover:bg-primary/5">
           Voir tout le catalogue
           <ArrowRight className="ml-2 w-4 h-4" />

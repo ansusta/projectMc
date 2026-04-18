@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Skip auto-restoration as requested to ensure a fresh start
+  // User must log in manually each session
   useEffect(() => {
     setIsLoading(false);
   }, []);
@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     authService.logout().catch(() => { });
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem('auth_user');
+    localStorage.removeItem('nexus_local_cart');
     setUser(null);
   };
 

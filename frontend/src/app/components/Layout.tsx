@@ -1,4 +1,5 @@
 import { ReactNode, useState } from 'react';
+import { useCart } from '../contexts/CartContext';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { Chatbot } from './Chatbot';
@@ -9,12 +10,13 @@ interface LayoutProps {
   hideFooter?: boolean;
 }
 
+
 export function Layout({ children, hideFooter = false }: LayoutProps) {
-  const [cartItemsCount] = useState(2);
+  const { count } = useCart();
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar cartItemsCount={cartItemsCount} />
+      <Navbar cartItemsCount={count} />
       <main className="flex-1">
         {children}
       </main>
